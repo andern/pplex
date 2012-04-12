@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<project name="lpped" default="compile">
+
+  <target name="clean" description="remove intermediate files">
+    <delete dir="bin"/>
+  </target>
+
+  <target name="clobber" depends="clean" description="remove all artifact files">
+    <delete file="lpped.jar"/>
+  </target>
+
+  <target name="compile" description="compile the Java source code to class files">
+    <mkdir dir="bin"/>
+    <javac srcdir="src" destdir="bin"/>
+  </target>
+
+  <target name="jar" depends="compile" description="create a Jar file for the application">
+    <jar destfile="lpped.jar">
+      <fileset dir="bin" includes="**/*.class"/>
+      <manifest>
+        <attribute name="Main-class" value="lpped/Main"/>
+      </manifest>
+    </jar>
+  </target>
+
+</project>
+
