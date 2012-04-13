@@ -1,0 +1,4 @@
+max         x1 + 2x2 +  x3 +  x4
+subject to 2x1 +  x2 + 5x3 +  x4 <= 8
+           2x1 + 2x2       + 4x4 <= 26
+           3x1 +  x2 + 2x3       <= 18

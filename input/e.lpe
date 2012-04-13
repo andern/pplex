@@ -1,0 +1,4 @@
+max        4x1 + 5x2
+subject to 2x1 + 2x2 <= 9
+            x1       <= 4
+                  x2 <= 3

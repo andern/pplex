@@ -1,0 +1,3 @@
+max       8x1 - 6x2 + 6x3
+subject to x1 -  x2 +  x3 <= 2
+          3x1 -  x2 + 2x3 <= 3
