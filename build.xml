@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="lpped" default="compile">
+<project name="lpped" default="jar">
 
   <target name="clean" description="remove intermediate files">
     <delete dir="bin"/>

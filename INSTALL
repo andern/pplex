@@ -1,0 +1,3 @@
+BUILDING
+========
+Run 'ant jar' to generate a runnable jar 'lpped.jar'.
