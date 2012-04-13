@@ -65,6 +65,7 @@ class CLI {
 		else if (args[0].equals(Data.replace))  { s = parseReplace(args); }
 		else if (args[0].equals(Data.log))      { s = parseLog(args); }
 		else if (args[0].equals(Data.update))   { s = parseUpdate(args); }
+        else if (args[0].equals(Data.status))   { s = parseStatus(args); }
 
 		else return String.format("Invalid command %s%n", args[0]);
 
@@ -72,6 +73,27 @@ class CLI {
 		log.add(cmd);
 		return s;
 	}
+
+
+
+    private String parseStatus(String[] args) {
+        StringBuilder sb = new StringBuilder();
+        LP lp = lps.get(p-1);
+
+        if (lp.feasible(false)) sb.append("Primal problem is feasible.\n");
+        else sb.append("Primal problem is infeasible.\n");
+
+        if (lp.feasible(true)) sb.append("Dual problem is feasible.\n");
+        else sb.append("Dual problem is infeasible.\n");
+
+        if (lp.optimal(false)) sb.append("Primal problem is optimal\n");
+        else sb.append("Primal problem is not optimal.\n");
+
+        if (lp.optimal(true)) sb.append("Dual problem is optimal\n");
+        else sb.append("Dual problem is not optimal.\n");
+
+        return sb.toString();
+    }
 
 
 
