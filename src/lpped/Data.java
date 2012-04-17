@@ -63,7 +63,7 @@ class Data {
         {
         	put(help,     "help");
         	put(log,      "log");
-        	put(pivot,    "pivot ((dual) <entering index> <leaving index>)");
+        	put(pivot,    "pivot ((dual/primal) <entering index> <leaving index>)");
         	put(read,     "read <filename>");
         	put(redo,     "redo");
         	put(replace,  "replace (coeffs..)");
@@ -94,16 +94,10 @@ class Data {
             put(show,     "show various information about a problem");
     		put(undo,     "erase last change");
     		put(update,   "update the current objective function");
-
-    		put(showDual,        "show the dual dictionary");
-    		put(showFeasibility, "show whether the program is feasible or not");
-    		put(showOptimality,  "show whether the program is optimal or not");
-    		put(showPrimal,      "show the primal dictionary");
-    		put(showSolution,    "show the solution");
-    	}
+        }
     };
 
-
+    
 
     @SuppressWarnings("serial")
 	static final HashMap<String, String> LHELP = new HashMap<String, String>() {
@@ -141,12 +135,14 @@ class Data {
               + "pivot            Run one iteration of the primal simplex\n"
               + "                 method with entering and leaving variables\n"
               + "                 calculated using the largest coefficient rule.\n"
+              + "pivot primal     Same as above.\n"
               + "pivot dual       Same as above with the dual simplex method.\n"
-              + "pivot 1 2        Run one iteration of the primal simplex\n"
+              + "pivot 2 3        Run one iteration of the primal simplex\n"
               + "                 method with column 2 being the entering\n"
               + "                 variable and row 3 being the leaving\n"
               + "                 variable.\n"
-              + "pivot dual 1 2   Same as above with the dual simplex method.\n"
+              + "pivot primal 2 3 Same as above.\n"
+              + "pivot dual 2 3   Same as above with the dual simplex method.\n"
     		);
 
     		put(read,
@@ -204,11 +200,11 @@ class Data {
               + Data.SYNTAX.get(show) + "\n"
               + "\n"
               + "Subcommands:\n"
-              + "primal\n"
-              + "dual\n"
-              + "solution\n"
-              + "feasibility\n"
-              + "optimality\n"
+              + "dual             show the dual dictionary\n"
+              + "feasibility      show whether the program is feasible or not\n"
+              + "optimality       show whether the program is optimal or not\n"
+              + "primal           show the primal dictionary\n"
+              + "solution         show the current solution\n"
               + "\n"
               + "To get help for any of the subcommands, type 'help <subcommand>'.\n"
             );

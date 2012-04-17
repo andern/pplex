@@ -70,15 +70,15 @@ class CLI {
 			return String.format(f, args[0]);
 		}
 
-		if      (args[0].equals(Data.help))    { s = parseHelp(args); }
-		else if (args[0].equals(Data.log))     { s = parseLog(args); }
-		else if (args[0].equals(Data.pivot))   { s = parsePivot(args); }
-		else if (args[0].equals(Data.read))    { s = parseRead(args); }
-		else if (args[0].equals(Data.redo))    { s = parseRedo(args); }
-		else if (args[0].equals(Data.replace)) { s = parseReplace(args); }
+        if      (args[0].equals(Data.help))    { s = parseHelp(args); }
+        else if (args[0].equals(Data.log))     { s = parseLog(args); }
+        else if (args[0].equals(Data.pivot))   { s = parsePivot(args); }
+        else if (args[0].equals(Data.read))    { s = parseRead(args); }
+        else if (args[0].equals(Data.redo))    { s = parseRedo(args); }
+        else if (args[0].equals(Data.replace)) { s = parseReplace(args); }
         else if (args[0].equals(Data.show))    { s = parseShow(args); }
-		else if (args[0].equals(Data.undo))    { s = parseUndo(args); }
-		else if (args[0].equals(Data.update))  { s = parseUpdate(args); }
+        else if (args[0].equals(Data.undo))    { s = parseUndo(args); }
+        else if (args[0].equals(Data.update))  { s = parseUpdate(args); }
 
 		else return String.format("Invalid command %s%n", args[0]);
 
@@ -134,10 +134,10 @@ class CLI {
 	private String parsePivot(String[] args) {
 		int argc = args.length;
 
-		if (argc == 1) return pivot(0, 0, false);
+		if (argc == 1) return pivot(false);
 		if (argc == 2) {
 			boolean dual = args[1].equals(Data.showDual);
-			return pivot(0, 0, dual);
+			return pivot(dual);
 		}
 		if (argc == 3 || argc == 4) {
 			boolean dual = args[1].equals(Data.showDual);
@@ -284,7 +284,12 @@ class CLI {
 
 
 	private String parseOptimality(String[] args) {
-    	return "";
+        StringBuilder sb = new StringBuilder();
+        LP lp = lps.get(p-1);
+
+        if (lp.feasible(false) || lp.feasible(true))
+            return "Problem is optimal\n";
+    	return "Problem is not optimal\n";
     }
 
 
@@ -333,7 +338,7 @@ class CLI {
 	private String pivot(int e, int l, boolean dual) {
 		try {
 			LP lp;
-			if (e == 0 && l == 0) lp = lps.get(p-1).pivot(dual);
+			if (e == -1 && l == -1) lp = lps.get(p-1).pivot(dual);
 			else if (dual) lp = lps.get(p-1).pivot(l, e);
 			else lp = lps.get(p-1).pivot(e, l);
 
@@ -346,6 +351,22 @@ class CLI {
 			return err.getLocalizedMessage();
 		}
 	}
+
+
+
+    private String pivot(boolean dual) {
+        try {
+            LP lp = lps.get(p-1).pivot(dual);
+
+            lps.add(p++, lp);
+            redo = 0;
+
+            if (dual) return lp.dualToString();
+            return lp.toString();
+        } catch (RuntimeException err) {
+            return err.getLocalizedMessage();
+        }
+    }
 
 
 
