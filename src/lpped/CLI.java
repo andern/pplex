@@ -39,13 +39,10 @@ class CLI {
 
 	/* These commands do operations on an LP. */
 	private String[] reqProg = new String[] {
-			Data.primal,
-			Data.dual,
 			Data.pivot,
-			Data.solution,
 			Data.replace,
 			Data.update,
-			Data.status
+            Data.show
 	};
 
 
@@ -61,6 +58,7 @@ class CLI {
 
 	private String parseCmd(String cmd) {
 		if (cmd.equals("q") || cmd.equals("exit") || cmd.equals("quit")) System.exit(0);
+		if (cmd.trim().equals("")) return "";
 
 		String[] args = cmd.split(" ");
 		String s = "";
@@ -72,18 +70,15 @@ class CLI {
 			return String.format(f, args[0]);
 		}
 
-		if      (args[0].equals(Data.read))     { s = parseRead(args); }
-		else if (args[0].equals(Data.help))     { s = parseHelp(args); }
-		else if (args[0].equals(Data.primal))   { s = parsePrimal(args); }
-		else if (args[0].equals(Data.dual))     { s = parseDual(args); }
-		else if (args[0].equals(Data.pivot))    { s = parsePivot(args); }
-		else if (args[0].equals(Data.solution)) { s = parseSolution(args); }
-		else if (args[0].equals(Data.undo))     { s = parseUndo(args); }
-		else if (args[0].equals(Data.redo))     { s = parseRedo(args); }
-		else if (args[0].equals(Data.replace))  { s = parseReplace(args); }
-		else if (args[0].equals(Data.log))      { s = parseLog(args); }
-		else if (args[0].equals(Data.update))   { s = parseUpdate(args); }
-        else if (args[0].equals(Data.status))   { s = parseStatus(args); }
+		if      (args[0].equals(Data.help))    { s = parseHelp(args); }
+		else if (args[0].equals(Data.log))     { s = parseLog(args); }
+		else if (args[0].equals(Data.pivot))   { s = parsePivot(args); }
+		else if (args[0].equals(Data.read))    { s = parseRead(args); }
+		else if (args[0].equals(Data.redo))    { s = parseRedo(args); }
+		else if (args[0].equals(Data.replace)) { s = parseReplace(args); }
+        else if (args[0].equals(Data.show))    { s = parseShow(args); }
+		else if (args[0].equals(Data.undo))    { s = parseUndo(args); }
+		else if (args[0].equals(Data.update))  { s = parseUpdate(args); }
 
 		else return String.format("Invalid command %s%n", args[0]);
 
@@ -94,32 +89,25 @@ class CLI {
 
 
 
-    private String parseStatus(String[] args) {
-        StringBuilder sb = new StringBuilder();
-        LP lp = lps.get(p-1);
+    private String parseHelp(String[] args) {
+		StringBuffer sb = new StringBuffer();
 
-        if (lp.feasible(false)) sb.append("Primal problem is feasible.\n");
-        else sb.append("Primal problem is infeasible.\n");
-
-        if (lp.feasible(true)) sb.append("Dual problem is feasible.\n");
-        else sb.append("Dual problem is infeasible.\n");
-
-        if (lp.optimal(false)) sb.append("Primal problem is optimal\n");
-        else sb.append("Primal problem is not optimal.\n");
-
-        if (lp.optimal(true)) sb.append("Dual problem is optimal\n");
-        else sb.append("Dual problem is not optimal.\n");
-
-        return sb.toString();
-    }
-
-
-
-	private String parseUpdate(String[] args) {
-		LP lp = lps.get(p-1).updateObj();
-		lps.add(p, lp);
-		p++;
-		return lp.toString();
+		if (args.length == 1) {
+			sb.append("\n");
+			Set<String> set = Data.SHELP.keySet();
+			for (String s : set) {
+				sb.append(String.format("%-20s %s%n", s, Data.SHELP.get(s)));
+			}
+			sb.append("\n");
+			sb.append(Data.EHELP);
+			sb.append("\n");
+		}
+		if (args.length == 2) {
+			String h = Data.LHELP.get(args[1]);
+			if (h != null) sb.append(h);
+			else sb.append("No such command.");
+		}
+		return sb.toString();
 	}
 
 
@@ -139,6 +127,68 @@ class CLI {
 			sb.append(String.format(f, k, log.get(k)));
 		}
 		return sb.toString();
+	}
+
+
+
+	private String parsePivot(String[] args) {
+		int argc = args.length;
+
+		if (argc == 1) return pivot(0, 0, false);
+		if (argc == 2) {
+			boolean dual = args[1].equals(Data.showDual);
+			return pivot(0, 0, dual);
+		}
+		if (argc == 3 || argc == 4) {
+			boolean dual = args[1].equals(Data.showDual);
+			try {
+				int e = Integer.parseInt(args[argc - 2]) - 1;
+				int l = Integer.parseInt(args[argc - 1]) - 1;
+
+				int eSize = lps.get(p-1).getNoBasic();
+				int lSize = lps.get(p-1).getNoNonBasic();
+
+				if (e < 0 || l < 0 ||
+				    e > eSize || l > lSize) return "Invalid index";
+
+				return pivot(e, l, dual);
+			}
+			catch (NumberFormatException err) {
+				return Data.SYNTAX.get(Data.pivot);
+			}
+		}
+		return Data.SYNTAX.get(Data.pivot);
+	}
+
+
+
+	private String parseRead(String[] args) {
+		if (args.length == 2) {
+			File file = new File(args[1]);
+
+			try {
+				lps.add(p, Parser.parse(file));
+				p++;
+				redo = 0;
+				return "Read " + file + " OK.\n";
+			}
+			catch (FileNotFoundException e) {
+				return "File " + file + " not found.\n";
+			}
+		}
+		else {
+			return Data.SYNTAX.get(Data.read);
+		}
+	}
+
+
+
+	private String parseRedo(String[] args) {
+		if (redo == 0) return "Nothing to redo.\n";
+
+		redo--;
+		p++;
+		return "";
 	}
 
 
@@ -173,12 +223,16 @@ class CLI {
 
 
 
-	private String parseRedo(String[] args) {
-		if (redo == 0) return "Nothing to redo.\n";
+	private String parseShow(String[] args) {
+	    if (args.length == 1) return Data.LHELP.get(Data.show);
 
-		redo--;
-		p++;
-		return "";
+	    if (args[1].equals(Data.showDual))        return parseDual(args);
+	    if (args[1].equals(Data.showFeasibility)) return parseFeasibility(args);
+	    if (args[1].equals(Data.showOptimality))  return parseOptimality(args);
+	    if (args[1].equals(Data.showPrimal))      return parsePrimal(args);
+	    if (args[1].equals(Data.showSolution))    return parseSolution(args);
+
+	    return Data.LHELP.get(Data.show);
 	}
 
 
@@ -193,6 +247,15 @@ class CLI {
 
 
 
+	private String parseUpdate(String[] args) {
+		LP lp = lps.get(p-1).updateObj();
+		lps.add(p, lp);
+		p++;
+		return lp.toString();
+	}
+
+
+
 	private String parseSolution(String[] args) {
 		LP lp = lps.get(p-1);
 		double[] point = lp.point();
@@ -200,11 +263,11 @@ class CLI {
 
 		int prec = 2;
 
-		try {
-			if (args.length == 2) prec = Integer.parseInt(args[1]);
-		}
-		catch (NumberFormatException e) {
-			return Data.SYNTAX.get(Data.solution);
+		if (args.length == 3) {
+			try { prec = Integer.parseInt(args[2]); }
+			catch (NumberFormatException e) {
+				return Data.SYNTAX.get(Data.showSolution);
+			}
 		}
 
 		StringBuilder sb = new StringBuilder("(");
@@ -215,111 +278,37 @@ class CLI {
 		}
 		sb.append(String.format(f + ")", point[point.length-1]));
 
-		return String.format(f + "at point %s%n", val, sb.toString());
+		return String.format(f + " at point %s%n", val, sb.toString());
 	}
 
 
 
-	private String parsePivot(String[] args) {
-		String[] pr = new String[] {"primal"};
-		String[] du = new String[] {"dual"};
-
-		/* No args. Primal pivot with largest coefficients rule. */
-		if (args.length == 1) {
-			try {
-				LP lp = lps.get(p-1).pivot(false);
-				lps.add(p++, lp);
-				redo = 0;
-				return parsePrimal(pr);
-			}
-			catch (RuntimeException err) {
-				return err.getLocalizedMessage();
-
-			}
-		}
-
-		/* Dual arg. Dual pivot with largest coefficients rule. */
-		else if (args.length == 2 && args[1].equals(Data.dual)) {
-			try {
-				LP lp = lps.get(p-1).pivot(true);
-				lps.add(p++, lp);
-				redo = 0;
-				return parseDual(du);
-			} catch (RuntimeException err) {
-				return err.getLocalizedMessage();
-			}
-		}
-
-		/* Pivot args. Primal pivot with given variables. */
-		else if (args.length == 3) {
-			int e;
-			int l;
-
-			try {
-				e = Integer.parseInt(args[1]) - 1;
-				l = Integer.parseInt(args[2]) - 1;
+	private String parseOptimality(String[] args) {
+    	return "";
+    }
 
 
-				int eSize = lps.get(p-1).getNoBasic();
-				int lSize = lps.get(p-1).getNoNonBasic();
 
-				if (e < 0 || l < 0 ||
-				    e > eSize || l > lSize) return "Invalid index";
+    private String parseFeasibility(String[] args) {
+        StringBuilder sb = new StringBuilder();
+        LP lp = lps.get(p-1);
 
-				LP lp = lps.get(p-1).pivot(e, l);
-				lps.add(p++, lp);
-				redo = 0;
-				return parsePrimal(pr);
-			}
-			catch (NumberFormatException err) {
-				return Data.SYNTAX.get(Data.pivot);
-			}
-			catch (RuntimeException err) {
-				return err.getLocalizedMessage();
-			}
-		}
+        if (lp.feasible(false)) sb.append("Primal problem is feasible.\n");
+        else sb.append("Primal problem is infeasible.\n");
 
-		/* Dual args and pivots. Dual pivot with given variables. */
-		else if (args.length == 4) {
-			int e;
-			int l;
+        if (lp.feasible(true)) sb.append("Dual problem is feasible.\n");
+        else sb.append("Dual problem is infeasible.\n");
 
-			try {
-				e = Integer.parseInt(args[2]) - 1;
-				l = Integer.parseInt(args[3]) - 1;
-
-				boolean bDual = args[1].equals(Data.dual);
-				if (!bDual) return Data.SYNTAX.get(Data.pivot);
-
-				int eSize = lps.get(p-1).getNoBasic();
-				int lSize = lps.get(p-1).getNoNonBasic();
-
-				if (e < 0 || l < 0 ||
-				    e > eSize || l > lSize) return "Invalid index";
-
-				LP lp = lps.get(p-1).pivot(l, e);
-				lps.add(p++, lp);
-				redo = 0;
-				return parseDual(du);
-			}
-			catch (NumberFormatException err) {
-				return Data.SYNTAX.get(Data.pivot);
-			}
-			catch (RuntimeException err) {
-				return err.getLocalizedMessage();
-			}
-		}
-		/* Wrong syntax. */
-		return Data.SYNTAX.get(Data.pivot);
-	}
+        return sb.toString();
+    }
 
 
 
 	private String parsePrimal(String[] args) {
 		int prec = 2;
-		if (args.length != 1) {
-			try { prec = Integer.parseInt(args[1]); }
-			catch (NumberFormatException e) { return Data.SYNTAX.get(Data.primal); }
+		if (args.length == 3) {
+			try { prec = Integer.parseInt(args[2]); }
+			catch (NumberFormatException e) { return Data.SYNTAX.get(Data.showPrimal); }
 		}
 
 		try { return lps.get(p-1).toString(prec); }
@@ -330,9 +319,9 @@ class CLI {
 
 	private String parseDual(String[] args) {
 		int prec = 2;
-		if (args.length != 1) {
-			try { prec = Integer.parseInt(args[1]); }
-			catch (NumberFormatException e) { return Data.SYNTAX.get(Data.dual); }
+		if (args.length == 3) {
+			try { prec = Integer.parseInt(args[2]); }
+			catch (NumberFormatException e) { return Data.SYNTAX.get(Data.showDual); }
 		}
 
 		try { return lps.get(p-1).dualToString(prec); }
@@ -341,46 +330,21 @@ class CLI {
 
 
 
-	private String parseRead(String[] args) {
-		if (args.length == 2) {
-			File file = new File(args[1]);
+	private String pivot(int e, int l, boolean dual) {
+		try {
+			LP lp;
+			if (e == 0 && l == 0) lp = lps.get(p-1).pivot(dual);
+			else if (dual) lp = lps.get(p-1).pivot(l, e);
+			else lp = lps.get(p-1).pivot(e, l);
 
-			try {
-				lps.add(p, Parser.parse(file));
-				p++;
-				redo = 0;
-				return "Read " + file + " OK.\n";
-			}
-			catch (FileNotFoundException e) {
-				return "File " + file + " not found.\n";
-			}
+			lps.add(p++, lp);
+			redo = 0;
+
+			if (dual) return lp.dualToString();
+			return lp.toString();
+		} catch (RuntimeException err) {
+			return err.getLocalizedMessage();
 		}
-		else {
-			return Data.SYNTAX.get(Data.read);
-		}
-	}
-
-
-
-	private String parseHelp(String[] args) {
-		StringBuffer sb = new StringBuffer();
-
-		if (args.length == 1) {
-			sb.append("\n");
-			Set<String> set = Data.SHELP.keySet();
-			for (String s : set) {
-				sb.append(String.format("%-20s %s%n", s, Data.SHELP.get(s)));
-			}
-			sb.append("\n");
-			sb.append(Data.EHELP);
-			sb.append("\n");
-		}
-		if (args.length == 2) {
-			String h = Data.LHELP.get(args[1]);
-			if (h != null) sb.append(h);
-			else sb.append("No such command.");
-		}
-		return sb.toString();
 	}
 
 
