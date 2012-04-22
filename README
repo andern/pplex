@@ -11,7 +11,7 @@ Table of contents
 1.0) About
 ---- -----
 lpped is an application that can interpret linear programs (LP) and show
-how the LP dictionary evolves throughout the execution of the method.
+how the LP dictionary evolves throughout the execution of the simplex method.
 
 lpped is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -29,3 +29,7 @@ To compile the sources of lppend and build a runnable jar run
     `ant jar`
     or simply
     `ant`
+
+To run the newly built jar simply run
+    `java -jar lpped.jar`
+
