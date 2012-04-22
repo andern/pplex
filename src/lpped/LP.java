@@ -29,21 +29,21 @@ import java.util.HashMap;
  * @see     lpped.Parser
  */
 class LP {
-	private Matrix B;
-	private Matrix N;
+    private Matrix B;
+    private Matrix N;
 
-	private final Matrix b;
-	private final Matrix c;
-	private Matrix x_b;
-	private Matrix z_n;
+    private final Matrix b;
+    private final Matrix c;
+    private Matrix x_b;
+    private Matrix z_n;
 
-	private int[] Bi;
-	private int[] Ni;
-	private HashMap<Integer, String> x;
+    private int[] Bi;
+    private int[] Ni;
+    private HashMap<Integer, String> x;
 
 
 
-	/**
+    /**
      * Initializes a linear program.
      *
      * @param B
@@ -71,19 +71,20 @@ class LP {
      *        A {@code HashMap} mapping the indices of the
      *        basic and non-basic variables to their names.
      */
-    LP(Matrix B, Matrix N, Matrix b, Matrix c, Matrix x_b,
-    	Matrix z_n, int[] Bi, int[] Ni, HashMap<Integer, String> x) {
-    	this.B = B;
-    	this.N = N;
+    LP(Matrix B, Matrix N, Matrix b, Matrix c, Matrix x_b, Matrix z_n,
+                                            int[] Bi, int[] Ni,
+                                            HashMap<Integer, String> x) {
+        this.B = B;
+        this.N = N;
 
-    	this.b = b;
-    	this.c = c;
-    	this.x_b = x_b;
-    	this.z_n = z_n;
+        this.b = b;
+        this.c = c;
+        this.x_b = x_b;
+        this.z_n = z_n;
 
-    	this.Bi = Bi;
-    	this.Ni = Ni;
-    	this.x = x;
+        this.Bi = Bi;
+        this.Ni = Ni;
+        this.x = x;
     }
 
 
@@ -117,12 +118,13 @@ class LP {
      */
     LP(Matrix N, Matrix b, Matrix c, HashMap<Integer, String> x) {
         this(Matrix.identity(N.rows()), N, b, c, b, c.scale(-1),
-             new int[N.rows()], new int[N.cols()], x);
+                                              new int[N.rows()],
+                                              new int[N.cols()], x);
 
         for (int i = 0; i < Ni.length; i++) Ni[i] = i;
         for (int i = 0; i < Bi.length; i++) {
-        	Bi[i] = i + Ni.length;
-        	x.put(Bi[i], "w" + (i+1));
+            Bi[i] = i + Ni.length;
+            x.put(Bi[i], "w" + (i+1));
         }
     }
 
@@ -206,115 +208,117 @@ class LP {
 
 
     /**
-	 * Find an entering variable index according
-	 * to the largest coefficients rule.
-	 *
-	 * @param  dual
-	 *         If true, find an entering variable index for the dual problem.
-	 *         Otherwise, find one for the primal problem.
-	 * @return
-	 *         An entering variable index.
-	 */
-	int entering(boolean dual) {
-	    Matrix check = dual ? x_b : z_n;
+     * Find an entering variable index according
+     * to the largest coefficients rule.
+     *
+     * @param  dual
+     *         If true, find an entering variable index for the dual problem.
+     *         Otherwise, find one for the primal problem.
+     * @return
+     *         An entering variable index.
+     */
+    int entering(boolean dual) {
+        Matrix check = dual ? x_b : z_n;
 
-	    double min = 0.0;
-	    int index = -1;
-	    for (int i = 0; i < check.rows(); i++) {
-	        double val = check.get(i, 0);
-	        if (val < min) {
-	            min = val;
-	            index = i;
-	        }
-	    }
+        double min = 0.0;
+        int index = -1;
+        for (int i = 0; i < check.rows(); i++) {
+            double val = check.get(i, 0);
+            if (val < min) {
+                min = val;
+                index = i;
+            }
+        }
 
-	    if (index == -1) {
-	    	String e = "Problem is optimal.";
-	    	String e2 = String.format("Problem is %s infeasible",
-	    			                  dual ? "dual" : "primal");
+        if (index == -1) {
+            String e = "Problem is optimal.";
+            String e2 = String.format("Problem is %s infeasible",
+                                       dual ? "dual" : "primal");
 
-	    	if (optimal(dual)) throw new RuntimeException(e);
-	    	if (!feasible(dual)) throw new RuntimeException(e2);
-	    }
-	    return index;
-	}
-
-
-
-	/**
-	 * Return whether the program is feasible or not.
-	 *
-	 * @param  dual
-	 *         If true, check for dual feasibility.
-	 *         Otherwise, check for primal feasibility.
-	 * @return
-	 *         True if the program is feasible. False otherwise.
-	 */
-	boolean feasible(boolean dual) {
-		if (dual) return z_n.gte(0);
-		return x_b.gte(0);
-	}
+            if (optimal(dual)) throw new RuntimeException(e);
+            if (!feasible(dual)) throw new RuntimeException(e2);
+        }
+        return index;
+    }
 
 
 
-	/**
-	 * Find a leaving variable index that is the most
-	 * bounding on the given entering variable index.
-	 *
-	 * @param  entering
-	 *         an entering variable index.
-	 * @param  dual
-	 *         If true, find a leaving variable index for the dual problem.
-	 *         Otherwise, find one for the primal problem.
-	 * @return
-	 *         A leaving variable index.
-	 */
-	int leaving(int entering, boolean dual) {
-		Matrix check, sd;
-		Matrix bin = B.inverse().product(N);
-
-		String e = "Problem is unbounded.";
-		if (dual) {
-			check = z_n;
-			sd = bin.transpose().scale(-1).product(Matrix.unitVector(bin.rows(), entering+1));
-		}
-		else {
-			check = x_b;
-			sd = bin.product(Matrix.unitVector(bin.cols(), entering+1));
-		}
-
-		double max = Double.MIN_VALUE;
-		int index = -1;
-		double val = Double.MIN_VALUE;
-		for (int i = 0; i < sd.rows(); i++) {
-			double denom = check.get(i, 0);
-			if (denom != 0) {
-				val = sd.get(i, 0) / denom;
-				if (val > max) {
-					max = val;
-					index = i;
-				}
-			}
-		}
-		if (index == -1) throw new RuntimeException(e);
-		return index;
-	}
+    /**
+     * Return whether the program is feasible or not.
+     *
+     * @param  dual
+     *         If true, check for dual feasibility.
+     *         Otherwise, check for primal feasibility.
+     * @return
+     *         True if the program is feasible. False otherwise.
+     */
+    boolean feasible(boolean dual) {
+        if (dual) return z_n.gte(0);
+        return x_b.gte(0);
+    }
 
 
 
-	/**
+    /**
+     * Find a leaving variable index that is the most
+     * bounding on the given entering variable index.
+     *
+     * @param  entering
+     *         an entering variable index.
+     * @param  dual
+     *         If true, find a leaving variable index for the dual problem.
+     *         Otherwise, find one for the primal problem.
+     * @return
+     *         A leaving variable index.
+     */
+    int leaving(int entering, boolean dual) {
+        Matrix check, sd;
+        Matrix bin = B.inverse().product(N);
+
+        String e = "Problem is unbounded.";
+        if (dual) {
+            check = z_n;
+            sd = bin.transpose().scale(-1).product(
+                                    Matrix.unitVector(bin.rows(), entering+1));
+        }
+        else {
+            check = x_b;
+            sd = bin.product(Matrix.unitVector(bin.cols(), entering+1));
+        }
+
+        double max = Double.MIN_VALUE;
+        double val = Double.MIN_VALUE;
+        int index = -1;
+
+        for (int i = 0; i < sd.rows(); i++) {
+            double denom = check.get(i, 0);
+            if (denom != 0) {
+                val = sd.get(i, 0) / denom;
+                if (val > max) {
+                    max = val;
+                    index = i;
+                }
+            }
+        }
+        if (index == -1) throw new RuntimeException(e);
+        return index;
+    }
+
+
+
+    /**
      * Return the objective value of the current dictionary.
      *
      * @return
      *         the objective value.
      */
     double objVal() {
-    	double sum = 0;
-    	for (int i = 0; i < Bi.length; i++) {
-    		int j = Bi[i];
-    		if (j < c.rows()) sum += c.get(j, 0)*x_b.get(i, 0);
-    	}
-    	return sum;
+        double sum = 0;
+        for (int i = 0; i < Bi.length; i++) {
+            int j = Bi[i];
+            if (j < c.rows()) sum += c.get(j, 0)*x_b.get(i, 0);
+        }
+        return sum;
     }
 
 
@@ -328,8 +332,8 @@ class LP {
      *         True if the program is optimal. False otherwise.
      */
     boolean optimal(boolean dual) {
-    	if (dual) return feasible(true) && x_b.gte(0);
-    	return feasible(false) && z_n.gte(0);
+        if (dual) return feasible(true) && x_b.gte(0);
+        return feasible(false) && z_n.gte(0);
     }
 
 
@@ -341,10 +345,11 @@ class LP {
      * @return A linear program.
      */
     LP phaseOneObj() {
-    	double zdata[] = new double[z_n.rows()];
-    	Arrays.fill(zdata, 1);
+        double zdata[] = new double[z_n.rows()];
+        Arrays.fill(zdata, 1);
 
-    	return new LP(B, N, b, c, x_b, new Matrix(zdata).transpose(), Bi, Ni, x);
+        Matrix z_n = new Matrix(zdata).transpose()
+        return new LP(B, N, b, c, x_b, z_n, Bi, Ni, x);
     }
 
 
@@ -359,100 +364,102 @@ class LP {
      *         A linear program with the new objective function.
      */
     LP replaceObj(double[] coeff) {
-    	return new LP(B, N, b, c, x_b, new Matrix(coeff).transpose().scale(-1), Bi, Ni, x);
+        Matrix z_n = new Matrix(coeff).transpose().scale(-1);
+        return new LP(B, N, b, c, x_b, z_n, Bi, Ni, x);
     }
 
 
 
     /**
-	 * Do one iteration of the simplex method.
-	 *
-	 * @param  entering
-	 *         Index of variable to enter the basis.
-	 * @param  leaving
-	 *         Index of variable to leave the basis.
-	 * @return
-	 *         A linear program after one iteration.
-	 */
-	LP pivot(int entering, int leaving) {
-		Matrix bin = B.inverse().product(N);
-		// Step 1: Check for optimality
-		// Step 2: Select entering variable.
-		// Naive method. Does not check for optimality. Assumes feasibility.
-		// Entering variable is given.
+     * Do one iteration of the simplex method.
+     *
+     * @param  entering
+     *         Index of variable to enter the basis.
+     * @param  leaving
+     *         Index of variable to leave the basis.
+     * @return
+     *         A linear program after one iteration.
+     */
+    LP pivot(int entering, int leaving) {
+        Matrix bin = B.inverse().product(N);
+        // Step 1: Check for optimality
+        // Step 2: Select entering variable.
+        // Naive method. Does not check for optimality. Assumes feasibility.
+        // Entering variable is given.
 
-		// Step 3: Compute primal step direction.
-		Matrix ej = Matrix.unitVector(bin.cols(), entering+1);
-		Matrix psd = bin.product(ej);
+        // Step 3: Compute primal step direction.
+        Matrix ej = Matrix.unitVector(bin.cols(), entering+1);
+        Matrix psd = bin.product(ej);
 
-	    // Step 4: Compute primal step length.
-	    // Step 5: Select leaving variable.
-		// Leaving variable is given.
-	    double t = x_b.get(leaving, 0) / psd.get(leaving, 0);
+        // Step 4: Compute primal step length.
+        // Step 5: Select leaving variable.
+        // Leaving variable is given.
+        double t = x_b.get(leaving, 0) / psd.get(leaving, 0);
 
-	    // Step 6: Compute dual step direction.
-	    Matrix ei = Matrix.unitVector(bin.rows(), leaving+1);
-	    Matrix dsd = bin.transpose().scale(-1).product(ei);
+        // Step 6: Compute dual step direction.
+        Matrix ei = Matrix.unitVector(bin.rows(), leaving+1);
+        Matrix dsd = bin.transpose().scale(-1).product(ei);
 
-	    // Step 7: Compute dual step length.
-	    double s = z_n.get(entering, 0) / dsd.get(entering, 0);
+        // Step 7: Compute dual step length.
+        double s = z_n.get(entering, 0) / dsd.get(entering, 0);
 
-	    // Step 8: Update current primal and dual solutions.
-	    Matrix nx_b = x_b.subtract(psd.scale(t)).set(leaving, 0, t);
-	    Matrix nz_n = z_n.subtract(dsd.scale(s)).set(entering, 0, s);
+        // Step 8: Update current primal and dual solutions.
+        Matrix nx_b = x_b.subtract(psd.scale(t)).set(leaving, 0, t);
+        Matrix nz_n = z_n.subtract(dsd.scale(s)).set(entering, 0, s);
 
-	    // Step 9: Update basis.
-	    Matrix temp = B.getCol(leaving);
-	    Matrix nB = B.setCol(leaving, this.N.getCol(entering));
-	    Matrix nN = N.setCol(entering, temp);
+        // Step 9: Update basis.
+        Matrix temp = B.getCol(leaving);
+        Matrix nB = B.setCol(leaving, this.N.getCol(entering));
+        Matrix nN = N.setCol(entering, temp);
 
-	    int[] nBi = Bi.clone();
-	    int[] nNi = Ni.clone();
-	    nBi[leaving] = Ni[entering];
-		nNi[entering] = Bi[leaving];
+        int[] nBi = Bi.clone();
+        int[] nNi = Ni.clone();
+        nBi[leaving] = Ni[entering];
+        nNi[entering] = Bi[leaving];
 
-	    return new LP(nB, nN, b, c, nx_b, nz_n, nBi, nNi, x);
-	}
-
-
-
-	/**
-	 * Do one iteration of the simplex method.
-	 *
-	 * @param  dual
-	 *         If true, run the dual simplex method.
-	 *         Otherwise, run the primal simplex method.
-	 * @return
-	 *         A linear program after one iteration.
-	 */
-	LP pivot(boolean dual) {
-		int e = entering(dual);
-		int l = leaving(e, dual);
-		if (dual) return pivot(l, e);
-		return pivot(e, l);
-	}
+        return new LP(nB, nN, b, c, nx_b, nz_n, nBi, nNi, x);
+    }
 
 
 
-	LP updateObj() {
-    	double zdata[] = new double[z_n.rows()];
-    	Matrix bin = B.inverse().product(N);
+    /**
+     * Do one iteration of the simplex method.
+     *
+     * @param  dual
+     *         If true, run the dual simplex method.
+     *         Otherwise, run the primal simplex method.
+     * @return
+     *         A linear program after one iteration.
+     */
+    LP pivot(boolean dual) {
+        int e = entering(dual);
+        int l = leaving(e, dual);
+        if (dual) return pivot(l, e);
+        return pivot(e, l);
+    }
 
-    	for (int i = 0; i < Bi.length; i++) {
-    		int k = Bi[i];
-    		if (k < Ni.length) {
-    			for (int j = 0; j < Ni.length; j++) {
-    				zdata[j] += c.get(k, 0)*bin.get(i, j);
-    			}
-    		}
-    	}
 
-    	for (int i = 0; i < Ni.length; i++) {
-    		int k = Ni[i];
-    		if (k < Ni.length) zdata[i] += -c.get(i, 0);
-    	}
 
-    	return new LP(B, N, b, c, x_b, new Matrix(zdata).transpose(), Bi, Ni, x);
+    LP updateObj() {
+        double zdata[] = new double[z_n.rows()];
+        Matrix bin = B.inverse().product(N);
+
+        for (int i = 0; i < Bi.length; i++) {
+            int k = Bi[i];
+            if (k < Ni.length) {
+                for (int j = 0; j < Ni.length; j++) {
+                    zdata[j] += c.get(k, 0)*bin.get(i, j);
+                }
+            }
+        }
+
+        for (int i = 0; i < Ni.length; i++) {
+            int k = Ni[i];
+            if (k < Ni.length) zdata[i] += -c.get(i, 0);
+        }
+
+        Matrix z_n = new Matrix(zdata).transpose();
+        return new LP(B, N, b, c, x_b, z_n, Bi, Ni, x);
     }
 
 
@@ -462,44 +469,44 @@ class LP {
 
 
     public String toString(int precision) {
-    	Matrix dict = dictionary();
+        Matrix dict = dictionary();
 
-    	String[] nb = new String[Ni.length+1];
-    	nb[0] = "";
-    	for (int i = 0; i < Ni.length; i++) { nb[i+1] = x.get(Ni[i]); }
+        String[] nb = new String[Ni.length+1];
+        nb[0] = "";
+        for (int i = 0; i < Ni.length; i++) { nb[i+1] = x.get(Ni[i]); }
 
-    	String[] basic = new String[Bi.length+1];
-    	basic[0] = "ζ";
+        String[] basic = new String[Bi.length+1];
+        basic[0] = "ζ";
 
-    	int max = 1;
-    	for (int i = 0; i < Bi.length; i++) {
-    		String var = x.get(Bi[i]);
-    		int len = var.length();
+        int max = 1;
+        for (int i = 0; i < Bi.length; i++) {
+            String var = x.get(Bi[i]);
+            int len = var.length();
 
-    		basic[i+1] = var;
-    		if (len > max) max = len;
-    	}
+            basic[i+1] = var;
+            if (len > max) max = len;
+        }
 
-    	String format = String.format("%%%ds = %%s%n", max);
+        String format = String.format("%%%ds = %%s%n", max);
 
-    	String[] lines = dict.toString(nb, precision).split("\n");
+        String[] lines = dict.toString(nb, precision).split("\n");
 
-    	StringBuffer sb = new StringBuffer();
-    	for (int i = 0; i < lines.length; i++) {
-    		sb.append(String.format(format, basic[i], lines[i]));
-    	}
-    	return sb.toString();
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < lines.length; i++) {
+            sb.append(String.format(format, basic[i], lines[i]));
+        }
+        return sb.toString();
     }
 
 
 
     double[] point() {
-    	double[] point = new double[Ni.length];
-    	for (int i = 0; i < Bi.length; i++) {
-    		int j = Bi[i];
-    		if (j < Ni.length) point[j] = x_b.get(i, 0);
-    	}
-    	return point;
+        double[] point = new double[Ni.length];
+        for (int i = 0; i < Bi.length; i++) {
+            int j = Bi[i];
+            if (j < Ni.length) point[j] = x_b.get(i, 0);
+        }
+        return point;
     }
 
 
@@ -509,65 +516,65 @@ class LP {
 
 
     public String dualToString(int precision) {
-    	Matrix dict = dictionary().transpose().scale(-1);
-    	HashMap<Integer, String> x = dualVariables();
+        Matrix dict = dictionary().transpose().scale(-1);
+        HashMap<Integer, String> x = dualVariables();
 
-    	String[] nb = new String[Bi.length+1];
-    	nb[0] = "";
-    	int i = 0;
-    	for (i = 0; i < Bi.length; i++) { nb[i+1] = x.get(i); }
+        String[] nb = new String[Bi.length+1];
+        nb[0] = "";
+        int i = 0;
+        for (i = 0; i < Bi.length; i++) { nb[i+1] = x.get(i); }
 
-    	String[] basic = new String[Ni.length+1];
-    	basic[0] = "-ξ";
+        String[] basic = new String[Ni.length+1];
+        basic[0] = "-ξ";
 
-    	int max = 1;
-    	for (; i < Ni.length+Bi.length; i++) {
-    		String var = x.get(i);
-    		int len = var.length();
+        int max = 1;
+        for (; i < Ni.length+Bi.length; i++) {
+            String var = x.get(i);
+            int len = var.length();
 
-    		basic[i-Bi.length+1] = var;
-    		if (len > max) max = len;
-    	}
+            basic[i-Bi.length+1] = var;
+            if (len > max) max = len;
+        }
 
-    	String format = String.format("%%%ds = %%s%n", max);
+        String format = String.format("%%%ds = %%s%n", max);
 
-    	String[] lines = dict.toString(nb, precision).split("\n");
+        String[] lines = dict.toString(nb, precision).split("\n");
 
-    	StringBuffer sb = new StringBuffer();
-    	for (i = 0; i < lines.length; i++) {
-    		sb.append(String.format(format, basic[i], lines[i]));
-    	}
-    	return sb.toString();
+        StringBuffer sb = new StringBuffer();
+        for (i = 0; i < lines.length; i++) {
+            sb.append(String.format(format, basic[i], lines[i]));
+        }
+        return sb.toString();
     }
 
 
 
     public int getNoNonBasic() {
-    	return Bi.length;
+        return Bi.length;
     }
 
 
 
     public int getNoBasic() {
-    	return Ni.length;
+        return Ni.length;
     }
 
 
 
     private Matrix dictionary() {
-    	double[][] data = new double[Bi.length+1][Ni.length+1];
-    	for (int i = 0; i < Ni.length; i++) { data[0][i+1] = -z_n.get(i, 0); }
-    	for (int i = 0; i < Bi.length; i++) { data[i+1][0] = x_b.get(i, 0); }
+        double[][] data = new double[Bi.length+1][Ni.length+1];
+        for (int i = 0; i < Ni.length; i++) { data[0][i+1] = -z_n.get(i, 0); }
+        for (int i = 0; i < Bi.length; i++) { data[i+1][0] = x_b.get(i, 0); }
 
-    	data[0][0] = objVal();
+        data[0][0] = objVal();
 
-    	Matrix values = B.inverse().product(N);
-    	for (int i = 0; i < Bi.length; i++) {
-    		for (int j = 0; j < Ni.length; j++) {
-    			data[i+1][j+1] = -values.get(i, j);
-    		}
-    	}
+        Matrix values = B.inverse().product(N);
+        for (int i = 0; i < Bi.length; i++) {
+            for (int j = 0; j < Ni.length; j++) {
+                data[i+1][j+1] = -values.get(i, j);
+            }
+        }
 
-    	return new Matrix(data);
+        return new Matrix(data);
     }
 }
