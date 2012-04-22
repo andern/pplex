@@ -22,14 +22,14 @@ the Free Software Foundation, either version 3 of the License, or
 ---- ----------------------------
 Compiling lpped requires 'apache ant'.
 
-To compile only the sources of lpped run
+To only compile the sources of lpped, run
     `ant compile`
 
-To compile the sources of lppend and build a runnable jar run
+To compile the sources of lppend and build a runnable jar, run
     `ant jar`
     or simply
     `ant`
 
-To run the newly built jar simply run
+To run the newly built jar, run
     `java -jar lpped.jar`
 
