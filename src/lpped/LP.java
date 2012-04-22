@@ -351,7 +351,7 @@ class LP {
         double zdata[] = new double[z_n.rows()];
         Arrays.fill(zdata, 1);
 
-        Matrix z_n = new Matrix(zdata).transpose()
+        Matrix z_n = new Matrix(zdata).transpose();
         return new LP(B, N, b, c, x_b, z_n, Bi, Ni, x);
     }
 

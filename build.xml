@@ -11,7 +11,7 @@
 
   <target name="compile" description="compile the Java source code to class files">
     <mkdir dir="bin"/>
-    <javac srcdir="src" destdir="bin"/>
+    <javac includeantruntime="false" srcdir="src" destdir="bin"/>
   </target>
 
   <target name="jar" depends="compile" description="create a Jar file for the application">
