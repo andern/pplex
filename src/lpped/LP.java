@@ -161,8 +161,10 @@ class LP {
      */
     LP(Matrix N, Matrix b, Matrix c) {
         this(Matrix.identity(N.rows()), N, b, c, b, c.scale(-1),
-             new int[N.rows()], new int[N.cols()],
-             new HashMap<Integer, String>(N.rows()+N.cols()));
+                                              new int[N.rows()],
+                                              new int[N.cols()],
+                                              new HashMap<Integer,
+                                              String>(N.rows()+N.cols()));
 
         for (int i = 0; i < Ni.length; i++) {
             Ni[i] = i;
@@ -278,12 +280,13 @@ class LP {
         String e = "Problem is unbounded.";
         if (dual) {
             check = z_n;
-            sd = bin.transpose().scale(-1).product(
-                                    Matrix.unitVector(bin.rows(), entering+1));
+            Matrix unit = Matrix.unitVector(bin.rows(), entering+1);
+            sd = bin.transpose().scale(-1).product(unit);
         }
         else {
             check = x_b;
-            sd = bin.product(Matrix.unitVector(bin.cols(), entering+1));
+            Matrix unit = Matrix.unitVector(bin.cols(), entering+1);
+            sd = bin.product(unit);
         }
 
         double max = Double.MIN_VALUE;
