@@ -289,7 +289,7 @@ class CLI {
         StringBuilder sb = new StringBuilder();
         LP lp = lps.get(p-1);
 
-        if (lp.feasible(false) || lp.feasible(true))
+        if (lp.feasible(false) && lp.feasible(true))
             return "Problem is optimal\n";
         return "Problem is not optimal\n";
     }
