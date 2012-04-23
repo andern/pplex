@@ -23,7 +23,7 @@ import java.util.LinkedHashMap;
 
 class Data {
     static final String PNAME = "lpped";
-    static final String VERSION = "0.1.0";
+    static final String VERSION = "0.1.1";
     static final String COPY = "Copyright(C) 2012, Andreas Halle";
     static final String LINE = String.format("%s %s, %s", PNAME, VERSION, COPY);
     static final String WELCOME =
