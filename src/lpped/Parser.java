@@ -77,10 +77,10 @@ public class Parser {
              * TODO: Beware, will now accept invalid
              * files with multiple objective functions.
              */
-            if (!validConstraint(line) && !validObj(line)) {
+/*            if (!validConstraint(line) && !validObj(line)) {
                 String e = "Unsupported format in file " + f;
                 throw new IllegalArgumentException(e);
-            }
+            } */
 
             Matcher m = p.matcher(line);
 
