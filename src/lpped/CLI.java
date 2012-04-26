@@ -286,7 +286,6 @@ class CLI {
 
 
     private String parseOptimality(String[] args) {
-        StringBuilder sb = new StringBuilder();
         LP lp = lps.get(p-1);
 
         if (lp.feasible(false) && lp.feasible(true))
