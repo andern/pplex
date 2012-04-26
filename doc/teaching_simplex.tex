@@ -1,0 +1,129 @@
+\documentclass[ukenglish]{nik}
+\usepackage{mathptm}
+\usepackage{hyperref}
+\usepackage{amsfonts,amsmath,amssymb,amstext}
+\usepackage{latexsym}
+\usepackage{url}
+
+\newcommand{\va}{\mathit{variable}}
+\newcommand{\Fa}{\mathrm{F}}
+\newcommand{\TEXT}{{\mathrm{TEXT}}}
+\newcommand{\Nat}{\mathbb{N}}
+\newcommand{\Int}{\mathbb{Z}}
+\newcommand{\Rat}{\mathbb{Q}}
+\newcommand{\Rea}{\mathbb{R}}
+\newcommand{\cS}{\mathcal{S}}
+\newcommand{\cD}{\mathcal{D}}
+\newcommand{\cT}{\mathcal{T}}
+\newcommand{\cL}{\mathcal{L}}
+\newcommand{\cB}{\mathcal{B}}
+\newcommand{\cF}{\mathcal{F}}
+\newcommand{\cN}{\mathcal{N}}
+\newcommand{\cP}{\mathcal{P}}
+\newcommand{\cA}{\mathcal{A}}
+\newcommand{\ra}{\rightarrow}
+\newcommand{\Ra}{\Rightarrow}
+\newcommand{\set}[1]{\{#1\}}
+\newcommand{\seg}[2]{[#1.\,.#2]}
+\newcommand{\pair}[2]{\langle #1,#2\rangle}
+\newcommand{\der}[2]{\frac{\partial#1}{\partial#2}}
+\newcommand{\plusD}[1]{#1+\Delta{#1}}
+\newcommand{\dD}[1]{\Delta{#1}}
+\newcommand{\range}{\mathit{range}}
+\newcommand{\oa}{\overline{a}}
+\newcommand{\ob}{\overline{b}}
+\newcommand{\oc}{\overline{c}}
+\newcommand{\oz}{\overline{\zeta}}
+\newcommand{\ea}{\epsilon_1}
+\newcommand{\eb}{\epsilon_2}
+\newcommand{\ec}{\epsilon_3}
+\newcommand{\ba}{\frac{100}{2}b_1}
+\newcommand{\bb}{\frac{10}{2}b_2}
+\newcommand{\bc}{\frac{1}{2}b_3}
+\newcommand{\binomsq}[2]{\left[\begin{array}{c}#1\\#2\end{array}\right]}
+
+
+
+\begin{document}
+
+\title{Teaching the Simplex Method}
+
+\author{
+Joanna Bauer\thanks{University of Bergen, Department of Informatics, P.O.Box 7803, N-5020 Bergen, Norway}
+\and
+Marc Bezem$^*$
+\and
+Andreas Halle$^*$}
+\maketitle
+
+\begin{abstract}
+We present software (\url{https://github.com/andern/lpped})
+for the classroom presentation of the simplex method in linear programming.
+\end{abstract}
+
+\section{Motivation}
+In most courses on linear programming the need arises for demonstrating the simplex method step-by-step 
+\emph{without being distracted by detailed calculations in elementary linear algebra}. Let us start by
+introducing the simplex method and at the same time presenting the teaching issue at hand. 
+
+ \begin{itemize}
+    \item Maximize $5 x_1 + 4 x_2 + 3 x_3$ subject to
+    \begin{itemize}
+      \item $2 x_1 + 3 x_2 + x_3 \leq 5$
+      \item $4 x_1 + x_2 + 2 x_3 \leq 11$
+      \item $3 x_1 + 4 x_2 + 2 x_3 \leq 8$
+      \item all variables $\geq 0$
+    \end{itemize}
+    \item Introduce slack variables in the above \emph{standard form}
+    \item Maximize $\zeta$ subject to (with all variables $\geq 0$):
+\[    
+    \begin{array}{lcrcrcrcr}
+      \zeta&=&   & & 5 x_1 &+& 4 x_2 &+& 3 x_3 \\\hline
+      w_1  &=& 5 &-& 2 x_1 &-& 3 x_2 &-&   x_3 \\
+      w_2  &=& 11&-& 4 x_1 &-&   x_2 &-& 2 x_3 \\
+      w_3  &=& 8 &-& 3 x_1 &-& 4 x_2 &-& 2 x_3 
+    \end{array}
+\]
+  \end{itemize}
+
+Further desiderata:
+
+1. Open source
+
+2. Up-to-date
+
+3. Free and independent of licences
+
+4. Supporting most standards for LP problems
+
+\section{Examples}
+1. primal feasible
+
+2. dual feasible but not primal
+
+3. primal and dual infeasible
+
+4. unbounded
+
+5. cyclic
+
+\section{Features}
+Short overview of the software, dicussion of design decisions.
+
+\section{Future extensions}
+
+
+
+
+\bibliographystyle{abbrv}
+\begin{thebibliography}{99}
+\bibitem{lpped}
+\url{https://github.com/andern/lpped}
+%\bibitem{WalkerAMM}
+%Peter Walker, A Lemma on Divisibility. \emph{American Mathematical Monthly}
+%{\bf 115}(4):338.
+\end{thebibliography}
+
+
+
+\end{document}
