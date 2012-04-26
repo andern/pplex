@@ -103,9 +103,11 @@ public class Matrix {
      */
     Matrix augment(Matrix B) {
         if (m != B.m) {
-            throw new IllegalArgumentException(String.format("Illegal"
-                    + " operation: Cannot augment a %d x %d matrix with a"
-                    + " %d x %d matrix", m, n, B.m, B.n));
+            String e = String.format("Illegal operation: Cannot augment a"
+                                                  + " %d x %d matrix with"
+                                                  + " a %d x %d matrix",
+                                                  m, n, B.m, B.n);
+            throw new IllegalArgumentException(e);
         }
 
         Matrix C = new Matrix(m, n+B.n);
@@ -115,6 +117,9 @@ public class Matrix {
                 C.data[i][j] = data[i][j];
             }
         }
+
+
+
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < B.n; j++) {
                 C.data[i][j+n] = B.data[i][j];
@@ -139,7 +144,8 @@ public class Matrix {
     Matrix add(Matrix B) {
         if (m != B.m || n != B.n) {
             String e = String.format("Illegal operation: cannot add a %d x %d "
-                    + "matrix to a %d x %d matrix.", B.m, B.n, m, n);
+                                               + "matrix to a %d x %d  matrix",
+                                               B.m, B.n, m, n);
             throw new IllegalArgumentException(e);
         }
         Matrix C = new Matrix(m, n);
@@ -170,7 +176,11 @@ public class Matrix {
      */
     double[][] data() {
         double[][] data = new double[m][n];
-        for (int i = 0; i < data.length; i++) this.data[i] = data[i].clone();
+
+        for (int i = 0; i < data.length; i++) {
+            this.data[i] = data[i].clone();
+        }
+
         return data;
     }
 
@@ -200,9 +210,11 @@ public class Matrix {
      */
     Matrix getCol(int j) {
         double[] col = new double[m];
+
         for (int i = 0; i < m; i++) {
             col[i] = data[i][j];
         }
+
         return new Matrix(col).transpose();
     }
 
@@ -350,8 +362,10 @@ public class Matrix {
     Matrix product(Matrix B) {
         if (n != B.m) {
             String e = String.format("Illegal matrix operation: Cannot compute"
-                    + " the cross product of two matrices whose dimensions are"
-                    + " %d x %d and %d x %d.", m, n, B.m, B.n);
+                                                 + " the cross product of two"
+                                                 + " matrices whose dimensions"
+                                                 + " are %d x %d and %d x %d.",
+                                                 m, n, B.m, B.n);
             throw new IllegalArgumentException(e);
         }
 
@@ -414,9 +428,11 @@ public class Matrix {
      */
     Matrix setCol(int j, Matrix col) {
         double[][] cdata = copyData(data);
+
         for (int i = 0; i < m; i++) {
             cdata[i][j] = col.data[i][0];
         }
+
         return new Matrix(cdata);
     }
 
@@ -435,9 +451,11 @@ public class Matrix {
      */
     Matrix setRow(int i, Matrix row) {
         double[][] cdata = copyData(data);
+
         for (int j = 0; j < n; j++) {
             cdata[i][j] = row.data[i][j];
         }
+
         return new Matrix(cdata);
     }
 
@@ -454,11 +472,13 @@ public class Matrix {
      */
     Matrix scale(double scalar) {
         double[][] cdata = new double[m][n];
+
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 cdata[i][j] = scalar*data[i][j];
             }
         }
+
         return new Matrix(cdata);
     }
 
@@ -486,8 +506,11 @@ public class Matrix {
         if (re-rs < 0 || ce-cs < 0 || rs >= m || re >= m || cs >= n
                                                                   || ce >= n) {
             String e = String.format("Cannot create a sub matrix from rows"
-                    + " %d through %d and columns %d through %d of a"
-                    + " %d x %d matrix.", rs+1, re+1, cs+1, ce+1, m, n);
+                                                     + " %d through %d and"
+                                                     + " columns %d through"
+                                                     + " %d of a %d x %d"
+                                                     + " matrix.", rs+1, re+1,
+                                                     cs+1, ce+1, m, n);
             throw new IllegalArgumentException(e);
         }
 
@@ -497,6 +520,8 @@ public class Matrix {
                 cdata[i-rs][j-cs] = data[i][j];
             }
         }
+
+
         return new Matrix(cdata);
     }
 
@@ -515,8 +540,9 @@ public class Matrix {
     Matrix subtract(Matrix B) {
         if (m != B.m || n != B.n) {
             String e = String.format("Illegal matrix operation: Cannot"
-                    + " subtract a %d x %d matrix from a %d x %d matrix.",
-                    m, n, B.m, B.n);
+                                                + " subtract a %d x %d"
+                                                + " matrix from a %d x %d"
+                                                + " matrix.", m, n, B.m, B.n);
             throw new IllegalArgumentException(e);
         }
 
@@ -547,8 +573,9 @@ public class Matrix {
     protected String toString(String[] x, int precision) {
         if (x.length != n) {
             String e = String.format("Illegal matrix operation: Cannot"
-                    + " multiply a %d x %d matrix with a vector whose"
-                    + " dimension is %d.", m, n, x.length);
+                                         + " multiply a %d x %d matrix"
+                                         + " with a vector whose dimension"
+                                         + " is %d.", m, n, x.length);
             throw new IllegalArgumentException(e);
         }
 
@@ -566,12 +593,13 @@ public class Matrix {
             for (int j = 0; j < m; j++) {
                 double coeff = Math.abs(data[j][i]);
 
-                if (coeff == 0.0)
+                if (coeff == 0.0) {
                     elements[j][i] = "";
-                else if (coeff == 1.0 && !x[i].trim().equals(""))
+                } else if (coeff == 1.0 && !x[i].trim().equals("")) {
                     elements[j][i] = x[i];
-                else
+                } else {
                     elements[j][i] = String.format(f, coeff, x[i]);
+                }
 
                 /* 
                  * Check if the coefficients in the
@@ -689,6 +717,7 @@ public class Matrix {
         for (int i = 0; i < n; i++) {
             identity.data[i][i] = 1;
         }
+
         return identity;
     }
 
@@ -715,7 +744,9 @@ public class Matrix {
      }
 
 
-
+    /*
+     * Clone a 2D-array of doubles.
+     */
     private double[][] copyData(double[][] data) {
         double[][] ndata = new double[data.length][data[0].length];
         for (int i = 0; i < data.length; i++) {
