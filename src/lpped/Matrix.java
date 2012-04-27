@@ -571,75 +571,7 @@ public class Matrix {
      *         A nicely formatted {@code String}.
      */
     protected String toString(String[] x, int precision) {
-        if (x.length != n) {
-            String e = String.format("Illegal matrix operation: Cannot"
-                                         + " multiply a %d x %d matrix"
-                                         + " with a vector whose dimension"
-                                         + " is %d.", m, n, x.length);
-            throw new IllegalArgumentException(e);
-        }
-
-        String[][] elements = new String[m][n];
-        int[] lCol = new int[n];
-        boolean posfcol = true;
-
-        String f;
-        if (precision < 0) f = "%s%s"; // Automatically set a precision.
-        else f = String.format("%%.%df%%s", precision);
-
-        /* Calculate the product of each element in the matrix. */
-        for (int i = 0; i < n; i++) {
-            int max = 0;
-            for (int j = 0; j < m; j++) {
-                double coeff = Math.abs(data[j][i]);
-
-                if (coeff == 0.0) {
-                    elements[j][i] = "";
-                } else if (coeff == 1.0 && !x[i].trim().equals("")) {
-                    elements[j][i] = x[i];
-                } else {
-                    elements[j][i] = String.format(f, coeff, x[i]);
-                }
-
-                /* 
-                 * Check if the coefficients in the
-                 * first column are all positive.
-                 */
-                if (data[j][0] < 0) posfcol = false;
-
-                /*
-                 * Find the space needed to print out
-                 * the largest variable in each column.
-                 */
-                if (elements[j][i].length() > max) {
-                    max = elements[j][i].length();
-                }
-            }
-            lCol[i] = (max > 0) ? max : 1;
-        }
-
-        StringBuilder sb = new StringBuilder();
-
-        for (int i = 0; i < m; i++) {
-            if (i != 0) sb.append("\n");
-
-            for (int j = 0; j < n; j++) {
-                if (j != 0) sb.append(" ");
-
-                char sign = ' ';
-                if (data[i][j] > 0 && j != 0) sign = '+';
-                else if (data[i][j] < 0) sign = '-';
-
-                String fele = String.format("%%c %%%ds", lCol[j]);
-                if (j == 0 && posfcol) {
-                    fele = String.format("%%%ds", lCol[j]);
-                    sb.append(String.format(fele, elements[i][j]));
-                }
-                else sb.append(String.format(fele, sign, elements[i][j]));
-            }
-        }
-
-        return sb.toString();
+        return Output.toString(this, x, precision);
     }
 
 
