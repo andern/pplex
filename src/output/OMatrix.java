@@ -16,42 +16,16 @@
  * You should have received a copy of the GNU General Public license
  * along with lpped. If not, see <http://www.gnu.org/licenses/>.
  */
-package lpped;
+package output;
 
-public final class Output {
-    /**
-     * Return a nicely formatted {@code String} that represents the
-     * matrix-vector product of this {@code Matrix} and the given
-     * vector given as an {@code Array}.
-     *
-     * @param  x
-     *         A vector as an {@code array} of {@code Strings}.
-     * @param  precision
-     *         Limit each double precision number to this many decimals.
-     *         Give a negative value to automatically set precision.
-     * @return
-     *         A nicely formatted {@code String}.
-     */
-    public static String toString(Matrix A, String[] x, int precision) {
-        StringBuilder sb = new StringBuilder();
-        String[][] terms = niceTerms(A, x, precision);
+import lpped.Matrix;
 
-        for (int i = 0; i < A.rows(); i++) {
-            if (i != 0) {
-                sb.append("\n");
-            }
-            sb.append(exprToString(terms[i], x, precision));
-        }
-        return sb.toString();
-    }
-
-
-
+public final class OMatrix {
     /*
      * Return an array containing the length
      * of the longest string in each column.
      */
-    private static int[] colSizes(String[][] elements) {
+     private static int[] colSizes(String[][] elements) {
         int[] colSizes = new int[elements[0].length];
         for (int j = 0; j < elements[0].length; j++) {
             int max = 1;
@@ -72,7 +46,7 @@ public final class Output {
     /*
      * Nicely format each term in an expression.
      */
-    private static String[] expr(Matrix row, String[] el, int[] cols, boolean fcol) {
+     private static String[] expr(Matrix row, String[] el, int[] cols, boolean fcol) {
         String[] exprs = new String[el.length];
 
         for (int j = 0; j < el.length; j++) {
@@ -94,7 +68,7 @@ public final class Output {
     /*
      * Return a nicely formatted String of an expression.
      */
-    private static String exprToString(String[] row, String[] x, int precision) {
+     static String exprToString(String[] row, String[] x, int precision) {
         StringBuilder sb = new StringBuilder();
         for (int j = 0; j < row.length; j++) {
             if (j != 0) {
@@ -110,7 +84,7 @@ public final class Output {
     /*
      * Nicely format all the terms in the matrix-vector product.
      */
-    private static String[][] niceTerms(Matrix A, String[] x, int precision) {
+     static String[][] niceTerms(Matrix A, String[] x, int precision) {
         int m = A.rows();
         int n = A.cols();
 
@@ -130,7 +104,7 @@ public final class Output {
     /*
      * Return the sign to put in front of a term.
      */
-    private static char signify(double coeff, int column) {
+     private static char signify(double coeff, int column) {
         char sign = ' ';
         if (coeff > 0 && column != 0) {
             sign = '+';
@@ -145,7 +119,7 @@ public final class Output {
     /*
      * Format a term as nicely as possible.
      */
-    private static String term(double coeff, String var, int precision) {
+     private static String term(double coeff, String var, int precision) {
         if (coeff == 0.0) {
             return "";
         } else if (coeff == 1.0 && !var.trim().equals("")) {
@@ -168,7 +142,7 @@ public final class Output {
      * Calculate the term of each element
      * in the matrix-vector-product.
      */
-    private static String[][] terms(Matrix A, String[] x, int precision) {
+     private static String[][] terms(Matrix A, String[] x, int precision) {
         int m = A.rows();
         int n = A.cols();
         String[][] elements = new String[m][n];

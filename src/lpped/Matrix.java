@@ -18,6 +18,8 @@
  */
 package lpped;
 
+import output.Output;
+
 /**
  * The {@code Matrix} class represents a rectangular array of double precision
  * numbers. The {@code Matrix} class is immutable.
@@ -40,7 +42,7 @@ public class Matrix {
      * @param matrix
      *        A {@code Matrix}.
      */
-    Matrix(Matrix matrix) {
+    public Matrix(Matrix matrix) {
         this(matrix.data);
     }
 
@@ -53,7 +55,7 @@ public class Matrix {
      * @param data
      *        An {@code array} of {@code double} precision numbers.
      */
-    Matrix(double[] data) {
+    public Matrix(double[] data) {
         this(1, data.length);
         this.data[0] = data.clone();
     }
@@ -67,7 +69,7 @@ public class Matrix {
      * @param data
      *        An {@code array} of {@code double} precision numbers.
      */
-    Matrix(double[][] data) {
+    public Matrix(double[][] data) {
         m = data.length;
         n = data[0].length;
         this.data = copyData(data);
@@ -84,7 +86,7 @@ public class Matrix {
      * @param n
      *        Number of columns in the {@code Matrix}·
      */
-    Matrix(int m, int n) {
+    public Matrix(int m, int n) {
         this.m = m;
         this.n = n;
         data = new double[m][n];
@@ -101,7 +103,7 @@ public class Matrix {
      * @return
      *         An augmented {@code Matrix}.
      */
-    Matrix augment(Matrix B) {
+    public Matrix augment(Matrix B) {
         if (m != B.m) {
             String e = String.format("Illegal operation: Cannot augment a"
                                                   + " %d x %d matrix with"
@@ -141,7 +143,7 @@ public class Matrix {
      * @return
      *         A {@code Matrix}.
      */
-    Matrix add(Matrix B) {
+    public Matrix add(Matrix B) {
         if (m != B.m || n != B.n) {
             String e = String.format("Illegal operation: cannot add a %d x %d "
                                                + "matrix to a %d x %d  matrix",
@@ -165,7 +167,7 @@ public class Matrix {
      * @return
      *         the number of columns in the {@code Matrix}.
      */
-    int cols() { return n; }
+    public int cols() { return n; }
 
 
 
@@ -174,7 +176,7 @@ public class Matrix {
      * @return
      *         copy of the {@code array} of numbers in the {@code Matrix}.
      */
-    double[][] data() {
+    public double[][] data() {
         double[][] data = new double[m][n];
 
         for (int i = 0; i < data.length; i++) {
@@ -196,7 +198,7 @@ public class Matrix {
      * @return
      *         A double precision number.
      */
-    double get(int i, int j) { return data[i][j]; }
+    public double get(int i, int j) { return data[i][j]; }
 
 
 
@@ -208,7 +210,7 @@ public class Matrix {
      * @return
      *         A column vector.
      */
-    Matrix getCol(int j) {
+    public Matrix getCol(int j) {
         double[] col = new double[m];
 
         for (int i = 0; i < m; i++) {
@@ -228,7 +230,7 @@ public class Matrix {
      * @return
      *         A row vector.
      */
-    Matrix getRow(int i) {
+    public Matrix getRow(int i) {
         return new Matrix(data[i]);
     }
 
@@ -243,7 +245,7 @@ public class Matrix {
      *         {@code true} if every element is greater than the given value.
      *         {@code false} otherwise.
      */
-    boolean gt(double value) {
+    public boolean gt(double value) {
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 if (data[i][j] <= value) return false;
@@ -263,7 +265,7 @@ public class Matrix {
      *         {@code true} if every element is greater than or equal to
      *         the given value. {@code false} otherwise.
      */
-    boolean gte(double value) {
+    public boolean gte(double value) {
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 if (data[i][j] < value) return false;
@@ -283,7 +285,7 @@ public class Matrix {
      * @return
      *         The inverse of the {@code original}.
      */
-    Matrix inverse() {
+    public Matrix inverse() {
         if (m != n) {
             String e = "Cannot invert a non-square matrix.";
             throw new IllegalArgumentException(e);
@@ -319,7 +321,7 @@ public class Matrix {
      *         {@code true} if every element is less than the given value.
      *         {@code false} otherwise.
      */
-    boolean lt(double value) {
+    public boolean lt(double value) {
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 if (data[i][j] >= value) return false;
@@ -339,7 +341,7 @@ public class Matrix {
      *         {@code true} if every element is less than or equal to
      *         the given value. {@code false} otherwise.
      */
-    boolean lte(double value) {
+    public boolean lte(double value) {
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 if (data[i][j] > value) return false;
@@ -359,7 +361,7 @@ public class Matrix {
      * @return
      *         A cross product between two matrices.
      */
-    Matrix product(Matrix B) {
+    public Matrix product(Matrix B) {
         if (n != B.m) {
             String e = String.format("Illegal matrix operation: Cannot compute"
                                                  + " the cross product of two"
@@ -388,7 +390,7 @@ public class Matrix {
      * @return
      *         Number of rows in the {@code Matrix}.
      */
-    int rows() { return m; }
+    public int rows() { return m; }
 
 
 
@@ -406,7 +408,7 @@ public class Matrix {
      * @return
      *         A {@code Matrix}.
      */
-    Matrix set(int i, int j, double value) {
+    public Matrix set(int i, int j, double value) {
         Matrix C = new Matrix(this);
         C.data[i][j] = value;
         return C;
@@ -426,7 +428,7 @@ public class Matrix {
      * @return
      *         A {@code Matrix}.
      */
-    Matrix setCol(int j, Matrix col) {
+    public Matrix setCol(int j, Matrix col) {
         double[][] cdata = copyData(data);
 
         for (int i = 0; i < m; i++) {
@@ -449,7 +451,7 @@ public class Matrix {
      * @return
      *         A {@code Matrix}.
      */
-    Matrix setRow(int i, Matrix row) {
+    public Matrix setRow(int i, Matrix row) {
         double[][] cdata = copyData(data);
 
         for (int j = 0; j < n; j++) {
@@ -470,7 +472,7 @@ public class Matrix {
      * @return
      *         A {@code Matrix}.
      */
-    Matrix scale(double scalar) {
+    public Matrix scale(double scalar) {
         double[][] cdata = new double[m][n];
 
         for (int i = 0; i < m; i++) {
@@ -502,7 +504,7 @@ public class Matrix {
      *         row index {@code re} and column index {@code ce}.
      *
      */
-    Matrix subMatrix(int rs, int re, int cs, int ce) {
+    public Matrix subMatrix(int rs, int re, int cs, int ce) {
         if (re-rs < 0 || ce-cs < 0 || rs >= m || re >= m || cs >= n
                                                                   || ce >= n) {
             String e = String.format("Cannot create a sub matrix from rows"
@@ -537,7 +539,7 @@ public class Matrix {
      * @return
      *         A {@code Matrix}.
      */
-    Matrix subtract(Matrix B) {
+    public Matrix subtract(Matrix B) {
         if (m != B.m || n != B.n) {
             String e = String.format("Illegal matrix operation: Cannot"
                                                 + " subtract a %d x %d"
@@ -570,7 +572,7 @@ public class Matrix {
      * @return
      *         A nicely formatted {@code String}.
      */
-    protected String toString(String[] x, int precision) {
+    public String toString(String[] x, int precision) {
         return Output.toString(this, x, precision);
     }
 
@@ -582,7 +584,7 @@ public class Matrix {
      * @return
      *         The transpose of the {@code original}.
      */
-    Matrix transpose() {
+    public Matrix transpose() {
         Matrix C = new Matrix(n, m);
         for (int i = 0; i < C.m; i++) {
             for (int j = 0; j < C.n; j++) {
