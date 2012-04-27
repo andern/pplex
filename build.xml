@@ -18,7 +18,7 @@
     <jar destfile="lpped.jar">
       <fileset dir="bin" includes="**/*.class"/>
       <manifest>
-        <attribute name="Main-class" value="lpped/Main"/>
+        <attribute name="Main-class" value="controller/Main"/>
       </manifest>
     </jar>
   </target>

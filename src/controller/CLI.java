@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public license
  * along with lpped. If not, see <http://www.gnu.org/licenses/>.
  */
-package lpped;
+package controller;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,6 +24,17 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Set;
 
+import output.Output;
+
+import model.LP;
+
+/**
+ * An implementation of a command-line
+ * interface (CLI) for lpped.
+ * 
+ * @author  Andreas Halle
+ * @version 0.1
+ */
 class CLI {
     /* Save history for each linear program. */
     private ArrayList<LP> lps = new ArrayList<LP>();
@@ -219,7 +230,7 @@ class CLI {
             return syntax;
         }
         lps.add(p++, lp);
-        return lp.toString();
+        return Output.primal(lp);
     }
 
 
@@ -252,7 +263,7 @@ class CLI {
         LP lp = lps.get(p-1).updateObj();
         lps.add(p, lp);
         p++;
-        return lp.toString();
+        return Output.primal(lp);
     }
 
 
@@ -319,9 +330,12 @@ class CLI {
                 return Data.SYNTAX.get(Data.showPrimal);
             }
         }
-
-        try { return lps.get(p-1).toString(prec); }
-        catch (IllegalArgumentException e) { return e.getLocalizedMessage(); }
+        
+        try {
+        	return Output.primal(lps.get(p-1), prec);
+        } catch (IllegalArgumentException e) {
+        	return e.getLocalizedMessage();
+        }
     }
 
 
@@ -335,10 +349,13 @@ class CLI {
                 return Data.SYNTAX.get(Data.showDual);
             }
         }
-
-        try { return lps.get(p-1).dualToString(prec); }
-        catch (IllegalArgumentException e) { return e.getLocalizedMessage(); }
-    }
+        
+        try {
+        	return Output.dual(lps.get(p-1), prec);
+        } catch (IllegalArgumentException e) {
+        	return e.getLocalizedMessage();
+        }
+    } 
 
 
 
@@ -351,9 +368,9 @@ class CLI {
 
             lps.add(p++, lp);
             redo = 0;
-
-            if (dual) return lp.dualToString();
-            return lp.toString();
+            
+            if (dual) return Output.dual(lp);
+            return Output.primal(lp);
         } catch (RuntimeException err) {
             return err.getLocalizedMessage();
         }
@@ -368,8 +385,8 @@ class CLI {
             lps.add(p++, lp);
             redo = 0;
 
-            if (dual) return lp.dualToString();
-            return lp.toString();
+            if (dual) return Output.dual(lp);
+            return Output.primal(lp);
         } catch (RuntimeException err) {
             return err.getLocalizedMessage();
         }

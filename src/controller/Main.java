@@ -1,6 +1,6 @@
-package lpped;
+package controller;
 
-public class Main {
+class Main {
     public static void main(String[] args) {
         CLI cli = new CLI();
         cli.run();

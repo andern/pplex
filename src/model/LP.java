@@ -16,19 +16,19 @@
  * You should have received a copy of the GNU General Public license
  * along with lpped. If not, see <http://www.gnu.org/licenses/>.
  */
-package lpped;
+package model;
 
 import java.util.Arrays;
 import java.util.HashMap;
 
 /**
- * An {@code object} representing a linear program(LP).
+ * An {@code Object} representing a linear program (LP).
  *
  * @author  Andreas Halle
- * @version 0.1
- * @see     lpped.Parser
+ * @version 0.2
+ * @see     controller.Parser
  */
-class LP {
+public class LP {
     private Matrix B;
     private Matrix N;
 
@@ -45,52 +45,6 @@ class LP {
 
     /**
      * Initializes a linear program.
-     *
-     * @param B
-     *        A {@code Matrix} with the coefficients of the basic variables.
-     * @param N
-     *        A {@code Matrix} with the coefficients
-     *        of the non-basic variables.
-     * @param b
-     *        A {@code Matrix} with the upper bounds on
-     *        the constraints in the original program.
-     * @param c
-     *        A {@code Matrix} with the coefficients of the
-     *        decision variables in the original program.
-     * @param x_b
-     *        A {@code Matrix} with the upper bounds on the constraints
-     *        in the current iteration of the simplex method.
-     * @param z_n
-     *        A {@code Matrix} with the coefficients of the decision variables
-     *        in the current iteration of the simplex method.
-     * @param Bi
-     *        An {@code array} with the indices of the basic variables.
-     * @param Ni
-     *        An {@code array} with the indices of the non-basic variables.
-     * @param x
-     *        A {@code HashMap} mapping the indices of the
-     *        basic and non-basic variables to their names.
-     */
-    LP(Matrix B, Matrix N, Matrix b, Matrix c, Matrix x_b, Matrix z_n,
-                                            int[] Bi, int[] Ni,
-                                            HashMap<Integer, String> x) {
-        this.B = B;
-        this.N = N;
-
-        this.b = b;
-        this.c = c;
-        this.x_b = x_b;
-        this.z_n = z_n;
-
-        this.Bi = Bi;
-        this.Ni = Ni;
-        this.x = x;
-    }
-
-
-
-    /**
-     * Initializes a linear program.
      * <p>
      * n being the number of variables and m being the number of constraints,
      * this {@code constructor} does the following:
@@ -116,7 +70,7 @@ class LP {
      *        A {@code HashMap} mapping the indices of the
      *        basic and non-basic variables to their names.
      */
-    LP(Matrix N, Matrix b, Matrix c, HashMap<Integer, String> x) {
+    public LP(Matrix N, Matrix b, Matrix c, HashMap<Integer, String> x) {
         this(Matrix.identity(N.rows()), N, b, c, b, c.scale(-1),
                                               new int[N.rows()],
                                               new int[N.cols()], x);
@@ -130,82 +84,49 @@ class LP {
 
 
 
-    /**
-     * Initializes a linear program.
-     * <p>
-     * n being the number of variables and m being the number of constraints,
-     * this {@code constructor} does the following:
-     * <p><blockquote><pre>
-     *     B is set to the identity matrix of dimension m.
-     *
-     *     The indices of the basic and non-basic variables are set to
-     *     0..n-1 and n-1..n+m-1, respectively.
-     *
-     *     The decision variables are called x1..xn
-     *
-     *     The slack variables are called w1..wm.
-     * </pre></blockquote<p>
-     *
-     * @param N
-     *        A {@code Matrix} with the coefficients
-     *        of the non-basic variables.
-     * @param b
-     *        A {@code Matrix} with the upper bounds on
-     *        the constraints in the original program.
-     * @param c
-     *        A {@code Matrix} with the coefficients of the
-     *        decision variables in the original program.
-     * @param x
-     *        A {@code HashMap} mapping the indices of the
-     *        basic and non-basic variables to their names.
-     */
-    LP(Matrix N, Matrix b, Matrix c) {
-        this(Matrix.identity(N.rows()), N, b, c, b, c.scale(-1),
-                                              new int[N.rows()],
-                                              new int[N.cols()],
-                                              new HashMap<Integer,
-                                              String>(N.rows()+N.cols()));
-
-        for (int i = 0; i < Ni.length; i++) {
-            Ni[i] = i;
-            x.put(i, "x" + (i+1));
-        }
-        for (int i = 0; i < Bi.length; i++) {
-            Bi[i] = i + Ni.length;
-            x.put(Bi[i], "w" + (i+1));
-        }
-    }
-
-
-
-    /**
-     * Return a {@code HashMap} mapping the indices of the basic and non-basic
-     * variables to the corresponding dual variables and dual slacks.
-     *
-     * @return
-     *         A {@code HashMap}.
-     */
-    HashMap<Integer, String> dualVariables() {
-        HashMap<Integer, String> vars = new HashMap<Integer, String>(x.size());
-
-        for (int i = 0; i < Bi.length; i++) {
-            String var;
-            if (Bi[i] >= Ni.length) var = "y" + (Bi[i] - Ni.length +1);
-            else var = "z" + (Bi[i] + 1);
-
-            vars.put(i, var);
-        }
-
-        for (int i = 0; i < Ni.length; i++) {
-            String var;
-            if (Ni[i] >= Ni.length) var = "y" + (Ni[i] - Ni.length + 1);
-            else var = "z" + (Ni[i] + 1);
-
-            int index = i + Bi.length;
-            vars.put(index, var);
-        }
-        return vars;
-    }
+    /*
+	 * Initializes a linear program.
+	 *
+	 * @param B
+	 *        A {@code Matrix} with the coefficients of the basic variables.
+	 * @param N
+	 *        A {@code Matrix} with the coefficients
+	 *        of the non-basic variables.
+	 * @param b
+	 *        A {@code Matrix} with the upper bounds on
+	 *        the constraints in the original program.
+	 * @param c
+	 *        A {@code Matrix} with the coefficients of the
+	 *        decision variables in the original program.
+	 * @param x_b
+	 *        A {@code Matrix} with the upper bounds on the constraints
+	 *        in the current iteration of the simplex method.
+	 * @param z_n
+	 *        A {@code Matrix} with the coefficients of the decision variables
+	 *        in the current iteration of the simplex method.
+	 * @param Bi
+	 *        An {@code array} with the indices of the basic variables.
+	 * @param Ni
+	 *        An {@code array} with the indices of the non-basic variables.
+	 * @param x
+	 *        A {@code HashMap} mapping the indices of the
+	 *        basic and non-basic variables to their names.
+	 */
+	private LP(Matrix B, Matrix N, Matrix b, Matrix c, Matrix x_b, Matrix z_n,
+	                                        int[] Bi, int[] Ni,
+	                                        HashMap<Integer, String> x) {
+	    this.B = B;
+	    this.N = N;
+	
+	    this.b = b;
+	    this.c = c;
+	    this.x_b = x_b;
+	    this.z_n = z_n;
+	
+	    this.Bi = Bi;
+	    this.Ni = Ni;
+	    this.x = x;
+	}
 
 
 
@@ -219,7 +140,7 @@ class LP {
      * @return
      *         An entering variable index.
      */
-    int entering(boolean dual) {
+    private int entering(boolean dual) {
         Matrix check = dual ? x_b : z_n;
 
         double min = 0.0;
@@ -254,7 +175,7 @@ class LP {
      * @return
      *         True if the program is feasible. False otherwise.
      */
-    boolean feasible(boolean dual) {
+    public boolean feasible(boolean dual) {
         if (dual) return z_n.gte(0);
         return x_b.gte(0);
     }
@@ -273,7 +194,7 @@ class LP {
      * @return
      *         A leaving variable index.
      */
-    int leaving(int entering, boolean dual) {
+    private int leaving(int entering, boolean dual) {
         Matrix check, sd;
         Matrix bin = B.inverse().product(N);
 
@@ -315,7 +236,7 @@ class LP {
      * @return
      *         the objective value.
      */
-    double objVal() {
+    public double objVal() {
         double sum = 0;
         for (int i = 0; i < Bi.length; i++) {
             int j = Bi[i];
@@ -334,7 +255,7 @@ class LP {
      * @return
      *         True if the program is optimal. False otherwise.
      */
-    boolean optimal(boolean dual) {
+    public boolean optimal(boolean dual) {
         if (dual) return feasible(true) && x_b.gte(0);
         return feasible(false) && z_n.gte(0);
     }
@@ -347,7 +268,7 @@ class LP {
      *
      * @return A linear program.
      */
-    LP phaseOneObj() {
+    public LP phaseOneObj() {
         double zdata[] = new double[z_n.rows()];
         Arrays.fill(zdata, 1);
 
@@ -366,7 +287,7 @@ class LP {
      * @return
      *         A linear program with the new objective function.
      */
-    LP replaceObj(double[] coeff) {
+    public LP replaceObj(double[] coeff) {
         Matrix z_n = new Matrix(coeff).transpose().scale(-1);
         return new LP(B, N, b, c, x_b, z_n, Bi, Ni, x);
     }
@@ -383,7 +304,7 @@ class LP {
      * @return
      *         A linear program after one iteration.
      */
-    LP pivot(int entering, int leaving) {
+    public LP pivot(int entering, int leaving) {
         Matrix bin = B.inverse().product(N);
         // Step 1: Check for optimality
         // Step 2: Select entering variable.
@@ -434,7 +355,7 @@ class LP {
      * @return
      *         A linear program after one iteration.
      */
-    LP pivot(boolean dual) {
+    public LP pivot(boolean dual) {
         int e = entering(dual);
         int l = leaving(e, dual);
         if (dual) return pivot(l, e);
@@ -443,7 +364,7 @@ class LP {
 
 
 
-    LP updateObj() {
+    public LP updateObj() {
         double zdata[] = new double[z_n.rows()];
         Matrix bin = B.inverse().product(N);
 
@@ -467,87 +388,13 @@ class LP {
 
 
 
-    public String toString() { return toString(2); }
-
-
-
-    public String toString(int precision) {
-        Matrix dict = dictionary();
-
-        String[] nb = new String[Ni.length+1];
-        nb[0] = "";
-        for (int i = 0; i < Ni.length; i++) { nb[i+1] = x.get(Ni[i]); }
-
-        String[] basic = new String[Bi.length+1];
-        basic[0] = "ζ";
-
-        int max = 1;
-        for (int i = 0; i < Bi.length; i++) {
-            String var = x.get(Bi[i]);
-            int len = var.length();
-
-            basic[i+1] = var;
-            if (len > max) max = len;
-        }
-
-        String format = String.format("%%%ds = %%s%n", max);
-
-        String[] lines = dict.toString(nb, precision).split("\n");
-
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < lines.length; i++) {
-            sb.append(String.format(format, basic[i], lines[i]));
-        }
-        return sb.toString();
-    }
-
-
-
-    double[] point() {
+    public double[] point() {
         double[] point = new double[Ni.length];
         for (int i = 0; i < Bi.length; i++) {
             int j = Bi[i];
             if (j < Ni.length) point[j] = x_b.get(i, 0);
         }
         return point;
-    }
-
-
-
-    public String dualToString() { return dualToString(2); }
-
-
-
-    public String dualToString(int precision) {
-        Matrix dict = dictionary().transpose().scale(-1);
-        HashMap<Integer, String> x = dualVariables();
-
-        String[] nb = new String[Bi.length+1];
-        nb[0] = "";
-        int i = 0;
-        for (i = 0; i < Bi.length; i++) { nb[i+1] = x.get(i); }
-
-        String[] basic = new String[Ni.length+1];
-        basic[0] = "-ξ";
-
-        int max = 1;
-        for (; i < Ni.length+Bi.length; i++) {
-            String var = x.get(i);
-            int len = var.length();
-
-            basic[i-Bi.length+1] = var;
-            if (len > max) max = len;
-        }
-
-        String format = String.format("%%%ds = %%s%n", max);
-
-        String[] lines = dict.toString(nb, precision).split("\n");
-
-        StringBuffer sb = new StringBuffer();
-        for (i = 0; i < lines.length; i++) {
-            sb.append(String.format(format, basic[i], lines[i]));
-        }
-        return sb.toString();
     }
 
 
@@ -564,7 +411,69 @@ class LP {
 
 
 
-    private Matrix dictionary() {
+    public String[] getBasic() {
+        String[] basic = new String[Bi.length];
+        for (int i = 0; i < Bi.length; i++) {
+            basic[i] = x.get(Bi[i]);
+        }
+        return basic;
+    }
+
+
+
+    public String[] getNonBasic() {
+        String[] nb = new String[Ni.length];
+        for (int i = 0; i < Ni.length; i++) {
+            nb[i] = x.get(Ni[i]);
+        }
+        return nb;
+    }
+    
+    
+    
+    public String[] getDualNonBasic() {
+    	String[] vars = new String[Bi.length];
+    	
+    	for (int i = 0; i < Bi.length; i++) {
+    		String var;
+    		if (Bi[i] >= Ni.length) {
+    			var = "y" + (Bi[i] - Ni.length + 1);
+    		}
+    		else {
+    			var = "z" + (Bi[i] + 1);
+    		}
+    		
+    		vars[i] = var;
+    	}
+    	return vars;
+    }
+    
+    
+    
+    public String[] getDualBasic() {
+    	String[] vars = new String[Ni.length];
+    	
+    	for (int i = 0; i < Ni.length; i++) {
+    		String var;
+    		if (Ni[i] >= Ni.length) {
+    			var = "y" + (Ni[i] - Ni.length + 1);
+    		}
+    		else {
+    			var = "z" + (Ni[i] + 1);
+    		}
+    		vars[i] = var;
+    	}
+    	return vars;
+    }
+
+
+
+    /**
+     * @return
+     * 		   A {@code Matrix} of double precision numbers representing
+     * 		   the dictionary of the current Linear Program.
+     */
+    public  Matrix dictionary() {
         double[][] data = new double[Bi.length+1][Ni.length+1];
         for (int i = 0; i < Ni.length; i++) { data[0][i+1] = -z_n.get(i, 0); }
         for (int i = 0; i < Bi.length; i++) { data[i+1][0] = x_b.get(i, 0); }

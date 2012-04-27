@@ -18,9 +18,17 @@
  */
 package output;
 
-import lpped.Matrix;
+import model.Matrix;
 
-public final class OMatrix {
+/**
+ * Class containing output-methods specifically
+ * for the {@code Matrix} object.
+ *
+ * @author  Andreas Halle
+ * @version 0.1
+ * @see     model.Matrix
+ */
+final class OMatrix {
     /*
      * Return an array containing the length
      * of the longest string in each column.
@@ -46,7 +54,7 @@ public final class OMatrix {
     /*
      * Nicely format each term in an expression.
      */
-     private static String[] expr(Matrix row, String[] el, int[] cols, boolean fcol) {
+     static String[] expr(Matrix row, String[] el, int[] cols, boolean fcol) {
         String[] exprs = new String[el.length];
 
         for (int j = 0; j < el.length; j++) {

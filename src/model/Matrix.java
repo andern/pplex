@@ -16,16 +16,14 @@
  * You should have received a copy of the GNU General Public license
  * along with lpped. If not, see <http://www.gnu.org/licenses/>.
  */
-package lpped;
-
-import output.Output;
+package model;
 
 /**
  * The {@code Matrix} class represents a rectangular array of double precision
  * numbers. The {@code Matrix} class is immutable.
  *
  * @author  Andreas Halle
- * @version 0.1
+ * @version 0.2
  */
 public class Matrix {
     private double[][] data;
@@ -45,6 +43,7 @@ public class Matrix {
     public Matrix(Matrix matrix) {
         this(matrix.data);
     }
+
 
 
     /**
@@ -560,25 +559,6 @@ public class Matrix {
 
 
     /**
-     * Return a nicely formatted {@code String} that represents the
-     * matrix-vector product of this {@code Matrix} and the given
-     * vector given as an {@code Array}.
-     *
-     * @param  x
-     *         A vector as an {@code array} of {@code Strings}.
-     * @param  precision
-     *         Limit each double precision number to this many decimals.
-     *         Give a negative value to automatically set precision.
-     * @return
-     *         A nicely formatted {@code String}.
-     */
-    public String toString(String[] x, int precision) {
-        return Output.toString(this, x, precision);
-    }
-
-
-
-    /**
      * Return the transpose of the {@code original}.
      *
      * @return
@@ -611,7 +591,7 @@ public class Matrix {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
-                sb.append(String.format("%9.4f ", data[i][j]));
+                sb.append(String.format("%9.2f ", data[i][j]));
             }
             sb.append("\n");
         }

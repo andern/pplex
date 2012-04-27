@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public license
  * along with lpped. If not, see <http://www.gnu.org/licenses/>.
  */
-package lpped;
+package controller;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -25,8 +25,10 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import model.LP;
+import model.Matrix;
 
-public class Parser {
+class Parser {
     final static String dvarreg =
         "\\s*([\\+\\-])?\\s*(\\d+(?:\\.\\d+)?)?\\s*([a-z]+\\d*)";
     final static String objreg =

@@ -16,12 +16,20 @@
  * You should have received a copy of the GNU General Public license
  * along with lpped. If not, see <http://www.gnu.org/licenses/>.
  */
-package lpped;
+package controller;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-class Data {
+/**
+ * The {@code Data} class contains data needed by the
+ * command-line interface.
+ * 
+ * @author  Andreas Halle
+ * @version 0.1
+ * @see     controller.CLI
+ */
+final class Data {
     static final String PNAME = "lpped";
     static final String VERSION = "0.1.1";
     static final String COPY = "Copyright(C) 2012, Andreas Halle";
