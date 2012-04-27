@@ -1,3 +1,13 @@
-BUILDING
-========
-Run 'ant jar' to generate a runnable jar 'lpped.jar'.
+Compiling lpped requires 'apache ant'.
+
+To only compile the sources of lpped, run
+    `ant compile`
+
+To compile the sources of lppend and build a runnable jar, run
+    `ant jar`
+    or simply
+    `ant`
+
+To run the newly built jar, run
+    `java -jar lpped.jar`
+
