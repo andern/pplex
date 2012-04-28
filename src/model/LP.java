@@ -85,48 +85,48 @@ public class LP {
 
 
     /*
-	 * Initializes a linear program.
-	 *
-	 * @param B
-	 *        A {@code Matrix} with the coefficients of the basic variables.
-	 * @param N
-	 *        A {@code Matrix} with the coefficients
-	 *        of the non-basic variables.
-	 * @param b
-	 *        A {@code Matrix} with the upper bounds on
-	 *        the constraints in the original program.
-	 * @param c
-	 *        A {@code Matrix} with the coefficients of the
-	 *        decision variables in the original program.
-	 * @param x_b
-	 *        A {@code Matrix} with the upper bounds on the constraints
-	 *        in the current iteration of the simplex method.
-	 * @param z_n
-	 *        A {@code Matrix} with the coefficients of the decision variables
-	 *        in the current iteration of the simplex method.
-	 * @param Bi
-	 *        An {@code array} with the indices of the basic variables.
-	 * @param Ni
-	 *        An {@code array} with the indices of the non-basic variables.
-	 * @param x
-	 *        A {@code HashMap} mapping the indices of the
-	 *        basic and non-basic variables to their names.
-	 */
-	private LP(Matrix B, Matrix N, Matrix b, Matrix c, Matrix x_b, Matrix z_n,
-	                                        int[] Bi, int[] Ni,
-	                                        HashMap<Integer, String> x) {
-	    this.B = B;
-	    this.N = N;
-	
-	    this.b = b;
-	    this.c = c;
-	    this.x_b = x_b;
-	    this.z_n = z_n;
-	
-	    this.Bi = Bi;
-	    this.Ni = Ni;
-	    this.x = x;
-	}
+     * Initializes a linear program.
+     *
+     * @param B
+     *        A {@code Matrix} with the coefficients of the basic variables.
+     * @param N
+     *        A {@code Matrix} with the coefficients
+     *        of the non-basic variables.
+     * @param b
+     *        A {@code Matrix} with the upper bounds on
+     *        the constraints in the original program.
+     * @param c
+     *        A {@code Matrix} with the coefficients of the
+     *        decision variables in the original program.
+     * @param x_b
+     *        A {@code Matrix} with the upper bounds on the constraints
+     *        in the current iteration of the simplex method.
+     * @param z_n
+     *        A {@code Matrix} with the coefficients of the decision variables
+     *        in the current iteration of the simplex method.
+     * @param Bi
+     *        An {@code array} with the indices of the basic variables.
+     * @param Ni
+     *        An {@code array} with the indices of the non-basic variables.
+     * @param x
+     *        A {@code HashMap} mapping the indices of the
+     *        basic and non-basic variables to their names.
+     */
+    private LP(Matrix B, Matrix N, Matrix b, Matrix c, Matrix x_b, Matrix z_n,
+                                            int[] Bi, int[] Ni,
+                                            HashMap<Integer, String> x) {
+        this.B = B;
+        this.N = N;
+    
+        this.b = b;
+        this.c = c;
+        this.x_b = x_b;
+        this.z_n = z_n;
+    
+        this.Bi = Bi;
+        this.Ni = Ni;
+        this.x = x;
+    }
 
 
 
@@ -432,46 +432,46 @@ public class LP {
     
     
     public String[] getDualNonBasic() {
-    	String[] vars = new String[Bi.length];
-    	
-    	for (int i = 0; i < Bi.length; i++) {
-    		String var;
-    		if (Bi[i] >= Ni.length) {
-    			var = "y" + (Bi[i] - Ni.length + 1);
-    		}
-    		else {
-    			var = "z" + (Bi[i] + 1);
-    		}
-    		
-    		vars[i] = var;
-    	}
-    	return vars;
+        String[] vars = new String[Bi.length];
+        
+        for (int i = 0; i < Bi.length; i++) {
+            String var;
+            if (Bi[i] >= Ni.length) {
+                var = "y" + (Bi[i] - Ni.length + 1);
+            }
+            else {
+                var = "z" + (Bi[i] + 1);
+            }
+            
+            vars[i] = var;
+        }
+        return vars;
     }
     
     
     
     public String[] getDualBasic() {
-    	String[] vars = new String[Ni.length];
-    	
-    	for (int i = 0; i < Ni.length; i++) {
-    		String var;
-    		if (Ni[i] >= Ni.length) {
-    			var = "y" + (Ni[i] - Ni.length + 1);
-    		}
-    		else {
-    			var = "z" + (Ni[i] + 1);
-    		}
-    		vars[i] = var;
-    	}
-    	return vars;
+        String[] vars = new String[Ni.length];
+        
+        for (int i = 0; i < Ni.length; i++) {
+            String var;
+            if (Ni[i] >= Ni.length) {
+                var = "y" + (Ni[i] - Ni.length + 1);
+            }
+            else {
+                var = "z" + (Ni[i] + 1);
+            }
+            vars[i] = var;
+        }
+        return vars;
     }
 
 
 
     /**
      * @return
-     * 		   A {@code Matrix} of double precision numbers representing
-     * 		   the dictionary of the current Linear Program.
+     *         A {@code Matrix} of double precision numbers representing
+     *         the dictionary of the current Linear Program.
      */
     public  Matrix dictionary() {
         double[][] data = new double[Bi.length+1][Ni.length+1];

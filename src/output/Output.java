@@ -126,7 +126,7 @@ public final class Output {
      *         
      */
     public static String primal(LP lp) {
-    	return primal(lp, 2);
+        return primal(lp, 2);
     }
     
     
@@ -144,16 +144,16 @@ public final class Output {
      *         
      */
     public static String dual(LP lp, int precision) {
-    	Matrix dict = lp.dictionary().transpose().scale(-1);
-    	
-    	String[] basic = OLP.insert(lp.getDualBasic(), "-ξ");
-    	String[] nb = OLP.insert(lp.getDualNonBasic(), "");
-    	
-    	int max = OLP.longest(basic);
-    	String format = String.format("%%%ds = ", max);
-    	
-    	String[][] terms = OMatrix.niceTerms(dict, nb, precision);
-    	
+        Matrix dict = lp.dictionary().transpose().scale(-1);
+
+        String[] basic = OLP.insert(lp.getDualBasic(), "-ξ");
+        String[] nb = OLP.insert(lp.getDualNonBasic(), "");
+
+        int max = OLP.longest(basic);
+        String format = String.format("%%%ds = ", max);
+
+        String[][] terms = OMatrix.niceTerms(dict, nb, precision);
+
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < basic.length; i++) {
             sb.append(String.format(format, basic[i]));
@@ -177,6 +177,6 @@ public final class Output {
      *         
      */
     public static String dual(LP lp) {
-    	return dual(lp, 2);
+        return dual(lp, 2);
     }
 }

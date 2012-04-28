@@ -332,9 +332,9 @@ class CLI {
         }
         
         try {
-        	return Output.primal(lps.get(p-1), prec);
+            return Output.primal(lps.get(p-1), prec);
         } catch (IllegalArgumentException e) {
-        	return e.getLocalizedMessage();
+            return e.getLocalizedMessage();
         }
     }
 
@@ -351,9 +351,9 @@ class CLI {
         }
         
         try {
-        	return Output.dual(lps.get(p-1), prec);
+            return Output.dual(lps.get(p-1), prec);
         } catch (IllegalArgumentException e) {
-        	return e.getLocalizedMessage();
+            return e.getLocalizedMessage();
         }
     } 
 
