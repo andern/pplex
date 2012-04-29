@@ -53,6 +53,8 @@ class CLI {
                                              Data.replace,
                                              Data.update,
                                              Data.show};
+    /* Standard number of decimals when printing double precision numbers. */
+    private int stdPrec = 2;
 
 
 
@@ -230,7 +232,7 @@ class CLI {
             return syntax;
         }
         lps.add(p++, lp);
-        return Output.primal(lp);
+        return Output.primal(lp, stdPrec);
     }
 
 
@@ -240,6 +242,7 @@ class CLI {
 
         if (args[1].equals(Data.showDual))        return parseDual(args);
         if (args[1].equals(Data.showFeasibility)) return parseFeasibility(args);
+        if (args[1].equals(Data.showLatex))       return parseLatex(args);
         if (args[1].equals(Data.showOptimality))  return parseOptimality(args);
         if (args[1].equals(Data.showPrimal))      return parsePrimal(args);
         if (args[1].equals(Data.showSolution))    return parseSolution(args);
@@ -263,7 +266,31 @@ class CLI {
         LP lp = lps.get(p-1).updateObj();
         lps.add(p, lp);
         p++;
-        return Output.primal(lp);
+        return Output.primal(lp, stdPrec);
+    }
+    
+    
+    
+    private String parseLatex(String[] args) {
+        int prec = stdPrec;
+        if (args.length == 4) {
+            try {
+                prec = Integer.parseInt(args[3]);
+            } catch (NumberFormatException e) {
+                return Data.SYNTAX.get(Data.showPrimal);
+            }
+        }
+        
+        try {
+            if (args[2].equals("dual")) {
+                return Output.texDual(lps.get(p-1), prec);
+            }
+            return Output.texPrimal(lps.get(p-1), prec);
+        } catch (IllegalArgumentException e) {
+            return e.getLocalizedMessage();
+        } catch (IndexOutOfBoundsException e) {
+            return Data.SYNTAX.get(Data.showLatex);
+        }
     }
 
 
@@ -273,7 +300,7 @@ class CLI {
         double[] point = lp.point();
         double val = lp.objVal();
 
-        int prec = 2;
+        int prec = stdPrec;
 
         if (args.length == 3) {
             try {
@@ -322,7 +349,7 @@ class CLI {
 
 
     private String parsePrimal(String[] args) {
-        int prec = 2;
+        int prec = stdPrec;
         if (args.length == 3) {
             try {
                 prec = Integer.parseInt(args[2]);
@@ -341,7 +368,7 @@ class CLI {
 
 
     private String parseDual(String[] args) {
-        int prec = 2;
+        int prec = stdPrec;
         if (args.length == 3) {
             try {
                 prec = Integer.parseInt(args[2]);
@@ -369,8 +396,8 @@ class CLI {
             lps.add(p++, lp);
             redo = 0;
             
-            if (dual) return Output.dual(lp);
-            return Output.primal(lp);
+            if (dual) return Output.dual(lp, stdPrec);
+            return Output.primal(lp, stdPrec);
         } catch (RuntimeException err) {
             return err.getLocalizedMessage();
         }
@@ -385,8 +412,8 @@ class CLI {
             lps.add(p++, lp);
             redo = 0;
 
-            if (dual) return Output.dual(lp);
-            return Output.primal(lp);
+            if (dual) return Output.dual(lp, stdPrec);
+            return Output.primal(lp, stdPrec);
         } catch (RuntimeException err) {
             return err.getLocalizedMessage();
         }

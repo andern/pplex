@@ -33,7 +33,7 @@ final class OMatrix {
      * Return an array containing the length
      * of the longest string in each column.
      */
-     private static int[] colSizes(String[][] elements) {
+    private static int[] colSizes(String[][] elements) {
         int[] colSizes = new int[elements[0].length];
         for (int j = 0; j < elements[0].length; j++) {
             int max = 1;
@@ -51,48 +51,46 @@ final class OMatrix {
 
 
 
-    /*
-     * Nicely format each term in an expression.
+    /**
+     * Join an array of {@code Strings} into a single 
+     * {@code String} separated by the given separator.
+     * 
+     * @param  arr
+     *         {@code Array} of {@code Strings} to join together. 
+     * @param  separator
+     *         Separator between each {@code String}.
+     * @return
+     *         A {@code String}.
      */
-     static String[] expr(Matrix row, String[] el, int[] cols, boolean fcol) {
-        String[] exprs = new String[el.length];
-
-        for (int j = 0; j < el.length; j++) {
-            char sign = signify(row.get(0, j), j);
-
-            String f = String.format("%%c %%%ds", cols[j]);
-            if (j == 0 && fcol) {
-                f = String.format("%%%ds", cols[j]);
-                exprs[j] = String.format(f, el[j]);
-            } else {
-                exprs[j] = String.format(f, sign, el[j]);
-            }
-        }
-        return exprs;
-    }
-
-
-
-    /*
-     * Return a nicely formatted String of an expression.
-     */
-     static String exprToString(String[] row, String[] x, int precision) {
+    static String join(String[] arr, String separator) {
         StringBuilder sb = new StringBuilder();
-        for (int j = 0; j < row.length; j++) {
-            if (j != 0) {
-                sb.append(" ");
+        for (int i = 0; i < arr.length; i++) {
+            if (i != 0) {
+                sb.append(separator);
             }
-            sb.append(row[j]);
+            sb.append(arr[i]);
         }
         return sb.toString();
     }
+    
+    
+    
 
-
-
-    /*
-     * Nicely format all the terms in the matrix-vector product.
+    /**
+     * Nicely format the spacing in every term in the matrix-vector
+     * product based on the longest term in each column.
+     *
+     * @param  A
+     *         The {@code Matrix}
+     * @param  x
+     *         The vector as a {@code String}-array.
+     * @param  precision
+     *         Limit each double precision number to this many decimals.
+     *         Give a negative value to automatically set precision.
+     * @return
+     *         A 2D array of nicely formatted terms.
      */
-     static String[][] niceTerms(Matrix A, String[] x, int precision) {
+    static String[][] niceTerms(Matrix A, String[] x, int precision) {
         int m = A.rows();
         int n = A.cols();
 
@@ -102,17 +100,27 @@ final class OMatrix {
 
         String[][] niceTerms = new String[m][n];
         for (int i = 0; i < m; i++) {
-            niceTerms[i] = expr(A.getRow(i), terms[i], cols, fcol);
+            for (int j = 0; j < n; j++) {
+                char sign = signify(A.get(i, j), j);
+
+                String f = String.format("%%c %%%ds", cols[j]);
+                if (j == 0 && fcol) {
+                    f = String.format("%%%ds", cols[j]);
+                    niceTerms[i][j] = String.format(f, terms[i][j]);
+                } else {
+                    niceTerms[i][j] = String.format(f, sign, terms[i][j]);
+                }
+            }
         }
         return niceTerms;
     }
-
-
-
+    
+    
+    
     /*
      * Return the sign to put in front of a term.
      */
-     private static char signify(double coeff, int column) {
+    private static char signify(double coeff, int column) {
         char sign = ' ';
         if (coeff > 0 && column != 0) {
             sign = '+';
@@ -122,25 +130,25 @@ final class OMatrix {
         return sign;
     }
 
-
+    
 
     /*
      * Format a term as nicely as possible.
      */
-     private static String term(double coeff, String var, int precision) {
+    private static String term(double coeff, String var, int precision) {
         if (coeff == 0.0) {
             return "";
         } else if (coeff == 1.0 && !var.trim().equals("")) {
             return var;
         }
-
+    
         String f;
         if (precision < 0) {
             f = "%s%s"; // Automatically set precision.
         } else {
             f = String.format("%%.%df%%s", precision);
         }
-
+    
         return String.format(f, coeff, var);
     }
 
@@ -150,19 +158,69 @@ final class OMatrix {
      * Calculate the term of each element
      * in the matrix-vector-product.
      */
-     private static String[][] terms(Matrix A, String[] x, int precision) {
+    private static String[][] terms(Matrix A, String[] x, int precision) {
         int m = A.rows();
         int n = A.cols();
         String[][] elements = new String[m][n];
-
+    
         for (int j = 0; j < n; j++) {
             for (int i = 0; i < m; i++) {
                 double coeff = Math.abs(A.get(i, j));
                 String element = term(coeff, x[j], precision);
-
+    
                 elements[i][j] = element;
             }
         }
         return elements;
+    }
+
+
+
+    /**
+     * Nicely format the spacing in every term in the matrix-vector
+     * product based on the longest term in each column. In LaTeX format.
+     *
+     * @param  A
+     *         The {@code Matrix}
+     * @param  x
+     *         The vector as a {@code String}-array.
+     * @param  precision
+     *         Limit each double precision number to this many decimals.
+     *         Give a negative value to automatically set precision.
+     * @return
+     *         A 2D array of nicely formatted terms in LaTeX.
+     */
+    static String[][] texNiceTerms(Matrix A, String[] x, int precision) {
+        int m = A.rows();
+        int n = A.cols();
+        
+        String[][] terms = terms(A, x, precision);
+        int [] cols = colSizes(terms); // Find longest element in each column.
+        boolean fcol = A.getCol(0).gte(0); // First column all positive?
+        
+        String[][] niceTerms = new String[m][n];
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                String sign = texSignify(A.get(i, j), j);
+                
+                String f = String.format("%%s %%%ds", cols[j]);
+                if (j == 0 && fcol) {
+                    f = String.format("%%%ds", cols[j]);
+                    niceTerms[i][j] = String.format(f, terms[i][j]);
+                } else {
+                    niceTerms[i][j] = String.format(f, sign, terms[i][j]);
+                }
+            }
+        }
+        return niceTerms;
+    }
+
+
+
+    /* 
+     * Return the sign (surrounded by &'s) to put in front of a term.
+     */
+    private static String texSignify(double coeff, int column) {
+        return String.format("&%c&", signify(coeff, column));
     }
 }

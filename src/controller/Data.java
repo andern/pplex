@@ -58,11 +58,12 @@ final class Data {
     static final String update   = "update";
 
     /* Sub commands of show */
-    static final String showDual     = "dual";
+    static final String showDual        = "dual";
     static final String showFeasibility = "feasibility";
-    static final String showOptimality = "optimality";
-    static final String showPrimal   = "primal";
-    static final String showSolution = "solution";
+    static final String showLatex       = "latex";
+    static final String showOptimality  = "optimality";
+    static final String showPrimal      = "primal";
+    static final String showSolution    = "solution";
 
 
 
@@ -82,6 +83,7 @@ final class Data {
             /* Sub commands of show */
             put(showDual,         "show dual (<precision>)");
             put(showFeasibility,  "show feasibility");
+            put(showLatex,        "show latex <dual/primal> (<precision>)");
             put(showOptimality,   "show optimality");
             put(showPrimal,       "show primal (<precision>)");
             put(showSolution,     "show solution (<precision>)");
@@ -243,6 +245,19 @@ final class Data {
                   + "\n"
                   + "Syntax:\n"
                   + SYNTAX.get(showDual) + "\n"
+                  + "\n"
+                  + "precision tells the program how many decimals to use\n"
+                  + "for each number in the output. A negative number will\n"
+                  + "tell the program to calculate precision automatically.\n"
+                  + "Standard precision is two decimals.\n"
+                );
+            
+            put(showLatex,
+                    "latex prints out a dictionary of the current linear\n"
+                  + "program in LaTeX format.\n"
+                  + "\n"
+                  + "Syntax:\n"
+                  + SYNTAX.get(showLatex) + "\n"
                   + "\n"
                   + "precision tells the program how many decimals to use\n"
                   + "for each number in the output. A negative number will\n"
