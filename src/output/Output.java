@@ -116,7 +116,6 @@ public final class Output {
             sb.append(" ");
             sb.append(String.format(format, basic[i]));
             sb.append(OMatrix.join(terms[i], " "));
-//            sb.append(OMatrix.exprToString(terms[i], nb, precision));
             sb.append("\\\\");
             if (i == 0) {
                 sb.append("\\hline");
@@ -155,7 +154,6 @@ public final class Output {
                 sb.append("\n");
             }
             sb.append(OMatrix.join(terms[i], " "));
-//            sb.append(OMatrix.exprToString(terms[i], x, precision));
         }
         return sb.toString();
     }
@@ -189,7 +187,6 @@ public final class Output {
         for (int i = 0; i < basic.length; i++) {
             sb.append(String.format(format, basic[i]));
             sb.append(OMatrix.join(terms[i], " "));
-//            sb.append(OMatrix.exprToString(terms[i], nb, precision));
             sb.append("\n");
         }
 
@@ -225,7 +222,6 @@ public final class Output {
         for (int i = 0; i < basic.length; i++) {
             sb.append(String.format(format, basic[i]));
             sb.append(OMatrix.join(terms[i], " "));
-//            sb.append(OMatrix.exprToString(terms[i], nb, precision));
             sb.append("\n");
         }
 
