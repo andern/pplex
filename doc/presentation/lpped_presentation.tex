@@ -1,0 +1,50 @@
+\documentclass[mathserif]{beamer}
+%\documentclass[mathserif, handout]{beamer}
+
+\usepackage{UiB_alternative_template_blue}
+
+\usepackage{graphicx}
+\usepackage[noline,noend,algoruled,linesnumbered]{algorithm2e}
+\usepackage[retainorgcmds]{IEEEtrantools}
+\usepackage{pause}
+\usepackage[absolute,overlay]{textpos}
+\usepackage{ulem}
+\usepackage{hyperref}
+\usepackage{amsfonts,amsmath,amssymb,amstext}
+\usepackage{latexsym}
+\usepackage{url}
+
+\setbeamersize{text margin left=.5cm}
+
+\begin{document}
+
+\title{Teaching the Simplex Method}
+\author{J.~Bauer, M.~Bezem, and A.~Halle} 
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}
+{Geometry of Linear Programs}
+  \begin{block}{Simple Example}
+	 \nointerlineskip
+	 \begin{IEEEeqnarray}{RL}
+		\max 3x+2y & \nonumber \\
+		\text{s.t. } 3x + y & \leq 13.5  \label{eq:ex1.1}\\
+							x+3y & \leq 10.5 \label{eq:ex1.2}\\
+							x,y  & \geq 0 \label{eq:ex1.3}
+	 \end{IEEEeqnarray}
+  \end{block}
+	 \nointerlineskip
+  \begin{block}{Geometric Observations}
+	 \begin{itemize}[<+->]
+		\item Inequalities (\ref{eq:ex1.1})--(\ref{eq:ex1.3}) correspond to half-planes\\ (half-spaces in higher dimensions)
+		\item They define the feasible region
+		\item The objective function corresponds to an ``improvement vector''
+		\item If there is an optimal point, then there is an optimal corner point
+	 \end{itemize}
+  \end{block}
+\end{frame}
+
+\end{document}
