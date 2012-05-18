@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.11 (TeX Live 2010) (format=pdflatex 2011.4.29)  15 MAY 2012 09:23
+This is pdfTeX, Version 3.1415926-1.40.11 (TeX Live 2010) (format=pdflatex 2011.4.29)  15 MAY 2012 16:54
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -91,9 +91,9 @@ Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
 (/usr/local/texlive/2010/texmf-dist/tex/latex/geometry/geometry.sty
 Package: geometry 2010/09/12 v5.6 Page Geometry
 
-(/usr/local/texlive/2010/texmf-dist/tex/generic/oberdiek/ifpdf.sty
-Package: ifpdf 2011/01/30 v2.3 Provides the ifpdf switch (HO)
-Package ifpdf Info: pdfTeX in PDF mode is detected.
+(/Home/siv/nmimb/texlib/inputs/ifpdf.sty
+Package: ifpdf 2001/06/14 v1.0 Providing \ifpdf (HO)
+Package ifpdf Info: pdfTeX in pdf mode detected on input line 140.
 )
 (/usr/local/texlive/2010/texmf-dist/tex/generic/oberdiek/ifvtex.sty
 Package: ifvtex 2010/03/01 v1.5 Switches for detecting VTeX and its modes (HO)
@@ -383,6 +383,14 @@ Package etexcmds Info: Could not find \expanded.
 Package: kvsetkeys 2011/04/07 v1.13 Key value parser (HO)
 Package: kvdefinekeys 2011/04/07 v1.3 Defining keys (HO)
 Package: pdftexcmds 2011/04/22 v0.16 Utilities of pdfTeX for LuaTeX (HO)
+
+
+LaTeX Warning: You have requested, on input line 4654, version
+               `2010/09/13' of package ifpdf,
+               but only version
+               `2001/06/14 v1.0 Providing \ifpdf (HO)'
+               is available.
+
 Package pdftexcmds Info: LuaTeX not detected.
 Package pdftexcmds Info: \pdf@primitive is available.
 Package pdftexcmds Info: \pdf@ifprimitive is available.
@@ -402,6 +410,13 @@ Package: atbegshi 2011/01/30 v1.15 At begin shipout hook (HO)
 Package: refcount 2010/12/01 v3.2 Data extraction from references (HO)
 Package: hycolor 2011/01/30 v1.7 Color options of hyperref/bookmark (HO)
 )
+
+LaTeX Warning: You have requested, on input line 106, version
+               `2006/02/20' of package ifpdf,
+               but only version
+               `2001/06/14 v1.0 Providing \ifpdf (HO)'
+               is available.
+
 (/usr/local/texlive/2010/texmf-dist/tex/latex/oberdiek/kvoptions.sty
 Package: kvoptions 2010/12/23 v3.10 Keyval support for LaTeX options (HO)
 )
@@ -1023,10 +1038,10 @@ LaTeX Font Warning: Size substitutions with differences
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 50.
  ) 
 Here is how much of TeX's memory you used:
- 17006 strings out of 493763
- 311875 string characters out of 3144975
- 406428 words of memory out of 3000000
- 19892 multiletter control sequences out of 15000+200000
+ 17004 strings out of 493763
+ 311810 string characters out of 3144975
+ 406267 words of memory out of 3000000
+ 19889 multiletter control sequences out of 15000+200000
  11176 words of font info for 45 fonts, out of 3000000 for 9000
  715 hyphenation exceptions out of 8191
  49i,11n,53p,407b,543s stack positions out of 5000i,500n,10000p,200000b,50000s

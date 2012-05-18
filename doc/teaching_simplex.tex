@@ -62,9 +62,25 @@ for the classroom presentation of the simplex method in linear programming.
 \end{abstract}
 
 \section{Motivation}
+Linear Programming (LP) is the subfield of mathematical optimization where
+the aim is to maximize a linear function under linear constraints. Such a problem
+is called an LP problem. The simplex method is an algorithm for solving LP problems. 
+Although there exist other algorithms for solving LP problems,
+the simplex method is by far the one that is most used in practice.
+It is also listed it as one of the top 10 algorithms of the twentieth century in
+\cite{CiSaE2000}. Given the many applications of LP in economics and engineering and
+management, it is deemed important to teach the simplex method to a wide range of
+students. This range certainly includes students in applied mathematics and informatics,
+but extends considerably beyond these groups. The fact that the simplex method is
+taught to students with a weaker background in mathematics and algorithmics than
+the abovementioned two groups should have important consequences for the way
+in which we teach the simplex method.
+
 In most courses on linear programming the need arises for demonstrating the simplex method step-by-step 
 \emph{without being distracted by detailed calculations in elementary linear algebra}. Let us start by
-introducing the simplex method and at the same time presenting the teaching issue at hand. 
+introducing the simplex method by a simpe example.
+
+and at the same time presenting the teaching issue at hand. 
 
  \begin{itemize}
     \item Maximize $5 x_1 + 4 x_2 + 3 x_3$ subject to
@@ -117,6 +133,8 @@ Short overview of the software, dicussion of design decisions.
 
 \bibliographystyle{abbrv}
 \begin{thebibliography}{99}
+\bibitem{CiSaE2000} Computing in Science and Engineering, volume 2, no. 1, 2000.
+
 \bibitem{lpped}
 \url{https://github.com/andern/lpped}
 %\bibitem{WalkerAMM}
