@@ -64,7 +64,7 @@ for the classroom presentation of the simplex method in linear programming.
 \section{Motivation}
 Linear Programming (LP) is the subfield of mathematical optimization where
 the aim is to maximize a linear function under linear constraints. Such a problem
-is called an LP problem. The simplex method is an algorithm for solving LP problems. 
+is called an LP problem. The simplex method is a family of algorithms for solving LP problems. 
 Although there exist other algorithms for solving LP problems,
 the simplex method is by far the one that is most used in practice.
 It is also listed it as one of the top 10 algorithms of the twentieth century in
@@ -78,29 +78,89 @@ in which we teach the simplex method.
 
 In most courses on linear programming the need arises for demonstrating the simplex method step-by-step 
 \emph{without being distracted by detailed calculations in elementary linear algebra}. Let us start by
-introducing the simplex method by a simpe example.
-
-and at the same time presenting the teaching issue at hand. 
-
- \begin{itemize}
-    \item Maximize $5 x_1 + 4 x_2 + 3 x_3$ subject to
-    \begin{itemize}
-      \item $2 x_1 + 3 x_2 + x_3 \leq 5$
-      \item $4 x_1 + x_2 + 2 x_3 \leq 11$
-      \item $3 x_1 + 4 x_2 + 2 x_3 \leq 8$
-      \item all variables $\geq 0$
-    \end{itemize}
-    \item Introduce slack variables in the above \emph{standard form}
-    \item Maximize $\zeta$ subject to (with all variables $\geq 0$):
-\[    
-    \begin{array}{lcrcrcrcr}
-      \zeta&=&   & & 5 x_1 &+& 4 x_2 &+& 3 x_3 \\\hline
-      w_1  &=& 5 &-& 2 x_1 &-& 3 x_2 &-&   x_3 \\
-      w_2  &=& 11&-& 4 x_1 &-&   x_2 &-& 2 x_3 \\
-      w_3  &=& 8 &-& 3 x_1 &-& 4 x_2 &-& 2 x_3 
+introducing the simplex method by a simple example:
+%and at the same time present some teaching issues at hand. 
+\[
+    \begin{array}{llcrcrcrcrcrcr}
+    \text{Maximize}  &    x &+&    y \\
+    \text{subject to}&  2 x &+&    y &\leq&   6\\
+    \text{and}&         7 x &+& 13 y &\leq&  40\\
+    \text{and}       &    x &,&    y &\geq&0    &
     \end{array}
 \]
-  \end{itemize}
+where the variables $x$ and $y$ range over the real numbers.
+A first observation is that there exist feasible solutions,
+since the polygon given by the four (yes, four!) inequalities contains,
+for example, the origin. A first systematic step is to give these inequalities
+all the same format $\mathit{variable}\geq 0$. For this purpose we introduce
+two new variables, $u$ and $v$, measuring to what extent the first
+two inequalities are satisfied. These new variables are commonly called
+\emph{slack variables}. At the same time we introduce an extra variable
+for the function $x+y$, the so-called \emph{objective function},
+or \emph{objective} for short. Thus our LP problem is brought in
+\emph{standard form}:
+\[    
+    \begin{array}{lcrcrcrcr}
+      \zeta&=&   & &     x &+&     y & &  \\\hline
+      u    &=& 6 &-&   2 x &-&     y & &  \\
+      v    &=& 40&-&   7 x &-&  13 y & &  \\
+      x,y,u,v  &\geq&0     & &  & &  & &    
+    \end{array}
+\]
+Note that each edge of the polygon corresponds to a variable
+being zero on that edge. Consequently,
+vertices of the polygon are all given by a pair of
+two distinct variables being zero. On the other hand, some of these
+pairs take their values zero outside the polygon, f.e.\ , $x=v=0$.
+Since the inequalities $x,y,u,v \geq 0$ are part of the standard, 
+they are often omitted. 
+
+Geometric considerations lead to the observation that the
+maximal value of the objective under the constraints (linear
+equalities and inequalities of the form 
+$\mathit{variable}\geq 0$ is attained in a vertex of the
+polygon. The idea of the standard form is
+that the variables on the right (the \emph{basic} variables) are zero,
+giving the variables on the left feasible, that is non-negative, values.
+
+In the example, we start in the origin $x=y=0$ and get
+value 0 for the objective $\zeta = x + y$.
+Clearly, there is room for improving here, since actually 
+the value 0 is the \emph{minimal} value of the objective
+under the given constraints. How can one improve on this
+value? The answer is: increase $x$ or $y$ or both.
+In the simplex method one chooses one basic variable and
+tries to increase it as much as possible, while keeping the
+other basic variables.
+Let's try to increase $x$ keeping $y=0$. How much can $x$ increase?
+We see that $0 \leq u = 6 -2x-y$ allows us to increase $x$ to $3$
+and that the other linear equality allows even more. Since both
+$u\geq 0$ and $v\geq 0$ must be respected, we increase $x$ to $3$,
+thereby getting $u=0$ as a consequence. Moreover the objective $x+y$ becomes 3.
+
+With $x$ increased to 3, $x$ doesn't qualify as a basic variable anymore.
+Fortunately, the variable $u$ has become 0. Exchanging the roles of
+$x$ and $u$ as basic and non-basic variable, respectively, restores 
+the invariant of the standard form. The first equation $u = 6 -2x-y$ makes it
+possible to express $x$ in $u,y$ such that $x$ can be eliminated from the
+right-hand side of the standard form. Technically this is done by standard
+row operations in linear algebra. The new standard form becomes:
+
+\[    
+    \begin{array}{lcrcrcrcr}
+      \zeta&=& 3 &-& \frac{1}{2} u &+& \frac{1}{2} y & &  \\\hline
+      u    &=& 6 &-&   2 x &-&     y & &  \\
+      v    &=& 40&-&   7 x &-&  13 y & &  \\
+
+    \end{array}
+\]
+ 
+
+
+
+After being brought in standard form, the next step in the simplex
+method is picking a 
+
 
 Further desiderata:
 
