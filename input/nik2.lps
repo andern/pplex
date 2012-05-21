@@ -1,0 +1,4 @@
+max         x  +  x2
+subject to  x  +  2x <= 6
+          13x  + 7x2 <= 40
+
