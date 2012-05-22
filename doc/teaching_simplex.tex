@@ -113,7 +113,7 @@ vertices of the polygon are all given by a pair of
 two distinct variables being zero. On the other hand, some of these
 pairs take their values zero outside the polygon, f.e.\ , $x=v=0$.
 Since the inequalities $x,y,u,v \geq 0$ are part of the standard, 
-they are often omitted. 
+they are often omitted. The standard form is also called \emph{dictionary}.
 
 Geometric considerations lead to the observation that the
 maximal value of the objective under the constraints (linear
@@ -131,35 +131,85 @@ under the given constraints. How can one improve on this
 value? The answer is: increase $x$ or $y$ or both.
 In the simplex method one chooses one basic variable and
 tries to increase it as much as possible, while keeping the
-other basic variables.
+other basic variables constant zero.
 Let's try to increase $x$ keeping $y=0$. How much can $x$ increase?
 We see that $0 \leq u = 6 -2x-y$ allows us to increase $x$ to $3$
 and that the other linear equality allows even more. Since both
 $u\geq 0$ and $v\geq 0$ must be respected, we increase $x$ to $3$,
 thereby getting $u=0$ as a consequence. Moreover the objective $x+y$ becomes 3.
 
-With $x$ increased to 3, $x$ doesn't qualify as a basic variable anymore.
-Fortunately, the variable $u$ has become 0. Exchanging the roles of
+Increased to $3$, $x$ doesn't qualify as a basic variable anymore.
+Fortunately, the variable $u$ has become zero. Interchanging the roles of
 $x$ and $u$ as basic and non-basic variable, respectively, restores 
 the invariant of the standard form. The first equation $u = 6 -2x-y$ makes it
 possible to express $x$ in $u,y$ such that $x$ can be eliminated from the
 right-hand side of the standard form. Technically this is done by standard
-row operations in linear algebra. The new standard form becomes:
-
+row operations in linear algebra. The new dictionary becomes:
 \[    
     \begin{array}{lcrcrcrcr}
-      \zeta&=& 3 &-& \frac{1}{2} u &+& \frac{1}{2} y & &  \\\hline
-      u    &=& 6 &-&   2 x &-&     y & &  \\
-      v    &=& 40&-&   7 x &-&  13 y & &  \\
+      \zeta&=& 3 &-& 0.5 u &+& 0.5 y & &  \\\hline
+      x    &=& 3 &-& 0.5 u &-& 0.5 y & &  \\
+      v    &=& 19&+& 3.5 u &-& 9.5 y & &  \\
 
     \end{array}
 \]
- 
+This still looks good, due to the simplicity of the example.
+However, in the next step things are getting worse. The next step
+starts by the observation that the objective would improve if we 
+increase $y$ while keeping $u$ constant zero. We see that
+$0\leq v = 19 + 3.5u - 9.5y$ allows us to increase $y$ to $2$
+and that the other linear equality allows even more.
+Hence we swap $y$ and $v$ and get,
+again by standard row operations, the new dictionary:
+\[    
+    \begin{array}{lcrcrcrcr}
+      \zeta&=& 4 &-& \frac{6}{19} u &-& \frac{1}{19} v &\vphantom{\frac{|}{|}} &  \\\hline
+      x    &=& 2 &-&\frac{13}{19} u &+& \frac{1}{19} v &\vphantom{\frac{|}{|}} &  \\
+      y    &=& 2 &+& \frac{7}{19} u &-& \frac{1}{19} v &\vphantom{\frac{|}{|}} &  \\
+    \end{array}
+\]
+Observe that all dictionaries obtained under way are equivalent,
+as the row operations could be reversed. Obtaining the last dictionary
+would be a rather painful (but useful) exercise on the blackboard.
+The good news is that we have found the maximum, as the coefficients of
+both (now) basic variables $u$ and $v$ are negative. The maximum value $4$
+of the objective is attained in the point $x=y=2$. These values are clearly
+integers by the design of the example, and could also be obtained in a geometric
+way (see the next section).
+
+The bad news is that the last dictionary contains a mistake: the
+last occurrence of $\frac{1}{19}$ should have been $\frac{2}{19}$.
+The mistake may have gone unnoticed, since it doesn't spoil the answer.
+However, the mistake may have confused the interested student who tries
+to understand the details. Worse still, another interested student
+may have asked the question: Can't we start with $y$ instead of $x$?
+Oops, the example has not been designed to start with $y$, 
+but of course this very good question deserves a detailed answer
+and the lecturer starts boldly calculating on the blackboard.
+Clearly, $0\leq v = 40 - 7x -13y$ allows us to increase $y$ to $\frac{40}{13}$
+and that the other linear equality allows even more. Hence we swap $y$ and $v$ and get,
+again by standard row operations, the new dictionary:
+\[    
+    \begin{array}{lcrcrcrcr}
+      \zeta&=& \frac{40}{13} &+& \frac{6}{13} x &-& \frac{1}{13} v &\vphantom{\frac{|}{|}} &  \\\hline
+      u    &=& \frac{38}{13} &-&\frac{19}{13} x &+& \frac{1}{13} v &\vphantom{\frac{|}{|}} &  \\
+      y    &=& \frac{40}{13} &-& \frac{7}{13} x &-& \frac{1}{13} v &\vphantom{\frac{|}{|}} &  \\
+    \end{array}
+\]
+At this point the lecturer almost regrets his willingness to answer the student's
+question in detail, but manages as by miracle to finally produce the following dictionary
+\[    
+    \begin{array}{lcrcrcrcr}
+      \zeta&=& 4 &-& \frac{6}{19} u &-& \frac{1}{19} v &\vphantom{\frac{|}{|}} &  \\\hline
+      x    &=& 2 &-&\frac{13}{19} u &+& \frac{1}{19} v &\vphantom{\frac{|}{|}} &  \\
+      y    &=& 2 &+& \frac{7}{19} u &-& \frac{2}{19} v &\vphantom{\frac{|}{|}} &  \\
+    \end{array}
+\]
+Our hero (the lecturer) is pointed to the fraction $\frac{2}{19}$ by one of the students, 
+but he soon discovers the mistake in the earlier calculation of this optimal dictionary. 
+Happy End.
 
 
-
-After being brought in standard form, the next step in the simplex
-method is picking a 
 
 
 Further desiderata:
