@@ -90,9 +90,11 @@ introducing the simplex method by a simple example:
 \]
 where the variables $x$ and $y$ range over the real numbers.
 A first observation is that there exist feasible solutions,
-since the polygon given by the four (yes, four!) inequalities contains,
-for example, the origin. A first systematic step is to give these inequalities
-all the same format $\mathit{variable}\geq 0$. For this purpose we introduce
+since the polyhedron given by the four (yes, four!) inequalities contains,
+for example, the origin. Inequalities cannot be manipulated in the same
+way as equations in linear algebra. A first step is therefore to
+have linear equations in combination with simple inequalities of the form
+$\mathit{variable}\geq 0$. For this purpose we introduce
 two new variables, $u$ and $v$, measuring to what extent the first
 two inequalities are satisfied. These new variables are commonly called
 \emph{slack variables}. At the same time we introduce an extra variable
@@ -107,25 +109,29 @@ or \emph{objective} for short. Thus our LP problem is brought in
       x,y,u,v  &\geq&0     & &  & &  & &    
     \end{array}
 \]
-Note that each edge of the polygon corresponds to a variable
+Note that each edge of the polyhedron corresponds to a variable
 being zero on that edge. Consequently,
-vertices of the polygon are all given by a pair of
+vertices of the polyhedron are all given by a pair of
 two distinct variables being zero. On the other hand, some of these
-pairs take their values zero outside the polygon, f.e.\ , $x=v=0$.
+pairs take their values zero outside the polyhedron, f.e.\ , $x=v=0$.
 Since the inequalities $x,y,u,v \geq 0$ are part of the standard, 
-they are often omitted. The standard form is also called \emph{dictionary}.
+they are often omitted. This standard form is also called \emph{dictionary}
+in \cite{Vanderbei}.
 
 Geometric considerations lead to the observation that the
 maximal value of the objective under the constraints (linear
 equalities and inequalities of the form 
 $\mathit{variable}\geq 0$ is attained in a vertex of the
-polygon. The idea of the standard form is
-that the variables on the right (the \emph{basic} variables) are zero,
-giving the variables on the left feasible, that is non-negative, values.
+polyhedron. The idea of the standard form is
+that the variables on the right, the \emph{basic} variables, are zero.
+The basic variables being zero enforce values to the variables on the left
+given by the constants in the linear equations.
+Since all variables must be non-negative, we have
+feasible and non-feasible dictionaries.
 
 In the example, we start in the origin $x=y=0$ and get
 value 0 for the objective $\zeta = x + y$.
-Clearly, there is room for improving here, since actually 
+Clearly, there is room for improvement here, since actually 
 the value 0 is the \emph{minimal} value of the objective
 under the given constraints. How can one improve on this
 value? The answer is: increase $x$ or $y$ or both.
@@ -133,12 +139,12 @@ In the simplex method one chooses one basic variable and
 tries to increase it as much as possible, while keeping the
 other basic variables constant zero.
 Let's try to increase $x$ keeping $y=0$. How much can $x$ increase?
-We see that $0 \leq u = 6 -2x-y$ allows us to increase $x$ to $3$
+We see that $0 \leq u = 6 -2x-y$ allows us to increase $x$ to $3$,
 and that the other linear equality allows even more. Since both
 $u\geq 0$ and $v\geq 0$ must be respected, we increase $x$ to $3$,
 thereby getting $u=0$ as a consequence. Moreover the objective $x+y$ becomes 3.
 
-Increased to $3$, $x$ doesn't qualify as a basic variable anymore.
+With value increased to $3$, $x$ doesn't qualify as a basic variable anymore.
 Fortunately, the variable $u$ has become zero. Interchanging the roles of
 $x$ and $u$ as basic and non-basic variable, respectively, restores 
 the invariant of the standard form. The first equation $u = 6 -2x-y$ makes it
@@ -157,7 +163,7 @@ This still looks good, due to the simplicity of the example.
 However, in the next step things are getting worse. The next step
 starts by the observation that the objective would improve if we 
 increase $y$ while keeping $u$ constant zero. We see that
-$0\leq v = 19 + 3.5u - 9.5y$ allows us to increase $y$ to $2$
+$0\leq v = 19 + 3.5u - 9.5y$ allows us to increase $y$ to $2$,
 and that the other linear equality allows even more.
 Hence we swap $y$ and $v$ and get,
 again by standard row operations, the new dictionary:
@@ -169,25 +175,22 @@ again by standard row operations, the new dictionary:
     \end{array}
 \]
 Observe that all dictionaries obtained under way are equivalent,
-as the row operations could be reversed. Obtaining the last dictionary
-would be a rather painful (but useful) exercise on the blackboard.
+as the row operations could be reversed. 
 The good news is that we have found the maximum, as the coefficients of
 both (now) basic variables $u$ and $v$ are negative. The maximum value $4$
 of the objective is attained in the point $x=y=2$. These values are clearly
 integers by the design of the example, and could also be obtained in a geometric
-way (see the next section).
+way (see the next section). Less good news is that obtaining the last dictionary
+was a rather painful (but still useful) exercise on the blackboard.
+%And this already in a very simple example!
 
-The bad news is that the last dictionary contains a mistake: the
-last occurrence of $\frac{1}{19}$ should have been $\frac{2}{19}$.
-The mistake may have gone unnoticed, since it doesn't spoil the answer.
-However, the mistake may have confused the interested student who tries
-to understand the details. Worse still, another interested student
-may have asked the question: Can't we start with $y$ instead of $x$?
+An interested and clever student may now ask the question: 
+Can't we start with $y$ instead of with $x$?
 Oops, the example has not been designed to start with $y$, 
-but of course this very good question deserves a detailed answer
-and the lecturer starts boldly calculating on the blackboard.
-Clearly, $0\leq v = 40 - 7x -13y$ allows us to increase $y$ to $\frac{40}{13}$
-and that the other linear equality allows even more. Hence we swap $y$ and $v$ and get,
+but of course this very good question deserves a detailed answer.
+Our hero, the lecturer starts boldly calculating on the blackboard.
+Clearly, $0\leq v = 40 - 7x -13y$ allows us to increase $y$ to $\frac{40}{13}$,
+and the other linear equality allows even more. Hence we swap $y$ and $v$ and get,
 again by standard row operations, the new dictionary:
 \[    
     \begin{array}{lcrcrcrcr}
@@ -205,11 +208,18 @@ question in detail, but manages as by miracle to finally produce the following d
       y    &=& 2 &+& \frac{7}{19} u &-& \frac{2}{19} v &\vphantom{\frac{|}{|}} &  \\
     \end{array}
 \]
-Our hero (the lecturer) is pointed to the fraction $\frac{2}{19}$ by one of the students, 
-but he soon discovers the mistake in the earlier calculation of this optimal dictionary. 
-Happy End.
+A Happy End? Not yet. Some attentive student points out that the two final dictionaries
+are not completely identical and asks for an explanation. After some discussion, it turns
+out that the fraction $\frac{2}{19}$ in the (last) final dictionary is correct,
+and that the corresponding fraction $\frac{1}{19}$ in the (previous) final dictionary was wrong.
+The mistake may have gone unnoticed, since it doesn't spoil the answer, the maximum stays
+$4$ at $x=y=2$. However, the mistake may have confused the interested student who tries
+to understand the details.
 
-
+What do we concluded form the above example? It is not entirely useless to do some explicit
+linear algebra calculations. However, linear algebra should be a prerequisite for a course
+in linear programming. The details of linear algebra should not distract from the important
+issues in linear programming.
 
 
 Further desiderata:
@@ -244,7 +254,9 @@ Short overview of the software, dicussion of design decisions.
 \bibliographystyle{abbrv}
 \begin{thebibliography}{99}
 \bibitem{CiSaE2000} Computing in Science and Engineering, volume 2, no. 1, 2000.
-
+\bibitem{Vanderbei} R.J. Vanderbei, 
+\emph{Linear Programming, Foundations and Extensions},
+3rd edition, Kluwer, 2008.
 \bibitem{lpped}
 \url{https://github.com/andern/lpped}
 %\bibitem{WalkerAMM}
