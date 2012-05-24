@@ -123,11 +123,13 @@ maximal value of the objective under the constraints (linear
 equalities and inequalities of the form 
 $\mathit{variable}\geq 0$ is attained in a vertex of the
 polyhedron. The idea of the standard form is
-that the variables on the right, the \emph{basic} variables, are zero.
-The basic variables being zero enforce values to the variables on the left
+that the variables on the right, the \emph{basic} variables, are zero,
+the so-called \emph{basic solution}.
+The basic solution enforces values to the variables on the left
 given by the constants in the linear equations.
-Since all variables must be non-negative, we have
-feasible and non-feasible dictionaries.
+Since all variables must be non-negative, it is possible that
+the the basic solution is not feasible. We have call a dictionary
+(non-) feasible if the basic solution is (not) feasible.
 
 In the example, we start in the origin $x=y=0$ and get
 value 0 for the objective $\zeta = x + y$.
@@ -149,8 +151,11 @@ Fortunately, the variable $u$ has become zero. Interchanging the roles of
 $x$ and $u$ as basic and non-basic variable, respectively, restores 
 the invariant of the standard form. The first equation $u = 6 -2x-y$ makes it
 possible to express $x$ in $u,y$ such that $x$ can be eliminated from the
-right-hand side of the standard form. Technically this is done by standard
-row operations in linear algebra. The new dictionary becomes:
+right-hand side of the standard form. The equation $u = 6 -2x-y$ is
+called the \emph{pivot} and the operation of interchanging the roles of
+a basic and a non-basic variable is called \emph{pivoting}.
+Technically, pivoting is done by standard row operations in linear algebra. 
+The new dictionary becomes:
 \[    
     \begin{array}{lcrcrcrcr}
       \zeta&=& 3 &-& 0.5 u &+& 0.5 y & &  \\\hline
@@ -216,10 +221,31 @@ The mistake may have gone unnoticed, since it doesn't spoil the answer, the maxi
 $4$ at $x=y=2$. However, the mistake may have confused the interested student who tries
 to understand the details.
 
-What do we concluded form the above example? It is not entirely useless to do some explicit
+What do we conclude form the above example? It is not entirely useless to do some explicit
 linear algebra calculations. However, linear algebra should be a prerequisite for a course
 in linear programming. The details of linear algebra should not distract from the important
-issues in linear programming.
+issues in linear programming. These issues are:
+\begin{itemize}
+\item The choice of the pivot.
+\item What to do if the basic solution is not feasible?
+\item Duality theory.
+\item Efficiency issues.
+\item Sensitivity analysis.
+\item Important special cases such as network problems.
+\end{itemize}
+Even for simple examples it is unnatural (and often impossible)
+to design them in such a way that the linear algebra calculations stay simple.
+It is much better to have a computerized tool for these calculations. Such a tool makes
+it also possible to deal with larger, more interesting examples. 
+
+This paper is organized as follows. In the next section we discuss the importance of
+geometry for linear programming. In Section~\ref{} we introduce our tool \url{lpped}.
+We conclude by discussing future work in Section~\ref{}.
+
+\section{Joanna on Geometry}
+
+\section{The tool \url{lpped}}
+
 
 
 Further desiderata:
