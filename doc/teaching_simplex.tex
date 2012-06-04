@@ -3,7 +3,7 @@
 \usepackage{hyperref}
 \usepackage{amsfonts,amsmath,amssymb,amstext}
 \usepackage{latexsym}
-\usepackage{url}
+\usepackage{url,alltt}
 
 \newcommand{\va}{\mathit{variable}}
 \newcommand{\Fa}{\mathrm{F}}
@@ -54,10 +54,11 @@ Joanna Bauer\thanks{University of Bergen, Department of Informatics, P.O.Box 780
 Marc Bezem$^*$
 \and
 Andreas Halle$^*$}
-\maketitle
+
+%\maketitle
 
 \begin{abstract}
-We present software (\url{https://github.com/andern/lpped})
+We present software (\url{https://github.com/andern/pplex})
 for the classroom presentation of the simplex method in linear programming.
 \end{abstract}
 
@@ -81,7 +82,7 @@ In most courses on linear programming the need arises for demonstrating the simp
 introducing the simplex method by a simple example:
 %and at the same time present some teaching issues at hand. 
 \[
-    \begin{array}{llcrcrcrcrcrcr}
+    \begin{array}{lrcrcrcrcrcrcr}
     \text{Maximize}  &    x &+&    y \\
     \text{subject to}&  2 x &+&    y &\leq&   6\\
     \text{and}&         7 x &+& 13 y &\leq&  40\\
@@ -142,7 +143,7 @@ tries to increase it as much as possible, while keeping the
 other basic variables constant zero.
 Let's try to increase $x$ keeping $y=0$. How much can $x$ increase?
 We see that $0 \leq u = 6 -2x-y$ allows us to increase $x$ to $3$,
-and that the other linear equality allows even more. Since both
+and that the other linear equation allows an even larger increase. Since both
 $u\geq 0$ and $v\geq 0$ must be respected, we increase $x$ to $3$,
 thereby getting $u=0$ as a consequence. Moreover the objective $x+y$ becomes 3.
 
@@ -169,7 +170,7 @@ However, in the next step things are getting worse. The next step
 starts by the observation that the objective would improve if we 
 increase $y$ while keeping $u$ constant zero. We see that
 $0\leq v = 19 + 3.5u - 9.5y$ allows us to increase $y$ to $2$,
-and that the other linear equality allows even more.
+and that the other linear equation allows an even larger increase.
 Hence we swap $y$ and $v$ and get,
 again by standard row operations, the new dictionary:
 \[    
@@ -195,7 +196,7 @@ Oops, the example has not been designed to start with $y$,
 but of course this very good question deserves a detailed answer.
 Our hero, the lecturer starts boldly calculating on the blackboard.
 Clearly, $0\leq v = 40 - 7x -13y$ allows us to increase $y$ to $\frac{40}{13}$,
-and the other linear equality allows even more. Hence we swap $y$ and $v$ and get,
+and the other linear equation allows an even larger increase. Hence we swap $y$ and $v$ and get,
 again by standard row operations, the new dictionary:
 \[    
     \begin{array}{lcrcrcrcr}
@@ -239,24 +240,79 @@ It is much better to have a computerized tool for these calculations. Such a too
 it also possible to deal with larger, more interesting examples. 
 
 This paper is organized as follows. In the next section we discuss the importance of
-geometry for linear programming. In Section~\ref{} we introduce our tool \url{lpped}.
+geometry for linear programming. In Section~\ref{} we introduce our tool \url{pplex}.
 We conclude by discussing future work in Section~\ref{}.
 
-\section{Joanna on Geometry}
+%\section{Joanna on Geometry}
 
-\section{The tool \url{lpped}}
+\section{A tool for teaching the Simplex method}
+Our tool has the name \url{pplex},
+which stands for a \emph{pedagogical implementation of the Simplex method}.
+It is open-source \cite{pplex} and freely distributed under the 
+GNU General Public License \cite{GNUGPL}.
+It runs under Java version xx, so it is portable to any (supporting) platform.
+We'll make an effort to keep it up to date and will support future standard
+formats for LP problems upon request.
 
+We start by demonstrating \url{pplex} on the example from the introduction.
+The input file for this example looks:
+\begin{alltt}
+\input{../input/nik2.lps}
+\end{alltt}
+After launching \url{pplex} a prompt \verb|pplex>| is written.
+We read the above input file, which is confirmed OK:
+\begin{verbatim}
+pplex> read input/nik2.lps
+Read input/nik2.lps OK.
+\end{verbatim}
+To show the dictionary of this problem one writes after the prompt:
+\begin{alltt}
+pplex> show primal
+ \(\zeta\) =       +     x +      y
+w1 =  6.00 - 2.00x -      y
+w2 = 40.00 - 7.00x - 13.00y
+\end{alltt}
+Results are standard displayed in two decimals, whereas internally
+calculations are performed in double(?) precision arithmetic.
+We can now let \url{pplex} generate the next dictionary by specifying
+the variable by its \emph{column} ($1$ for $x$ and $2$ for $y$)
+and the linear equation by its \emph{row}. (These numbers correspond to
+the indices in the matrix representation of the LP-problem.)
+Here comes the command and the resulting dictionary:
+\begin{alltt}
+pplex> pivot 1 1
+ \(\zeta\) =  3.00 - 0.50w1 + 0.50y
+ x =  3.00 - 0.50w1 - 0.50y
+w2 = 19.00 + 3.50w1 - 9.50y
+\end{alltt}
+The final (optimal) dictionary is produced after the next command:
+\begin{alltt}
+pplex> pivot 2 2
+ \(\zeta\) = 4.00 - 0.32w1 - 0.05w2
+ x = 2.00 - 0.68w1 + 0.05w2
+ y = 2.00 + 0.37w1 - 0.11w2
+\end{alltt}
+Responding to the question of the student about starting with variable $y$, 
+one can roll back to the first dictionary by two \verb|undo|'s and pivot
+with $y$ and the second linear linear equation:
+\begin{alltt}
+pplex> undo
 
+pplex> undo
 
-Further desiderata:
-
-1. Open source
-
-2. Up-to-date
-
-3. Free and independent of licences
-
-4. Supporting most standards for LP problems
+pplex> pivot 2 2
+ \(\zeta\) = 3.08 + 0.46x - 0.08w2
+w1 = 2.92 - 1.46x + 0.08w2
+ y = 3.08 - 0.54x - 0.08w2
+\end{alltt}
+In an effortless way one now obtains the same final dictionary:
+\begin{alltt}
+pplex> pivot 1 1 
+ \(\zeta\) = 4.00 - 0.32w1 - 0.05w2
+ x = 2.00 - 0.68w1 + 0.05w2
+ y = 2.00 + 0.37w1 - 0.11w2
+\end{alltt}
+Due to the double precision arithmetic, one obtains exactly the same result.
 
 \section{Examples}
 1. primal feasible
@@ -280,11 +336,15 @@ Short overview of the software, dicussion of design decisions.
 \bibliographystyle{abbrv}
 \begin{thebibliography}{99}
 \bibitem{CiSaE2000} Computing in Science and Engineering, volume 2, no. 1, 2000.
+
 \bibitem{Vanderbei} R.J. Vanderbei, 
 \emph{Linear Programming, Foundations and Extensions},
 3rd edition, Kluwer, 2008.
-\bibitem{lpped}
-\url{https://github.com/andern/lpped}
+
+\bibitem{pplex}
+\url{https://github.com/andern/pplex/}
+\bibitem{GNUGPL}
+\url{http://www.gnu.org/licenses/}
 %\bibitem{WalkerAMM}
 %Peter Walker, A Lemma on Divisibility. \emph{American Mathematical Monthly}
 %{\bf 115}(4):338.
