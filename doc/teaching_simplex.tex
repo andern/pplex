@@ -255,7 +255,7 @@ We'll make an effort to keep it up to date and will support future standard
 formats for LP problems upon request.
 
 We start by demonstrating \url{pplex} on the example from the introduction.
-The input file for this example looks:
+The input file for this example reads:
 \begin{alltt}
 \input{../input/nik2.lps}
 \end{alltt}
@@ -272,12 +272,12 @@ pplex> show primal
 w1 =  6.00 - 2.00x -      y
 w2 = 40.00 - 7.00x - 13.00y
 \end{alltt}
-Results are standard displayed in two decimals, whereas internally
+Numbers are by default displayed with two decimals precision, whereas
 calculations are performed in double(?) precision arithmetic.
-We can now let \url{pplex} generate the next dictionary by specifying
+We can now let \url{pplex} execute a pivot by specifying
 the variable by its \emph{column} ($1$ for $x$ and $2$ for $y$)
 and the linear equation by its \emph{row}. (These numbers correspond to
-the indices in the matrix representation of the LP-problem.)
+the indices in the matrix representation of the LP problem.)
 Here comes the command and the resulting dictionary:
 \begin{alltt}
 pplex> pivot 1 1
@@ -312,18 +312,68 @@ pplex> pivot 1 1
  x = 2.00 - 0.68w1 + 0.05w2
  y = 2.00 + 0.37w1 - 0.11w2
 \end{alltt}
-Due to the double precision arithmetic, one obtains exactly the same result.
+Due to (or despite?) the double precision arithmetic, one obtains exactly the same result.
 
-\section{Examples}
-1. primal feasible
+\section{Examples using Duality}
+%\subsection{Duality}
+In the previous section we worked through an example of a feasible dictionary.
+What if the initial dictionary is not feasible, that is, the origin is not a
+feasible solution. Here is an example:
+\begin{alltt}
+\input{../input/nik3.lps}
+\end{alltt}
+The geometric interpretation (Geogebra?) of this problem is the
+triangle with points $(0,1),(0,2),(\frac{1}{2},1\frac{1}{2})$
+in the $x,y$-plane, on which we maximize the objective $-2x-y$.
+Clearly, the solution $-1$ is to be found in the point $(0,1)$.
+However, we cannot proceed as in the previous section since the
+initial dictionary is not feasible:
+\begin{alltt}
+lpped> read input/nik3.lps
+Read input/nik3.lps OK.
 
-2. dual feasible but not primal
+lpped> show primal
+ \(\zeta\) =        - 2.00x - y
+w1 = - 1.00 -     x + y
+w2 =   2.00 -     x - y
+\end{alltt}
+One possible solution in such a case is to look at the so-called
+\emph{dual} problem (the original problem is called the \emph{primal} problem).
+Duality theory is about the relation between the primal and the dual problem,
+and one of its results is that the primal and the dual problem are \emph{equisolvable}.
+Equisolvability means that the primal problem has an optimal solution if and only if 
+the dual problem has. Moreover, these solutions are each other's dual.
+We will not enter the details of duality theory here, but let \url{pplex} do the work:
+\begin{alltt}
+lpped> show dual
+-\(\zeta\) =      + y1 - 2.00y2
+z1 = 2.00 + y1 +     y2
+z2 = 1.00 - y1 +     y2
+\end{alltt}
+The maximum value $1$ of \(-\zeta\) in the dual problem is found after one pivot:
+\begin{alltt}
+lpped> pivot dual 1 2
+-\(\zeta\) = 1.00 - z2 -     y2
+z1 = 3.00 - z2 + 2.00y2
+y1 = 1.00 - z2 +     y2
+\end{alltt}
+The primal version of this dictionary shows that we have indeed found the
+maximum $-1$ of $\zeta$ for $x=0,~y=1$ in the original problem:
+\begin{alltt}
+lpped> show primal
+ \(\zeta\) = - 1.00 - 3.00x - w1
+ y =   1.00 +     x + w1
+w2 =   1.00 - 2.00x - w1
+\end{alltt}
 
-3. primal and dual infeasible
 
-4. unbounded
+\section{Examples of Degeneracy and Cycling}
+\begin{alltt}
+\input{../input/nik5.txt}
+\end{alltt}
 
-5. cyclic
+\section{Unbounded Examples}
+
 
 \section{Features}
 Short overview of the software, dicussion of design decisions.
@@ -337,17 +387,20 @@ Short overview of the software, dicussion of design decisions.
 \begin{thebibliography}{99}
 \bibitem{CiSaE2000} Computing in Science and Engineering, volume 2, no. 1, 2000.
 
-\bibitem{Vanderbei} R.J. Vanderbei, 
+\bibitem{Vanderbei} R.J.~Vanderbei, 
 \emph{Linear Programming, Foundations and Extensions},
 3rd edition, Kluwer, 2008.
 
+\bibitem{Chvatal} V.~Chv\'atal,
+\emph{Linear Programming},
+W.H.~Freeman and Company, 1983.
+
 \bibitem{pplex}
 \url{https://github.com/andern/pplex/}
+
 \bibitem{GNUGPL}
 \url{http://www.gnu.org/licenses/}
-%\bibitem{WalkerAMM}
-%Peter Walker, A Lemma on Divisibility. \emph{American Mathematical Monthly}
-%{\bf 115}(4):338.
+
 \end{thebibliography}
 
 
