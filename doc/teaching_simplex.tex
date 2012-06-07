@@ -222,15 +222,15 @@ The mistake may have gone unnoticed, since it doesn't spoil the answer, the maxi
 $4$ at $x=y=2$. However, the mistake may have confused the interested student who tries
 to understand the details.
 
-What do we conclude form the above example? It is not entirely useless to do some explicit
-linear algebra calculations. However, linear algebra should be a prerequisite for a course
+What do we conclude form the above example? It is certainly not useless to do some explicit
+linear algebra calculations. Nevertheless, linear algebra should be a prerequisite for a course
 in linear programming. The details of linear algebra should not distract from the important
-issues in linear programming. These issues are:
+issues in linear programming. These issues include:
 \begin{itemize}
 \item The choice of the pivot.
 \item What to do if the basic solution is not feasible?
 \item Duality theory.
-\item Efficiency issues.
+\item Efficiency considerations.
 \item Sensitivity analysis.
 \item Important special cases such as network problems.
 \end{itemize}
@@ -350,6 +350,9 @@ lpped> show dual
 z1 = 2.00 + y1 +     y2
 z2 = 1.00 - y1 +     y2
 \end{alltt}
+The negative coefficients of the original objective $-2x-y$ show up in the dual
+dictionary as the positive constants $2.00$ and $1.00$ of the first and the second 
+linear equation, respectively. Since they are positive, the dual dictionary is actually feasible.
 The maximum value $1$ of \(-\zeta\) in the dual problem is found after one pivot:
 \begin{alltt}
 lpped> pivot dual 1 2
@@ -366,8 +369,65 @@ lpped> show primal
 w2 =   1.00 - 2.00x - w1
 \end{alltt}
 
+In the last example, the dual dictionary was feasible. What to do if both the primal and
+the dual dictionary are infeasible? The standard solution in this case is to change
+the objective of the primal dictionary to one having \emph{only} negative coefficients.
+Let's call the resulting problem the \emph{mock} primal, having a mock dual.
+Then the mock dual is feasible and one can attempt to solve it. 
+If the mock dual is solvable, then the mock primal is \emph{and the resulting
+mock primal dictionary is feasible}. The equations of the mock primal dictionary
+are equivalent to those of the original dictionary. Then it suffices to put the original objective
+in place, \emph{adapted to the equations of the mock primal dictionary}.
+Duality theory also explains that when the mock dual problem has arbitrarily large
+solutions (\emph{unbounded}), the primal problem has no solutions.
+Such cases will be treated in a later section.
+
+To get an example which is both primally and dually infeasible,
+we just negate the objective of the previous example:
+\begin{alltt}
+ \(\zeta\) =        + 2.00x + y
+w1 = - 1.00 -     x + y
+w2 =   2.00 -     x - y
+\end{alltt}
+The command \verb|replace -2 -1| is used to negate (back) the objective,
+yielding the dually feasible previous example:
+\begin{alltt}
+lpped> replace -2 -1
+ \(\zeta\)  =        - 2.00x - y
+w1 = - 1.00 -     x + y
+w2 =   2.00 -     x - y
+\end{alltt}
+We replay \verb|pivot dual 1 2| and \verb|show primal|,
+yielding of course the same feasible final dictionary:
+\begin{alltt}
+ \(\zeta\) = - 1.00 - 3.00x - w1
+ y =   1.00 +     x + w1
+w2 =   1.00 - 2.00x - w1
+\end{alltt}
+This is now a mock solution since the original objective was $2x+y$,
+not $-2x-y$. The only thing one has to do is to put the original objective in place,
+replacing non-basic variables by their right-hand sides: $2x+(1+x+w_1)$.
+This is achieved by the command \verb|update|:
+\begin{alltt}
+lpped> update
+ \(\zeta\) = 1.00 + 3.00x + w1
+ y = 1.00 +     x + w1
+w2 = 1.00 - 2.00x - w1
+\end{alltt}
+It now takes only one step to find the maximum value $2\frac{1}{2}$ 
+for $2x+y$ in $(\frac{1}{2},1\frac{1}{2})$:
+\begin{alltt}
+lpped> pivot 1 2
+ \(\zeta\) = 2.50 - 1.50w2 - 0.50w1
+ y = 1.50 - 0.50w2 + 0.50w1
+ x = 0.50 - 0.50w2 - 0.50w1
+\end{alltt}
+
 
 \section{Examples of Degeneracy and Cycling}
+Degeneracy is the phenomenon that the constant of the linear equation used as pivot
+is zero. Pivoting will then not improve the value of the basic solution, but can possibly
+
 \begin{alltt}
 \input{../input/nik5.txt}
 \end{alltt}
