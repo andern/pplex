@@ -238,7 +238,7 @@ class CLI {
 
 
     private String parseShow(String[] args) {
-        if (args.length == 1) return Data.LHELP.get(Data.show);
+        if (args.length == 1)                     return parsePrimal(args);
 
         if (args[1].equals(Data.showDual))        return parseDual(args);
         if (args[1].equals(Data.showFeasibility)) return parseFeasibility(args);
