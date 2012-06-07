@@ -62,7 +62,7 @@ We present software (\url{https://github.com/andern/pplex})
 for the classroom presentation of the simplex method in linear programming.
 \end{abstract}
 
-\section{Motivation}
+\section{Introduction and Motivation}\label{sec:intro}
 Linear Programming (LP) is the subfield of mathematical optimization where
 the aim is to maximize a linear function under linear constraints. Such a problem
 is called an LP problem. The simplex method is a family of algorithms for solving LP problems. 
@@ -239,13 +239,16 @@ to design them in such a way that the linear algebra calculations stay simple.
 It is much better to have a computerized tool for these calculations. Such a tool makes
 it also possible to deal with larger, more interesting examples. 
 
-This paper is organized as follows. In the next section we discuss the importance of
-geometry for linear programming. In Section~\ref{} we introduce our tool \url{pplex}.
-We conclude by discussing future work in Section~\ref{}.
+This paper is organized as follows ({\bf may change}). 
+%In the next section we discuss the importance of geometry for linear programming. 
+In Section~\ref{sec:pplex} we introduce 
+our tool \url{pplex}, applied to several examples in subsequent sections.
+The tool is fur described in Section~\ref{sec:features}.
+We conclude by discussing future work in Section~\ref{sec:future}.
 
 %\section{Joanna on Geometry}
 
-\section{A tool for teaching the Simplex method}
+\section{A tool for teaching the Simplex method}\label{sec:pplex}
 Our tool has the name \url{pplex},
 which stands for a \emph{pedagogical implementation of the Simplex method}.
 It is open-source \cite{pplex} and freely distributed under the 
@@ -273,7 +276,7 @@ w1 =  6.00 - 2.00x -      y
 w2 = 40.00 - 7.00x - 13.00y
 \end{alltt}
 Numbers are by default displayed with two decimals precision, whereas
-calculations are performed in double(?) precision arithmetic.
+calculations are performed in double precision arithmetic.
 We can now let \url{pplex} execute a pivot by specifying
 the variable by its \emph{column} ($1$ for $x$ and $2$ for $y$)
 and the linear equation by its \emph{row}. (These numbers correspond to
@@ -322,7 +325,7 @@ feasible solution. Here is an example:
 \begin{alltt}
 \input{../input/nik3.lps}
 \end{alltt}
-The geometric interpretation (Geogebra?) of this problem is the
+The geometric interpretation (Geogebra) of this problem is the
 triangle with points $(0,1),(0,2),(\frac{1}{2},1\frac{1}{2})$
 in the $x,y$-plane, on which we maximize the objective $-2x-y$.
 Clearly, the solution $-1$ is to be found in the point $(0,1)$.
@@ -379,8 +382,8 @@ mock primal dictionary is feasible}. The equations of the mock primal dictionary
 are equivalent to those of the original dictionary. Then it suffices to put the original objective
 in place, \emph{adapted to the equations of the mock primal dictionary}.
 Duality theory also explains that when the mock dual problem has arbitrarily large
-solutions (\emph{unbounded}), the primal problem has no solutions.
-Such cases will be treated in a later section.
+solutions, the primal problem has no solutions. So-called \emph{unboundedness}
+will be treated in Section~\ref{sec:unbounded}.
 
 To get an example which is both primally and dually infeasible,
 we just negate the objective of the previous example:
@@ -424,21 +427,26 @@ lpped> pivot 1 2
 \end{alltt}
 
 
-\section{Examples of Degeneracy and Cycling}
+\section{Examples of Degeneracy and Cycling}\label{sec:cycling}
 Degeneracy is the phenomenon that the constant of the linear equation used as pivot
-is zero. Pivoting will then not improve the value of the basic solution, but can possibly
+is zero. Pivoting will then not improve the value of the basic solution. 
+There can be hope, of course, that one of the next pivots will improve
+the objective. Unfortunately, there is the (rare) possibility of cycling,
+as shown by the following example \cite{Chvatal,Vanderbei}.
 
 \begin{alltt}
 \input{../input/nik5.txt}
 \end{alltt}
 
-\section{Unbounded Examples}
+\section{Unbounded Examples}\label{sec:unbounded}
 
 
-\section{Features}
+
+
+\section{Features}\label{sec:features}
 Short overview of the software, dicussion of design decisions.
 
-\section{Future extensions}
+\section{Future extensions}\label{sec:future}
 
 
 
