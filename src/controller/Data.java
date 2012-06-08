@@ -56,6 +56,7 @@ final class Data {
     static final String show     = "show";
     static final String undo     = "undo";
     static final String update   = "update";
+    static final String quit     = "quit";
 
     /* Sub commands of show */
     static final String showDual        = "dual";
@@ -79,6 +80,7 @@ final class Data {
             put(show,     "show <subcommand>");
             put(undo,     "undo");
             put(update,   "update");
+            put(quit,     "quit or q or exit");
 
             /* Sub commands of show */
             put(showDual,         "show dual (<precision>)");
@@ -101,9 +103,10 @@ final class Data {
             put(read,     "read a file of format .lp");
             put(redo,     "reverse last undo");
             put(replace,  "replace the current objective function");
-            put(show,     "show various information about a problem");
+            put(show,     "show various information about the current dictionary");
             put(undo,     "erase last change");
             put(update,   "update the current objective function");
+            put(quit,     "quit the program (exit and q do the same)");
         }
     };
 
@@ -204,17 +207,17 @@ final class Data {
 
             put(show,
                     "show has several subcommands that prints out various information\n"
-                  + "about the current linear problem.\n"
+                  + "about the current dictionary of the linear program.\n"
                   + "\n"
                   + "Syntax:\n"
                   + Data.SYNTAX.get(show) + "\n"
                   + "\n"
                   + "Subcommands:\n"
                   + "dual             show the dual dictionary\n"
-                  + "feasibility      show whether the program is feasible or not\n"
-                  + "optimality       show whether the program is optimal or not\n"
+                  + "feasibility      show whether the dictionary is feasible or not\n"
+                  + "optimality       show whether the dictionary is optimal or not\n"
                   + "primal           show the primal dictionary\n"
-                  + "solution         show the current solution\n"
+                  + "solution         show the basic (current) solution\n"
                   + "\n"
                   + "To get help for any of the subcommands, type 'help <subcommand>'.\n"
                 );
@@ -236,6 +239,13 @@ final class Data {
                   + "\n"
                 );
 
+            put(quit,
+                    "quit the program (exit and q do the same)\n"
+                  + "\n"
+                  + "Syntax:\n"
+                  + Data.SYNTAX.get(quit) + "\n"
+                  + "\n"
+                );
 
 
             /* Sub commands of show */
