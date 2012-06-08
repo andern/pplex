@@ -433,12 +433,38 @@ is zero. Pivoting will then not improve the value of the basic solution.
 There can be hope, of course, that one of the next pivots will improve
 the objective. Unfortunately, there is the (rare) possibility of cycling,
 as shown by the following example \cite{Chvatal,Vanderbei}.
-
 \begin{alltt}
 \input{../input/nik5.txt}
 \end{alltt}
 
 \section{Unbounded Examples}\label{sec:unbounded}
+Recall that solving an LP problem is to find the maximum of a linear
+function on a polyhedron. There are basically two reasons that
+an LP problem has no solution. The first is that the polyhedron is
+empty, that is, the inequalities defining the polyhedron do not allow
+a solution at all. The second reason is that the polyhedron is
+infinite in a direction in which the objective function increases.
+In the latter case there is no maximum since the objective can
+take arbitrarily large values on the polyhedron. In this case we
+speak of \emph{unboundedness}. We let the following example
+speak for itself:
+\begin{alltt}
+\input{../input/nik6.txt}
+\end{alltt}
+Here we have a feasible dictionary and all coefficients of $x$ are
+positive. This means that $x$ can increase unboundedly,
+yielding arbitrarily high values o fthe objective.
+The command \verb|pivot|, which can pick a suitable pivot itself,
+discovers this:
+\begin{alltt}
+lpped> pivot
+Problem is unbounded.
+\end{alltt}
+In the last dictionary we see that for $x=100+y$ and $y \geq 19900$
+we always have a solution. This was not so easy to see in the
+initial dictionary. 
+
+
 
 
 
