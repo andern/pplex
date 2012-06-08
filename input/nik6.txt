@@ -30,7 +30,3 @@ lpped> update
 \(\zeta\) = 39900.00 + 199.00w2 + 200.00w1
 y = 19900.00 +  99.00w2 + 100.00w1
 x = 20000.00 + 100.00w2 + 100.00w1
-
-lpped> pivot
-Problem is unbounded.
-
