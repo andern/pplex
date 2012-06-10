@@ -55,7 +55,7 @@ Marc Bezem$^*$
 \and
 Andreas Halle$^*$}
 
-%\maketitle
+\maketitle
 
 \begin{abstract}
 We present software (\url{https://github.com/andern/pplex})
@@ -349,7 +349,7 @@ the dual problem has. Moreover, these solutions are each other's dual.
 We will not enter the details of duality theory here, but let \url{pplex} do the work:
 \begin{alltt}
 lpped> show dual
--\(\zeta\) =      + y1 - 2.00y2
+-\(\xi\) =      + y1 - 2.00y2
 z1 = 2.00 + y1 +     y2
 z2 = 1.00 - y1 +     y2
 \end{alltt}
@@ -359,7 +359,7 @@ linear equation, respectively. Since they are positive, the dual dictionary is a
 The maximum value $1$ of \(-\zeta\) in the dual problem is found after one pivot:
 \begin{alltt}
 lpped> pivot dual 1 2
--\(\zeta\) = 1.00 - z2 -     y2
+-\(\xi\) = 1.00 - z2 -     y2
 z1 = 3.00 - z2 + 2.00y2
 y1 = 1.00 - z2 +     y2
 \end{alltt}
