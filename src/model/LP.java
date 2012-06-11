@@ -211,17 +211,20 @@ public class LP {
         }
 
         double max = Double.MIN_VALUE;
-        double val = Double.MIN_VALUE;
         int index = -1;
 
         for (int i = 0; i < sd.rows(); i++) {
+            double num = sd.get(i, 0);
             double denom = check.get(i, 0);
+
             if (denom != 0) {
-                val = sd.get(i, 0) / denom;
+                double val = num / denom;
                 if (val > max) {
                     max = val;
                     index = i;
                 }
+            } else {
+               if (num > 0) return i;
             }
         }
         if (index == -1) throw new RuntimeException(e);
