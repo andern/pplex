@@ -3,6 +3,7 @@
 \usepackage{hyperref}
 \usepackage{amsfonts,amsmath,amssymb,amstext}
 \usepackage{latexsym}
+\usepackage{graphicx}
 \usepackage{url,alltt}
 
 \newcommand{\va}{\mathit{variable}}
@@ -58,18 +59,18 @@ Andreas Halle$^*$}
 \maketitle
 
 \begin{abstract}
-We present software (\url{https://github.com/andern/pplex})
-for the classroom presentation of the simplex method in linear programming.
+{\bf May change:} We present software supporting
+the classroom presentation of the simplex method in linear programming.
 \end{abstract}
 
 \section{Introduction and Motivation}\label{sec:intro}
-Linear Programming (LP) is the subfield of mathematical optimization where
-the aim is to maximize a linear function under linear constraints. Such a problem
+Linear Programming (LP) is the subfield of mathematical optimization which
+deals with the maximization of a linear function under linear constraints. Such a problem
 is called an LP problem. The simplex method is a family of algorithms for solving LP problems. 
 Although there exist other algorithms for solving LP problems,
 the simplex method is by far the one that is most used in practice.
 It is also listed it as one of the top 10 algorithms of the twentieth century in
-\cite{CiSaE2000}. Given the many applications of LP in economics and engineering and
+\cite{CiSaE2000}. Given the many applications of LP in economics, engineering and
 management, it is deemed important to teach the simplex method to a wide range of
 students. This range certainly includes students in applied mathematics and informatics,
 but extends considerably beyond these groups. The fact that the simplex method is
@@ -90,10 +91,12 @@ introducing the simplex method by a simple example:
     \end{array}
 \]
 where the variables $x$ and $y$ range over the real numbers.
-A first observation is that there exist feasible solutions,
+A \emph{feasible} solution is an assignment of real numbers to the variables 
+such that all inequalities are satisfied. 
+In the example above there exist feasible solutions,
 since the polyhedron given by the four (yes, four!) inequalities contains,
-for example, the origin. Inequalities cannot be manipulated in the same
-way as equations in linear algebra. A first step is therefore to
+among other points, the origin. Inequalities cannot be manipulated in the same
+simple way as equations in linear algebra. Therefore, a first step is to
 have linear equations in combination with simple inequalities of the form
 $\mathit{variable}\geq 0$. For this purpose we introduce
 two new variables, $u$ and $v$, measuring to what extent the first
@@ -113,7 +116,7 @@ or \emph{objective} for short. Thus our LP problem is brought in
 Note that each edge of the polyhedron corresponds to a variable
 being zero on that edge. Consequently,
 vertices of the polyhedron are all given by a pair of
-two distinct variables being zero. On the other hand, some of these
+two distinct variables being zero. Note that some of these
 pairs take their values zero outside the polyhedron, f.e.\ , $x=v=0$.
 Since the inequalities $x,y,u,v \geq 0$ are part of the standard, 
 they are often omitted. This standard form is also called \emph{dictionary}
@@ -126,18 +129,18 @@ $\mathit{variable}\geq 0$ is attained in a vertex of the
 polyhedron. The idea of the standard form is
 that the variables on the right, the \emph{basic} variables, are zero,
 the so-called \emph{basic solution}.
-The basic solution enforces values to the variables on the left
-given by the constants in the linear equations.
+The basic solution enforces the variables on the left
+to have values given by the constants in the linear equations.
 Since all variables must be non-negative, it is possible that
-the the basic solution is not feasible. We have call a dictionary
-(non-) feasible if the basic solution is (not) feasible.
+the the basic solution is not feasible. We  call a dictionary
+\emph{(in)feasible} if the basic solution is (not) feasible.
 
-In the example, we start in the origin $x=y=0$ and get
-value 0 for the objective $\zeta = x + y$.
-Clearly, there is room for improvement here, since actually 
-the value 0 is the \emph{minimal} value of the objective
-under the given constraints. How can one improve on this
-value? The answer is: increase $x$ or $y$ or both.
+In the example above, we start in the origin $x=y=0$ and get
+value $0$ for the objective $\zeta = x + y$.
+Clearly, there is room for improvement here, since in fact
+the value $0$ is the \emph{minimal} value of the objective
+under the given constraints. How can we improve on this
+value? The answer is simple: increase $x$ or $y$ or both.
 In the simplex method one chooses one basic variable and
 tries to increase it as much as possible, while keeping the
 other basic variables constant zero.
@@ -150,7 +153,7 @@ thereby getting $u=0$ as a consequence. Moreover the objective $x+y$ becomes 3.
 With value increased to $3$, $x$ doesn't qualify as a basic variable anymore.
 Fortunately, the variable $u$ has become zero. Interchanging the roles of
 $x$ and $u$ as basic and non-basic variable, respectively, restores 
-the invariant of the standard form. The first equation $u = 6 -2x-y$ makes it
+the invariant of the standard form. The limiting equation $u = 6 -2x-y$ makes it
 possible to express $x$ in $u,y$ such that $x$ can be eliminated from the
 right-hand side of the standard form. The equation $u = 6 -2x-y$ is
 called the \emph{pivot} and the operation of interchanging the roles of
@@ -171,8 +174,8 @@ starts by the observation that the objective would improve if we
 increase $y$ while keeping $u$ constant zero. We see that
 $0\leq v = 19 + 3.5u - 9.5y$ allows us to increase $y$ to $2$,
 and that the other linear equation allows an even larger increase.
-Hence we swap $y$ and $v$ and get,
-again by standard row operations, the new dictionary:
+Hence we swap $y$ and $v$ using the second equation as pivot,
+and get, again by standard row operations, the new dictionary:
 \[    
     \begin{array}{lcrcrcrcr}
       \zeta&=& 4 &-& \frac{6}{19} u &-& \frac{1}{19} v &\vphantom{\frac{|}{|}} &  \\\hline
@@ -181,22 +184,22 @@ again by standard row operations, the new dictionary:
     \end{array}
 \]
 Observe that all dictionaries obtained under way are equivalent,
-as the row operations could be reversed. 
+as the row operations can be reversed. 
 The good news is that we have found the maximum, as the coefficients of
 both (now) basic variables $u$ and $v$ are negative. The maximum value $4$
 of the objective is attained in the point $x=y=2$. These values are clearly
 integers by the design of the example, and could also be obtained in a geometric
-way (see the next section). Less good news is that obtaining the last dictionary
+way. Less good news is that obtaining the last dictionary
 was a rather painful (but still useful) exercise on the blackboard.
 %And this already in a very simple example!
 
 An interested and clever student may now ask the question: 
 Can't we start with $y$ instead of with $x$?
-Oops, the example has not been designed to start with $y$, 
+Oops, the example was not designed to start with $y$, 
 but of course this very good question deserves a detailed answer.
-Our hero, the lecturer starts boldly calculating on the blackboard.
+The lecturer (our hero) starts boldly calculating on the blackboard.
 Clearly, $0\leq v = 40 - 7x -13y$ allows us to increase $y$ to $\frac{40}{13}$,
-and the other linear equation allows an even larger increase. Hence we swap $y$ and $v$ and get,
+and the other linear equation allows an even larger increase. Hence we pivot and get,
 again by standard row operations, the new dictionary:
 \[    
     \begin{array}{lcrcrcrcr}
@@ -214,11 +217,11 @@ question in detail, but manages as by miracle to finally produce the following d
       y    &=& 2 &+& \frac{7}{19} u &-& \frac{2}{19} v &\vphantom{\frac{|}{|}} &  \\
     \end{array}
 \]
-A Happy End? Not yet. Some attentive student points out that the two final dictionaries
+A Happy End? Not yet. Some attentive students point out that the two final dictionaries
 are not completely identical and asks for an explanation. After some discussion, it turns
 out that the fraction $\frac{2}{19}$ in the (last) final dictionary is correct,
 and that the corresponding fraction $\frac{1}{19}$ in the (previous) final dictionary was wrong.
-The mistake may have gone unnoticed, since it doesn't spoil the answer, the maximum stays
+The mistake may have gone unnoticed, since it didn't spoil the answer, the maximum stays
 $4$ at $x=y=2$. However, the mistake may have confused the interested student who tries
 to understand the details.
 
@@ -332,10 +335,10 @@ Clearly, the solution $-1$ is to be found in the point $(0,1)$.
 However, we cannot proceed as in the previous section since the
 initial dictionary is not feasible:
 \begin{alltt}
-lpped> read input/nik3.lps
+pplex> read input/nik3.lps
 Read input/nik3.lps OK.
 
-lpped> show primal
+pplex> show primal
  \(\zeta\) =        - 2.00x - y
 w1 = - 1.00 -     x + y
 w2 =   2.00 -     x - y
@@ -348,7 +351,7 @@ Equisolvability means that the primal problem has an optimal solution if and onl
 the dual problem has. Moreover, these solutions are each other's dual.
 We will not enter the details of duality theory here, but let \url{pplex} do the work:
 \begin{alltt}
-lpped> show dual
+pplex> show dual
 -\(\xi\) =      + y1 - 2.00y2
 z1 = 2.00 + y1 +     y2
 z2 = 1.00 - y1 +     y2
@@ -356,9 +359,9 @@ z2 = 1.00 - y1 +     y2
 The negative coefficients of the original objective $-2x-y$ show up in the dual
 dictionary as the positive constants $2.00$ and $1.00$ of the first and the second 
 linear equation, respectively. Since they are positive, the dual dictionary is actually feasible.
-The maximum value $1$ of \(-\zeta\) in the dual problem is found after one pivot:
+The maximum value $1$ of \(-\xi\) in the dual problem is found after one pivot:
 \begin{alltt}
-lpped> pivot dual 1 2
+pplex> pivot dual 1 2
 -\(\xi\) = 1.00 - z2 -     y2
 z1 = 3.00 - z2 + 2.00y2
 y1 = 1.00 - z2 +     y2
@@ -366,7 +369,7 @@ y1 = 1.00 - z2 +     y2
 The primal version of this dictionary shows that we have indeed found the
 maximum $-1$ of $\zeta$ for $x=0,~y=1$ in the original problem:
 \begin{alltt}
-lpped> show primal
+pplex> show primal
  \(\zeta\) = - 1.00 - 3.00x - w1
  y =   1.00 +     x + w1
 w2 =   1.00 - 2.00x - w1
@@ -395,7 +398,7 @@ w2 =   2.00 -     x - y
 The command \verb|replace -2 -1| is used to negate (back) the objective,
 yielding the dually feasible previous example:
 \begin{alltt}
-lpped> replace -2 -1
+pplex> replace -2 -1
  \(\zeta\)  =        - 2.00x - y
 w1 = - 1.00 -     x + y
 w2 =   2.00 -     x - y
@@ -412,7 +415,7 @@ not $-2x-y$. The only thing one has to do is to put the original objective in pl
 replacing non-basic variables by their right-hand sides: $2x+(1+x+w_1)$.
 This is achieved by the command \verb|update|:
 \begin{alltt}
-lpped> update
+pplex> update
  \(\zeta\) = 1.00 + 3.00x + w1
  y = 1.00 +     x + w1
 w2 = 1.00 - 2.00x - w1
@@ -420,7 +423,7 @@ w2 = 1.00 - 2.00x - w1
 It now takes only one step to find the maximum value $2\frac{1}{2}$ 
 for $2x+y$ in $(\frac{1}{2},1\frac{1}{2})$:
 \begin{alltt}
-lpped> pivot 1 2
+pplex> pivot 1 2
  \(\zeta\) = 2.50 - 1.50w2 - 0.50w1
  y = 1.50 - 0.50w2 + 0.50w1
  x = 0.50 - 0.50w2 - 0.50w1
@@ -428,7 +431,7 @@ lpped> pivot 1 2
 
 
 \section{Examples of Degeneracy and Cycling}\label{sec:cycling}
-Degeneracy is the phenomenon that the constant of the linear equation used as pivot
+Degeneracy is the phenomenon that the constant of a pivot
 is zero. Pivoting will then not improve the value of the basic solution. 
 There can be hope, of course, that one of the next pivots will improve
 the objective. Unfortunately, there is the (rare) possibility of cycling,
@@ -436,6 +439,10 @@ as shown by the following example \cite{Chvatal,Vanderbei}.
 \begin{alltt}
 \input{../input/nik5.txt}
 \end{alltt}
+With this last dictionary we are back at the beginning, 
+albeit written out in a permuted way. Note that each pivot has been
+chosen picking the basic variable with the largest coefficient in the objective.
+
 
 \section{Unbounded Examples}\label{sec:unbounded}
 Recall that solving an LP problem is to find the maximum of a linear
@@ -451,29 +458,28 @@ speak for itself:
 \begin{alltt}
 \input{../input/nik6.txt}
 \end{alltt}
-Here we have a feasible dictionary and all coefficients of $x$ are
-positive. This means that $x$ can increase unboundedly,
-yielding arbitrarily high values o fthe objective.
+Here we have a feasible dictionary and all coefficients of $w_1$ 
+(and of $w_2$) are positive. This means that $w_1$ can increase 
+unboundedly, yielding arbitrarily high values of the objective.
 The command \verb|pivot|, which can pick a suitable pivot itself,
 discovers this:
 \begin{alltt}
-lpped> pivot
+pplex> pivot
 Problem is unbounded.
 \end{alltt}
-In the last dictionary we see that for $x=100+y$ and $y \geq 19900$
-we always have a solution. This was not so easy to see in the
-initial dictionary. 
+In the last dictionary we see that for $w_2 = 0,~x=100+y$ we have a solution
+for any $y \geq 19900$. This was not so easy to see in the initial dictionary. 
 
 
 
 
 
 
-\section{Features}\label{sec:features}
-Short overview of the software, dicussion of design decisions.
+%\section{Features}\label{sec:features}
+%Short overview of the software, dicussion of design decisions.
 
 \section{Future extensions}\label{sec:future}
-
+3D visualization
 
 
 
@@ -490,7 +496,7 @@ Short overview of the software, dicussion of design decisions.
 W.H.~Freeman and Company, 1983.
 
 \bibitem{pplex}
-\url{https://github.com/andern/pplex/}
+\url{https://github.com/andern/lpped/pplex/}
 
 \bibitem{GNUGPL}
 \url{http://www.gnu.org/licenses/}
