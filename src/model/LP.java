@@ -31,9 +31,12 @@ import java.util.HashMap;
 public class LP {
     private Matrix B;
     private Matrix N;
+    
+    public Matrix B_;
+    public Matrix N_;
 
-    private final Matrix b;
-    private final Matrix c;
+    public final Matrix b;
+    public final Matrix c;
     private Matrix x_b;
     private Matrix z_n;
 
@@ -71,7 +74,8 @@ public class LP {
      *        basic and non-basic variables to their names.
      */
     public LP(Matrix N, Matrix b, Matrix c, HashMap<Integer, String> x) {
-        this(Matrix.identity(N.rows()), N, b, c, b, c.scale(-1),
+        this(Matrix.identity(N.rows()), N, Matrix.identity(N.rows()), N, b, c,
+                                              b, c.scale(-1),
                                               new int[N.rows()],
                                               new int[N.cols()], x);
 
@@ -92,6 +96,12 @@ public class LP {
      * @param N
      *        A {@code Matrix} with the coefficients
      *        of the non-basic variables.
+     * @param B_
+     *        A {@code Matrix} with the coefficients of the
+     *        basic variables in the original dictionary.
+     * @param N_
+     *        A {@code Matrix} with the coefficients of the
+     *        non-basic variables in the original dictionary.
      * @param b
      *        A {@code Matrix} with the upper bounds on
      *        the constraints in the original program.
@@ -112,11 +122,15 @@ public class LP {
      *        A {@code HashMap} mapping the indices of the
      *        basic and non-basic variables to their names.
      */
-    private LP(Matrix B, Matrix N, Matrix b, Matrix c, Matrix x_b, Matrix z_n,
+    private LP(Matrix B, Matrix N, Matrix B_, Matrix N_, Matrix b, Matrix c,
+                                            Matrix x_b, Matrix z_n,
                                             int[] Bi, int[] Ni,
                                             HashMap<Integer, String> x) {
         this.B = B;
         this.N = N;
+        
+        this.B_ = B_;
+        this.N_ = N_;
     
         this.b = b;
         this.c = c;
@@ -276,7 +290,7 @@ public class LP {
         Arrays.fill(zdata, 1);
 
         Matrix z_n = new Matrix(zdata).transpose();
-        return new LP(B, N, b, c, x_b, z_n, Bi, Ni, x);
+        return new LP(B, N, B_, N_, b, c, x_b, z_n, Bi, Ni, x);
     }
 
 
@@ -292,7 +306,7 @@ public class LP {
      */
     public LP replaceObj(double[] coeff) {
         Matrix z_n = new Matrix(coeff).transpose().scale(-1);
-        return new LP(B, N, b, c, x_b, z_n, Bi, Ni, x);
+        return new LP(B, N, B_, N_, b, c, x_b, z_n, Bi, Ni, x);
     }
 
 
@@ -344,7 +358,7 @@ public class LP {
         nBi[leaving] = Ni[entering];
         nNi[entering] = Bi[leaving];
 
-        return new LP(nB, nN, b, c, nx_b, nz_n, nBi, nNi, x);
+        return new LP(nB, nN, B_, N_, b, c, nx_b, nz_n, nBi, nNi, x);
     }
 
 
@@ -386,7 +400,7 @@ public class LP {
         }
 
         Matrix z_n = new Matrix(zdata).transpose();
-        return new LP(B, N, b, c, x_b, z_n, Bi, Ni, x);
+        return new LP(B, N, B_, N_, b, c, x_b, z_n, Bi, Ni, x);
     }
 
 
