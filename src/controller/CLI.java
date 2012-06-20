@@ -67,7 +67,7 @@ class CLI {
 
 
 
-    private String parseCmd(String cmd) {
+    String parseCmd(String cmd) {
         if (cmd.equals("q") || cmd.equals("exit") || cmd.equals("quit"))
             System.exit(0);
 
@@ -95,6 +95,9 @@ class CLI {
         else if (args[0].equals(Data.update))  { s = parseUpdate(args); }
 
         else return String.format("Invalid command %s%n", args[0]);
+        
+        // TODO: REMOVE
+        if (p != 0) Coordinates.lp = lps.get(p-1);
 
         /* Only log valid commands. */
         log.add(cmd);
@@ -107,7 +110,7 @@ class CLI {
         StringBuffer sb = new StringBuffer();
 
         if (args.length == 1) {
-            sb.append("\n");
+//            sb.append("\n");
             Set<String> set = Data.SHELP.keySet();
             for (String s : set) {
                 sb.append(String.format("%-20s %s%n", s, Data.SHELP.get(s)));
