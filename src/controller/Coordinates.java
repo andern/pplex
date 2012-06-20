@@ -10,6 +10,8 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.Ellipse2D;
+import java.math.BigDecimal;
+import java.math.MathContext;
 
 import javax.swing.JPanel;
 
@@ -21,10 +23,16 @@ public class Coordinates extends JPanel {
     public static LP lp = null;
     
     /* Define the range of the visible xy-plane */
-    private double loX = -1;
-    private double hiX = 5;
-    private double loY = -1;
-    private double hiY = 5;
+    private double loX = -10;
+    private double hiX = 10;
+    private double loY = -10;
+    private double hiY = 10;
+    
+    private double distX = hiX - loX;
+    private double distY = hiY - loY;
+    
+    /* Use this precision for BigDecimal */
+    private MathContext mc = MathContext.DECIMAL128;
     
     
     
@@ -32,6 +40,40 @@ public class Coordinates extends JPanel {
         this.addMouseListener(new mouseListener());
         this.addMouseMotionListener(new mouseListener());
         this.addMouseWheelListener(new mouseScrollListener());
+    }
+    
+    
+    
+    void updateDist() {
+        distX = hiX - loX;
+        distY = hiY - loY;
+    }
+    
+    
+    
+    void move(double moveX, double moveY) {
+        loX += moveX;
+        hiX += moveX;
+        loY += moveY;
+        hiY += moveY;
+        updateDist();
+    }
+    
+    
+    
+    void zoom(double zoomX, double zoomY) {
+        loX -= zoomX;
+        hiX += zoomX;
+        loY -= zoomY;
+        hiY += zoomY;
+        updateDist();
+    }
+    
+    
+    
+    void setHiX(double hiX) {
+        this.hiX = hiX;
+        updateDist();
     }
 
 
@@ -99,6 +141,8 @@ public class Coordinates extends JPanel {
         return new Point(newx, newy);
     }
     
+    
+    
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
@@ -125,15 +169,47 @@ public class Coordinates extends JPanel {
     
     
     
-    private double findDist(int power, double udist) {
+    private BigDecimal findDist(int power, BigDecimal udist) {
+        BigDecimal pow = new BigDecimal(10).pow(power, mc);
+        if (udist.compareTo(pow) < 0) return findDist(power-1, udist);
+        
+        BigDecimal pow2 = pow.multiply(new BigDecimal(2));
+        if (udist.compareTo(pow2) < 0) return pow;
+        
+        BigDecimal pow4 = pow.multiply(new BigDecimal(4));
+        if (udist.compareTo(pow4) < 0) return pow2;
+        
+        BigDecimal pow5 = pow.multiply(new BigDecimal(5));
+        if (udist.compareTo(pow5) < 0) return pow4;
+        
+        BigDecimal pow10 = pow.multiply(new BigDecimal(10));
+        if (udist.compareTo(pow10) < 0) return pow5;
+        
+        return findDist(power+1, udist);
+        
+        /* Method without BigDecimal is kept to make this less confusing */
+        /*
         double pow = Math.pow(10, power);
         if (udist < pow) return findDist(power-1, udist);
         if (udist < 2*pow) return pow;
         if (udist < 4*pow) return 2*pow;
         if (udist < 5*pow) return 4*pow;
         if (udist < 10*pow) return 5*pow;
-        else return findDist(power+1, udist); // if (udist >= 10*pow);
+        return findDist(power+1, udist); // if (udist >= 10*pow);
+        */
     }
+    
+    
+    
+//    private double findDist(int power, double udist) {
+//        double pow = Math.pow(10, power);
+//        if (udist < pow) return findDist(power-1, udist);
+//        if (udist < 2*pow) return pow;
+//        if (udist < 4*pow) return 2*pow;
+//        if (udist < 5*pow) return 4*pow;
+//        if (udist < 10*pow) return 5*pow;
+//        return findDist(power+1, udist); // if (udist >= 10*pow);
+//    }
     
     
     
@@ -160,77 +236,110 @@ public class Coordinates extends JPanel {
                      yaxis_end.x, yaxis_end.y);
         
         
-        int pbu = 100;
-        double distx = hiX - loX;
-        double disty = hiY - loY;
-        int unitsx = getWidth() / pbu;
-        int unitsy = getHeight() / pbu;
-        double udistx = distx / unitsx;
-        double udisty = disty / unitsy;
-        double vbux = findDist(1, udistx);
-        double vbuy = findDist(1, udisty);
-        double svbux = vbux / 5;
-        double svbuy = vbuy / 5;
+        
+        int pbu = 150; // Approximate pixels between each major unit.
+        int unitsX = getWidth() / pbu;
+        int unitsY = getHeight() / pbu;
+        double udistX = distX / unitsX;
+        double udistY = distX / unitsY;
+        /* Use BigDecimal so we don't get rounding errors on the major units */
+        BigDecimal vbuxbd = findDist(1, new BigDecimal(udistX));
+        BigDecimal vbuybd = findDist(1, new BigDecimal(udistY));
+        
+        BigDecimal five = new BigDecimal(5);
+        BigDecimal svbuxbd = vbuxbd.divide(five, mc);
+        BigDecimal svbuybd = vbuybd.divide(five, mc);
+        
+        
         
         /* Draw the units on the x-axis on the right side of "origo" */
-        for (double i = ox+vbux; i <= hiX; i += vbux) {
-            Point p = coordinate(i, oy);
-            g2d.drawLine(p.x, p.y-4, p.x, p.y+4);
-            
-            String val = String.format("%.1f", i);
-            g2d.drawString(val, p.x-7, p.y+20);
-        }
-        for (double i = ox+svbux; i <= hiX; i += svbux) {
-            Point p = coordinate(i, oy);
-            g2d.drawLine(p.x, p.y-2, p.x, p.y+2);
+        int pix = o.x;
+        int q = 1;
+        while (pix <= getWidth()) {
+            BigDecimal qbd = new BigDecimal(q);
+            BigDecimal val = svbuxbd.multiply(qbd, mc);
+            double rval = val.doubleValue();
+            Point p = coordinate(rval, oy);
+
+            int size = 2;
+
+            if (q++ % 5 == 0) {
+                size = 4;
+                /*
+                 * Cannot use BigDecimal's toString-method since it does not
+                 * use scientific notation on positive numbers.
+                 */
+                String strval = Double.toString(rval);
+                g2d.drawString(strval, p.x-7, p.y+20);
+            }
+            g2d.drawLine(p.x, p.y-size, p.x, p.y+size);
+            pix = p.x;
         }
         
         
         
         /* Draw the units on the x-axis on the left side of "origo" */
-        for (double i = ox-vbux; i >= loX; i -= vbux) {
-            Point p = coordinate(i, oy);
-            g2d.drawLine(p.x, p.y-4, p.x, p.y+4);
+        pix = o.x;
+        q = 1;
+        while (pix >= 0) {
+            BigDecimal qbd = new BigDecimal(q);
+            BigDecimal val = svbuxbd.multiply(qbd, mc).negate();
+            double rval = val.doubleValue();
+            Point p = coordinate(rval, oy);
             
-            String val = String.format("%.1f", i);
-            g2d.drawString(val, p.x-7, p.y+20);
+            int size = 2;
+            
+            if (q++ % 5 == 0) {
+                size = 4;
+                String strval = Double.toString(rval);
+                g2d.drawString(strval, p.x-7, p.y+20);
+            }
+            g2d.drawLine(p.x, p.y-size, p.x, p.y+size);
+            pix = p.x;
         }
-        for (double i = ox-svbux; i >= loX; i -= svbux) {
-            Point p = coordinate(i, oy);
-            g2d.drawLine(p.x, p.y-2, p.x, p.y+2);
-        }
-        
-        
-        
         
         
         
         /* Draw the units on the y-axis north of "origo" */
-        for (double i = oy+vbuy; i <= hiY; i += vbuy) {
-            Point p = coordinate(ox, i);
-            g2d.drawLine(p.x-4, p.y, p.x+4, p.y);
+        pix = o.y;
+        q = 1;
+        while (pix >= 0) {
+            BigDecimal qbd = new BigDecimal(q);
+            BigDecimal val = svbuybd.multiply(qbd, mc);
+            double rval = val.doubleValue();
+            Point p = coordinate(ox, rval);
             
-            String val = String.format("%.1f", i);
-            g2d.drawString(val, p.x-25, p.y+5);
-        }
-        for (double i = ox+svbuy; i <= hiY; i += svbuy) {
-            Point p = coordinate(ox, i);
-            g2d.drawLine(p.x-2, p.y, p.x+2, p.y);
+            int size = 2;
+            
+            if (q++ % 5 == 0) {
+                size = 4;
+                String strval = Double.toString(rval);
+                g2d.drawString(strval, p.x-strval.length()*10, p.y+5);
+            }
+            g2d.drawLine(p.x-size, p.y, p.x+size, p.y);
+            pix = p.y;
         }
         
         
         
         /* Draw the units on the y-axis south of "origo" */
-        for (double i = oy-vbuy; i >= loY; i -= vbuy) {
-            Point p = coordinate(ox, i);
-            g2d.drawLine(p.x-4, p.y, p.x+4, p.y);
+        pix = o.y;
+        q = 1;
+        while (pix <= getHeight()) {
+            BigDecimal qbd = new BigDecimal(q);
+            BigDecimal val = svbuybd.multiply(qbd, mc).negate();
+            double rval = val.doubleValue();
+            Point p = coordinate(ox, rval);
             
-            String val = String.format("%.1f", i);
-            g2d.drawString(val, p.x-30, p.y+5);
-        }
-        for (double i = ox-svbuy; i >= loY; i -= svbuy) {
-            Point p = coordinate(ox, i);
-            g2d.drawLine(p.x-2, p.y, p.x+2, p.y);
+            int size = 2;
+            
+            if (q++ % 5 == 0) {
+                size = 4;
+                String strval = Double.toString(rval);
+                g2d.drawString(strval, p.x-strval.length()*10, p.y+5);
+            }
+            g2d.drawLine(p.x-size, p.y, p.x+size, p.y);
+            pix = p.y;
         }
     }
     
@@ -251,13 +360,19 @@ public class Coordinates extends JPanel {
         public void mouseWheelMoved(MouseWheelEvent e) {
             int units = e.getUnitsToScroll();
             
-            double zoom = units / 10.0;
+            double distx = hiX - loX;
+            double disty = hiY - loY;
             
-            loX -= zoom;
-            hiX += zoom;
+            double zoomx = distx / 100.0 * units;
+            double zoomy = disty / 100.0 * units;
             
-            loY -= zoom;
-            hiY += zoom;
+            zoom(zoomx, zoomy);
+            
+//            loX -= zoomx;
+//            hiX += zoomx;
+//            
+//            loY -= zoomy;
+//            hiY += zoomy;
             
             repaint();
         }
@@ -267,8 +382,8 @@ public class Coordinates extends JPanel {
     
     
     class mouseListener implements MouseListener, MouseMotionListener {
-        int lastX;
-        int lastY;
+        private int lastX;
+        private int lastY;
 
         @Override
         public void mouseClicked(MouseEvent e) {}
@@ -297,10 +412,10 @@ public class Coordinates extends JPanel {
             int dx = lastX - x;
             int dy = lastY - y;
 
-            loX += dx / 100.0;
-            hiX += dx / 100.0;
-            loY -= dy / 100.0;
-            hiY -= dy / 100.0;
+            double moveX = distX / getWidth() * dx;
+            double moveY = distY / getHeight() * dy;
+            
+            move(moveX, -moveY);
 
             repaint();
             
