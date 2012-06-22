@@ -150,7 +150,7 @@ public class Coordinates extends JPanel {
         drawAxes(g2d);
         
         if (lp != null) {
-            System.out.println(lp.N_);
+//            System.out.println(lp.N_);
             for (int i = 0; i < lp.getNoNonBasic(); i++) {
                 drawConstraint(g2d, lp.N_.get(i, 0), 
                         lp.N_.get(i, 1),
@@ -169,47 +169,17 @@ public class Coordinates extends JPanel {
     
     
     
-    private BigDecimal findDist(int power, BigDecimal udist) {
-        BigDecimal pow = new BigDecimal(10).pow(power, mc);
-        if (udist.compareTo(pow) < 0) return findDist(power-1, udist);
-        
-        BigDecimal pow2 = pow.multiply(new BigDecimal(2));
-        if (udist.compareTo(pow2) < 0) return pow;
-        
-        BigDecimal pow4 = pow.multiply(new BigDecimal(4));
-        if (udist.compareTo(pow4) < 0) return pow2;
-        
-        BigDecimal pow5 = pow.multiply(new BigDecimal(5));
-        if (udist.compareTo(pow5) < 0) return pow4;
-        
-        BigDecimal pow10 = pow.multiply(new BigDecimal(10));
-        if (udist.compareTo(pow10) < 0) return pow5;
-        
-        return findDist(power+1, udist);
-        
-        /* Method without BigDecimal is kept to make this less confusing */
-        /*
-        double pow = Math.pow(10, power);
-        if (udist < pow) return findDist(power-1, udist);
-        if (udist < 2*pow) return pow;
-        if (udist < 4*pow) return 2*pow;
-        if (udist < 5*pow) return 4*pow;
-        if (udist < 10*pow) return 5*pow;
-        return findDist(power+1, udist); // if (udist >= 10*pow);
-        */
+    private BigDecimal findScale(double udist) {
+        int x = (int)Math.log10(udist);
+        double quot = udist / Math.pow(10, x);
+        /* scale = 10 ^ x */
+        BigDecimal scale = new BigDecimal(10, mc).pow((int)x, mc);
+        if (quot > 5.0) return scale.multiply(new BigDecimal(10), mc);
+        if (quot > 4.0) return scale.multiply(new BigDecimal(5), mc);
+        if (quot > 2.0) return scale.multiply(new BigDecimal(4), mc);
+        if (quot > 1.0) return scale.multiply(new BigDecimal(2), mc);
+        else return scale;
     }
-    
-    
-    
-//    private double findDist(int power, double udist) {
-//        double pow = Math.pow(10, power);
-//        if (udist < pow) return findDist(power-1, udist);
-//        if (udist < 2*pow) return pow;
-//        if (udist < 4*pow) return 2*pow;
-//        if (udist < 5*pow) return 4*pow;
-//        if (udist < 10*pow) return 5*pow;
-//        return findDist(power+1, udist); // if (udist >= 10*pow);
-//    }
     
     
     
@@ -237,40 +207,53 @@ public class Coordinates extends JPanel {
         
         
         
-        int pbu = 150; // Approximate pixels between each major unit.
+        /* Approximate number of pixels needed between each "unit" */
+        int pbu = 65;
+        
+        /* Total number of units on both axes */
         int unitsX = getWidth() / pbu;
         int unitsY = getHeight() / pbu;
+        
+        /* Exact value between each unit */
         double udistX = distX / unitsX;
-        double udistY = distX / unitsY;
-        /* Use BigDecimal so we don't get rounding errors on the major units */
-        BigDecimal vbuxbd = findDist(1, new BigDecimal(udistX));
-        BigDecimal vbuybd = findDist(1, new BigDecimal(udistY));
+        double udistY = distY / unitsY;
         
-        BigDecimal five = new BigDecimal(5);
-        BigDecimal svbuxbd = vbuxbd.divide(five, mc);
-        BigDecimal svbuybd = vbuybd.divide(five, mc);
+        /* 
+         * The exact value rounded to a value that can be written with
+         * very few decimals. Is also "easily" divisible by 5. 
+         */
+        BigDecimal vbux = findScale(udistX);
+        BigDecimal vbuy = findScale(udistY);
         
+        /* Divide by 5 to get value between each "minor" unit. */
+        BigDecimal five = new BigDecimal(5, mc);
+        BigDecimal svbux = vbux.divide(five, mc);
+        BigDecimal svbuy = vbuy.divide(five, mc);
         
-        
-        /* Draw the units on the x-axis on the right side of "origo" */
+        /* Draw the units on the x-axis */
         int pix = o.x;
-        int q = 1;
+        int q = (int) (loX / svbux.doubleValue());
         while (pix <= getWidth()) {
-            BigDecimal qbd = new BigDecimal(q);
-            BigDecimal val = svbuxbd.multiply(qbd, mc);
+            /*
+             * Simply using double here introduces rounding errors
+             * when rval reaches the order of 10^23 or higher or
+             * 10^-23 or lower.
+             */
+            BigDecimal qbd = new BigDecimal(q, mc);
+            BigDecimal val = svbux.multiply(qbd, mc);
             double rval = val.doubleValue();
             Point p = coordinate(rval, oy);
 
             int size = 2;
 
-            if (q++ % 5 == 0) {
+            if (q++ % 5 == 0 && p.x != o.x) {
                 size = 4;
                 /*
                  * Cannot use BigDecimal's toString-method since it does not
                  * use scientific notation on positive numbers.
                  */
                 String strval = Double.toString(rval);
-                g2d.drawString(strval, p.x-7, p.y+20);
+                g2d.drawString(strval, p.x-strval.length()/2*8, p.y+20);
             }
             g2d.drawLine(p.x, p.y-size, p.x, p.y+size);
             pix = p.x;
@@ -278,65 +261,22 @@ public class Coordinates extends JPanel {
         
         
         
-        /* Draw the units on the x-axis on the left side of "origo" */
-        pix = o.x;
-        q = 1;
-        while (pix >= 0) {
-            BigDecimal qbd = new BigDecimal(q);
-            BigDecimal val = svbuxbd.multiply(qbd, mc).negate();
-            double rval = val.doubleValue();
-            Point p = coordinate(rval, oy);
-            
-            int size = 2;
-            
-            if (q++ % 5 == 0) {
-                size = 4;
-                String strval = Double.toString(rval);
-                g2d.drawString(strval, p.x-7, p.y+20);
-            }
-            g2d.drawLine(p.x, p.y-size, p.x, p.y+size);
-            pix = p.x;
-        }
-        
-        
-        
-        /* Draw the units on the y-axis north of "origo" */
+        /* Draw the units on the y-axis */
         pix = o.y;
-        q = 1;
+        q = (int) (loY / svbuy.doubleValue());
         while (pix >= 0) {
-            BigDecimal qbd = new BigDecimal(q);
-            BigDecimal val = svbuybd.multiply(qbd, mc);
+            BigDecimal qbd = new BigDecimal(q, mc);
+            BigDecimal val = svbuy.multiply(qbd, mc);
             double rval = val.doubleValue();
             Point p = coordinate(ox, rval);
-            
+
             int size = 2;
-            
-            if (q++ % 5 == 0) {
+
+            if (q++ % 5 == 0 && p.y != o.y) {
                 size = 4;
+                
                 String strval = Double.toString(rval);
-                g2d.drawString(strval, p.x-strval.length()*10, p.y+5);
-            }
-            g2d.drawLine(p.x-size, p.y, p.x+size, p.y);
-            pix = p.y;
-        }
-        
-        
-        
-        /* Draw the units on the y-axis south of "origo" */
-        pix = o.y;
-        q = 1;
-        while (pix <= getHeight()) {
-            BigDecimal qbd = new BigDecimal(q);
-            BigDecimal val = svbuybd.multiply(qbd, mc).negate();
-            double rval = val.doubleValue();
-            Point p = coordinate(ox, rval);
-            
-            int size = 2;
-            
-            if (q++ % 5 == 0) {
-                size = 4;
-                String strval = Double.toString(rval);
-                g2d.drawString(strval, p.x-strval.length()*10, p.y+5);
+                g2d.drawString(strval, p.x-strval.length()*8, p.y+5);
             }
             g2d.drawLine(p.x-size, p.y, p.x+size, p.y);
             pix = p.y;
@@ -367,12 +307,6 @@ public class Coordinates extends JPanel {
             double zoomy = disty / 100.0 * units;
             
             zoom(zoomx, zoomy);
-            
-//            loX -= zoomx;
-//            hiX += zoomx;
-//            
-//            loY -= zoomy;
-//            hiY += zoomy;
             
             repaint();
         }
