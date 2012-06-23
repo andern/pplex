@@ -47,7 +47,7 @@
 
 \begin{document}
 
-\title{Teaching the Simplex Method}
+\title{\url{pplex} - A Tool for Teaching the Simplex Method}
 
 \author{
 Joanna Bauer\thanks{University of Bergen, Department of Informatics, P.O.Box 7803, N-5020 Bergen, Norway}
@@ -59,52 +59,64 @@ Andreas Halle$^*$}
 \maketitle
 
 \begin{abstract}
-{\bf May change:} We present software supporting
-the classroom presentation of the simplex method in linear programming.
+Linear programs occur frequently in various important disciplines, such as economics, management, and engineering.
+The simplex method is the best known and most widely used method to solve linear programs.
+Therefore, it is taught to a wide range of students with varying background in mathematics.
+	We present the software \url{pplex} for supporting
+the classroom presentation of the simplex method.
 \end{abstract}
 
 \section{Introduction and Motivation}\label{sec:intro}
-Linear Programming (LP) is the subfield of mathematical optimization which
-deals with the maximization of a linear function under linear constraints. Such a problem
-is called an LP problem. The simplex method is a family of algorithms for solving LP problems. 
-Although there exist other algorithms for solving LP problems,
-the simplex method is by far the one that is most used in practice.
-It is also listed it as one of the top 10 algorithms of the twentieth century in
-\cite{CiSaE2000}. Given the many applications of LP in economics, engineering and
-management, it is deemed important to teach the simplex method to a wide range of
-students. This range certainly includes students in applied mathematics and informatics,
-but extends considerably beyond these groups. The fact that the simplex method is
-taught to students with a weaker background in mathematics and algorithmics than
-the abovementioned two groups should have important consequences for the way
-in which we teach the simplex method.
+In an optimization problem, the objective is to decide on how to utilize given ressources such that they maximize some ``profit'' (or minimize some ``cost''), while satisfying a set of additional constraints on the ressources.
+This is commonly done by assoziating the possible decisions with variables, such that the profit and the constraints can be formulated as functions of these variables. 
+If the profit (in general called \emph{objective (function)} is linear and the constraints can be formulated as linear (in)equalities, then the optimization problem has a \emph{linear programming (LP)} formulation. An instance of an LP formulation is called \emph{linear program}.
+Solving a linear program means identifying those values for the variables which maximize the objective while satisfying all constraints.
+Linear programs occur frequently in economics, mangagement, and engineering.
 
-In most courses on linear programming the need arises for demonstrating the simplex method step-by-step 
+The simplex method is by far the most widely used method for solving linear programs. 
+It is listed as one of the top 10 algorithms of the twentieth century in
+\cite{CiSaE2000}. Given the many applications of LP, the simplex method is taught to a wide range of
+students, including students with a weak background in mathematics and algorithmics. 
+
+Most lecturers on linear programming need to demonstrate the simplex method step-by-step 
 \emph{without being distracted by detailed calculations in elementary linear algebra}. Let us start by
 introducing the simplex method by a simple example:
-%and at the same time present some teaching issues at hand. 
 \[
-    \begin{array}{lrcrcrcrcrcrcr}
-    \text{Maximize}  &    x &+&    y \\
-    \text{subject to}&  2 x &+&    y &\leq&   6\\
-    \text{and}&         7 x &+& 13 y &\leq&  40\\
-    \text{and}       &    x &,&    y &\geq&0    &
+    \begin{array}{lrcrcrl}
+			\text{Maximize}  &    x &+&    y &	&	& \quad\quad \text{(objective function)}\\
+			\text{subject to}&  2 x &+&    y &\leq&   6	& \quad\quad \text{(constraints)}\\
+    	\text{and}&         7 x &+& 13 y &\leq&  40\\
+    	\text{and}       &    x &,&    y &\geq&0    &
     \end{array}
 \]
 where the variables $x$ and $y$ range over the real numbers.
-A \emph{feasible} solution is an assignment of real numbers to the variables 
-such that all inequalities are satisfied. 
-In the example above there exist feasible solutions,
-since the polyhedron given by the four (yes, four!) inequalities contains,
-among other points, the origin. Inequalities cannot be manipulated in the same
-simple way as equations in linear algebra. Therefore, a first step is to
-have linear equations in combination with simple inequalities of the form
-$\mathit{variable}\geq 0$. For this purpose we introduce
-two new variables, $u$ and $v$, measuring to what extent the first
-two inequalities are satisfied. These new variables are commonly called
-\emph{slack variables}. At the same time we introduce an extra variable
-for the function $x+y$, the so-called \emph{objective function},
-or \emph{objective} for short. Thus our LP problem is brought in
-\emph{standard form}:
+
+A \emph{feasible} point is an assignment of real numbers to the variables 
+such that all constraints are satisfied. 
+The inequality constraints correspond to halfspaces (here halfplanes), and the constraints of a program 
+define the \emph{polyhedron} containing the feasible points (see Fig.~\ref{fig:ex1}).
+In the example above there exist feasible points,
+since the polyhedron given by the four inequalities contains,
+among other points, the origin. 
+
+\begin{figure}[htb]
+	\begin{center}
+		\includegraphics{ex1.jpg}
+	\end{center}
+	\caption{Geometric Interpretation of our Linear Program}
+	\label{fig:ex1}
+\end{figure}
+
+Since inequalities cannot be manipulated algebraically as easily
+as equations, a first step is to reformulate the problem such that it is expressed
+by linear equations in combination with simple inequalities of the form
+$\mathit{variable}\geq 0$. For this purpose, we introduce
+two new variables, $u$ and $v$, called \emph{slack variables}, measuring to what extent the first
+two inequalities are satisfied. 
+We also introduce a new variable
+for the objective function $x+y$. Thus our LP problem is brought into the following form, 
+called a \emph{dictionary} in \cite{Vanderbei}:
+%\emph{standard form}: ``Standard form'' is Ax \leq b , Vanderbei p.7
 \[    
     \begin{array}{lcrcrcrcr}
       \zeta&=&   & &     x &+&     y & &  \\\hline
@@ -113,27 +125,27 @@ or \emph{objective} for short. Thus our LP problem is brought in
       x,y,u,v  &\geq&0     & &  & &  & &    
     \end{array}
 \]
-Note that each edge of the polyhedron corresponds to a variable
-being zero on that edge. Consequently,
-vertices of the polyhedron are all given by a pair of
-two distinct variables being zero. Note that some of these
-pairs take their values zero outside the polyhedron, f.e.\ , $x=v=0$.
-Since the inequalities $x,y,u,v \geq 0$ are part of the standard, 
-they are often omitted. This standard form is also called \emph{dictionary}
-in \cite{Vanderbei}.
+
+Since we now deal with two equalities in four variables, 
+assigning values to any variable pair determines the values of the remaining two variables.
 
 Geometric considerations lead to the observation that the
-maximal value of the objective under the constraints (linear
+maximal value of the objective subject to the constraints (linear
 equalities and inequalities of the form 
-$\mathit{variable}\geq 0$ is attained in a vertex of the
-polyhedron. The idea of the standard form is
-that the variables on the right, the \emph{basic} variables, are zero,
-the so-called \emph{basic solution}.
-The basic solution enforces the variables on the left
-to have values given by the constants in the linear equations.
-Since all variables must be non-negative, it is possible that
-the the basic solution is not feasible. We  call a dictionary
-\emph{(in)feasible} if the basic solution is (not) feasible.
+$\mathit{variable}\geq 0$) is attained in a vertex of the polyhedron. 
+Through the introduction of the slack variables, each edge of the polyhedron now corresponds to one variable
+being zero. Thus assigning zero to a pair of variables corresponds to the intersection point of the corresponding pair of eges. 
+This intersection point either lies outside the polyhedron (f.ex. for $y=v=0$), or  
+it is a vertex of the polyhedron and thus a potential candidate for the optimal solution. 
+For this reason, we are especially interested in assignments to $(x,y,u,v)$ where two variables are set to zero. 
+Such an assignment is called a \emph{basic solution}, with the variables being zero the \emph{basic} variables.
+
+Every basic solution corresponds to a dictionary with the basic variables on the right side of ``='', 
+enforcing the variables on the left to equal the constants in the equations. 
+If one of the constants is negative, then the corresponding basic solution is not feasible. 
+(Geometrically, a non-feasible basic solution lies outside of the polyhedron with respect to the inequality corresponding to the 
+variable which is assigned a negative value.)
+We  call a dictionary \emph{(in)feasible} if the corresponding basic solution is (not) feasible.
 
 In the example above, we start in the origin $x=y=0$ and get
 value $0$ for the objective $\zeta = x + y$.
@@ -141,7 +153,7 @@ Clearly, there is room for improvement here, since in fact
 the value $0$ is the \emph{minimal} value of the objective
 under the given constraints. How can we improve on this
 value? The answer is simple: increase $x$ or $y$ or both.
-In the simplex method one chooses one basic variable and
+The simplex method chooses one basic variable and
 tries to increase it as much as possible, while keeping the
 other basic variables constant zero.
 Let's try to increase $x$ keeping $y=0$. How much can $x$ increase?
@@ -154,12 +166,14 @@ With value increased to $3$, $x$ doesn't qualify as a basic variable anymore.
 Fortunately, the variable $u$ has become zero. Interchanging the roles of
 $x$ and $u$ as basic and non-basic variable, respectively, restores 
 the invariant of the standard form. The limiting equation $u = 6 -2x-y$ makes it
-possible to express $x$ in $u,y$ such that $x$ can be eliminated from the
+possible to express $x$ in $u$ and $y$ such that $x$ can be eliminated from the
 right-hand side of the standard form. The equation $u = 6 -2x-y$ is
-called the \emph{pivot} and the operation of interchanging the roles of
+called the \emph{pivot} and interchanging the roles of
 a basic and a non-basic variable is called \emph{pivoting}.
-Technically, pivoting is done by standard row operations in linear algebra. 
-The new dictionary becomes:
+In the dictionary, pivoting is done by standard row operations in linear algebra. 
+The incumbent dictionary becomes:
+
+	\begin{minipage}{.45\textwidth}
 \[    
     \begin{array}{lcrcrcrcr}
       \zeta&=& 3 &-& 0.5 u &+& 0.5 y & &  \\\hline
@@ -168,14 +182,21 @@ The new dictionary becomes:
 
     \end{array}
 \]
-This still looks good, due to the simplicity of the example.
-However, in the next step things are getting worse. The next step
-starts by the observation that the objective would improve if we 
+\end{minipage}
+	\begin{minipage}{.45\textwidth}
+				\includegraphics{ex2.jpg}
+\end{minipage}
+\vspace{.2cm}
+
+The next step
+starts by observing that the objective improves if we 
 increase $y$ while keeping $u$ constant zero. We see that
-$0\leq v = 19 + 3.5u - 9.5y$ allows us to increase $y$ to $2$,
-and that the other linear equation allows an even larger increase.
-Hence we swap $y$ and $v$ using the second equation as pivot,
-and get, again by standard row operations, the new dictionary:
+$0\leq v = 19 + 3.5u - 9.5y$ allows to increase $y$ to $2$,
+and that the other equation allows an even larger increase.
+Hence, we pivot $y$ and $v$ using the second equation.
+The incumbent dictionary becomes:
+
+	\begin{minipage}{.45\textwidth}
 \[    
     \begin{array}{lcrcrcrcr}
       \zeta&=& 4 &-& \frac{6}{19} u &-& \frac{1}{19} v &\vphantom{\frac{|}{|}} &  \\\hline
@@ -183,24 +204,26 @@ and get, again by standard row operations, the new dictionary:
       y    &=& 2 &+& \frac{7}{19} u &-& \frac{1}{19} v &\vphantom{\frac{|}{|}} &  \\
     \end{array}
 \]
-Observe that all dictionaries obtained under way are equivalent,
-as the row operations can be reversed. 
-The good news is that we have found the maximum, as the coefficients of
-both (now) basic variables $u$ and $v$ are negative. The maximum value $4$
-of the objective is attained in the point $x=y=2$. These values are clearly
-integers by the design of the example, and could also be obtained in a geometric
-way. Less good news is that obtaining the last dictionary
-was a rather painful (but still useful) exercise on the blackboard.
-%And this already in a very simple example!
+\end{minipage}
+	\begin{minipage}{.45\textwidth}
+				\includegraphics{ex3.jpg}
+\end{minipage}
+\vspace{.2cm}
 
-An interested and clever student may now ask the question: 
+The good news is that we have found the maximum, as all coefficients in the objective
+are negative. The maximum value $4$
+of the objective is attained in the point $x=y=2$. These values are 
+integers by the design of the example, and can also be obtained graphically.
+Obtaining the last dictionary algebraically is a painful (but useful) exercise.
+
+An interested student may now ask the question: 
 Can't we start with $y$ instead of with $x$?
-Oops, the example was not designed to start with $y$, 
-but of course this very good question deserves a detailed answer.
+This very good question deserves a detailed answer.
 The lecturer (our hero) starts boldly calculating on the blackboard.
 Clearly, $0\leq v = 40 - 7x -13y$ allows us to increase $y$ to $\frac{40}{13}$,
 and the other linear equation allows an even larger increase. Hence we pivot and get,
 again by standard row operations, the new dictionary:
+\begin{minipage}{.5\textwidth}
 \[    
     \begin{array}{lcrcrcrcr}
       \zeta&=& \frac{40}{13} &+& \frac{6}{13} x &-& \frac{1}{13} v &\vphantom{\frac{|}{|}} &  \\\hline
@@ -217,21 +240,26 @@ question in detail, but manages as by miracle to finally produce the following d
       y    &=& 2 &+& \frac{7}{19} u &-& \frac{2}{19} v &\vphantom{\frac{|}{|}} &  \\
     \end{array}
 \]
+\end{minipage}
+	\begin{minipage}{.45\textwidth}
+				\includegraphics{ex4.jpg}
+\end{minipage}
+\vspace{.2cm}
+
 A Happy End? Not yet. Some attentive students point out that the two final dictionaries
-are not completely identical and asks for an explanation. After some discussion, it turns
+are not completely identical and ask for an explanation. After some discussion, it turns
 out that the fraction $\frac{2}{19}$ in the (last) final dictionary is correct,
 and that the corresponding fraction $\frac{1}{19}$ in the (previous) final dictionary was wrong.
 The mistake may have gone unnoticed, since it didn't spoil the answer, the maximum stays
-$4$ at $x=y=2$. However, the mistake may have confused the interested student who tries
-to understand the details.
+$4$ at $x=y=2$. However, the mistake may have confused a student working through the details at a later point.
 
-What do we conclude form the above example? It is certainly not useless to do some explicit
-linear algebra calculations. Nevertheless, linear algebra should be a prerequisite for a course
+What do we conclude form the above example? It is certainly useful to demonstrate some
+linear algebra calculations explicitely. Nevertheless, linear algebra should be a prerequisite for a course
 in linear programming. The details of linear algebra should not distract from the important
 issues in linear programming. These issues include:
 \begin{itemize}
 \item The choice of the pivot.
-\item What to do if the basic solution is not feasible?
+\item What if the initial dictionary is not feasible?
 \item Duality theory.
 \item Efficiency considerations.
 \item Sensitivity analysis.
@@ -239,39 +267,35 @@ issues in linear programming. These issues include:
 \end{itemize}
 Even for simple examples it is unnatural (and often impossible)
 to design them in such a way that the linear algebra calculations stay simple.
-It is much better to have a computerized tool for these calculations. Such a tool makes
-it also possible to deal with larger, more interesting examples. 
+A computerized tool for these calculations facilitates their demonstration. Such a tool facilitates also the study of larger, more interesting examples. 
 
-This paper is organized as follows ({\bf may change}). 
-%In the next section we discuss the importance of geometry for linear programming. 
+This paper is organized as follows.
 In Section~\ref{sec:pplex} we introduce 
-our tool \url{pplex}, applied to several examples in subsequent sections.
-The tool is fur described in Section~\ref{sec:features}.
+our tool \url{pplex}, applied to several examples in Sections~\ref{sec:examples}.
+%The tool is further described in Section~\ref{sec:features}.
 We conclude by discussing future work in Section~\ref{sec:future}.
 
-%\section{Joanna on Geometry}
-
 \section{A tool for teaching the Simplex method}\label{sec:pplex}
-Our tool has the name \url{pplex},
-which stands for a \emph{pedagogical implementation of the Simplex method}.
-It is open-source \cite{pplex} and freely distributed under the 
+Our contribution \url{pplex},
+(\emph{pedagogical implementation of the Simplex method}),
+is open-source \cite{pplex} and freely distributed under the 
 GNU General Public License \cite{GNUGPL}.
 It runs under Java version xx, so it is portable to any (supporting) platform.
-We'll make an effort to keep it up to date and will support future standard
-formats for LP problems upon request.
 
 We start by demonstrating \url{pplex} on the example from the introduction.
-The input file for this example reads:
+The input file for our example reads:
 \begin{alltt}
 \input{../input/nik2.lps}
 \end{alltt}
-After launching \url{pplex} a prompt \verb|pplex>| is written.
+Note that the inequalities $x,y \geq 0$ are implicitely assumed, and omitted in both the input file and the generated dictionaries.
+
+\url{pplex} launches with the prompt \verb|pplex>|.
 We read the above input file, which is confirmed OK:
 \begin{verbatim}
 pplex> read input/nik2.lps
 Read input/nik2.lps OK.
 \end{verbatim}
-To show the dictionary of this problem one writes after the prompt:
+To show the initial dictionary of this program one writes after the prompt:
 \begin{alltt}
 pplex> show primal
  \(\zeta\) =       +     x +      y
@@ -282,8 +306,7 @@ Numbers are by default displayed with two decimals precision, whereas
 calculations are performed in double precision arithmetic.
 We can now let \url{pplex} execute a pivot by specifying
 the variable by its \emph{column} ($1$ for $x$ and $2$ for $y$)
-and the linear equation by its \emph{row}. (These numbers correspond to
-the indices in the matrix representation of the LP problem.)
+and the linear equation by its \emph{row}. 
 Here comes the command and the resulting dictionary:
 \begin{alltt}
 pplex> pivot 1 1
@@ -291,7 +314,7 @@ pplex> pivot 1 1
  x =  3.00 - 0.50w1 - 0.50y
 w2 = 19.00 + 3.50w1 - 9.50y
 \end{alltt}
-The final (optimal) dictionary is produced after the next command:
+The final (optimal) dictionary is calculated after the next command:
 \begin{alltt}
 pplex> pivot 2 2
  \(\zeta\) = 4.00 - 0.32w1 - 0.05w2
@@ -320,82 +343,90 @@ pplex> pivot 1 1
 \end{alltt}
 Due to (or despite?) the double precision arithmetic, one obtains exactly the same result.
 
-\section{Examples using Duality}
-%\subsection{Duality}
-In the previous section we worked through an example of a feasible dictionary.
-What if the initial dictionary is not feasible, that is, the origin is not a
-feasible solution. Here is an example:
+\section{Examples of Using \texttt{pplex}}\label{sec:examples}
+\subsection{Duality}
+
+Giving an introduction into LP duality theory is beyond the scope of this work. We therefore assume knowledge of duality theory throughout this section.
+
+In Sections \ref{sec:intro} and \ref{sec:pplex}, we studied an example of an initially feasible dictionary.
+What if the initial dictionary is not feasible, that is, if the origin is not a
+feasible solution? Here is an example:
+
+\begin{minipage}{.45\textwidth}
 \begin{alltt}
-\input{../input/nik3.lps}
+\input{../input/nik8.lps}
 \end{alltt}
-The geometric interpretation (Geogebra) of this problem is the
-triangle with points $(0,1),(0,2),(\frac{1}{2},1\frac{1}{2})$
-in the $x,y$-plane, on which we maximize the objective $-2x-y$.
-Clearly, the solution $-1$ is to be found in the point $(0,1)$.
+\end{minipage}
+\begin{minipage}{.45\textwidth}
+	\includegraphics{ex_dual.jpg}
+\end{minipage}
+\vspace{.2cm}
+
+The feasible region of this program is the
+triangle with points $(0,\frac{1}{3}),(0,1.8),(1,1)$
+in the $x,y$-plane, on which we maximize the objective $-7x-8y$.
+Clearly, the solution $-\frac{8}{3}$ is to be found in the point $(0,\frac{1}{3})$.
 However, we cannot proceed as in the previous section since the
 initial dictionary is not feasible:
 \begin{alltt}
-pplex> read input/nik3.lps
-Read input/nik3.lps OK.
+pplex> read input/nik8.lps
+Read input/nik8.lps OK.
 
 pplex> show primal
- \(\zeta\) =        - 2.00x - y
-w1 = - 1.00 -     x + y
-w2 =   2.00 -     x - y
+ \(\zeta\) =        - 7.00x - 8.00y
+w1 = - 1.00 - 2.00x + 3.00y
+w2 =   9.00 - 4.00x - 5.00y
 \end{alltt}
-One possible solution in such a case is to look at the so-called
-\emph{dual} problem (the original problem is called the \emph{primal} problem).
-Duality theory is about the relation between the primal and the dual problem,
-and one of its results is that the primal and the dual problem are \emph{equisolvable}.
-Equisolvability means that the primal problem has an optimal solution if and only if 
-the dual problem has. Moreover, these solutions are each other's dual.
-We will not enter the details of duality theory here, but let \url{pplex} do the work:
+
+One possible approach in such a case is to solve the dual instead:
 \begin{alltt}
 pplex> show dual
--\(\xi\) =      + y1 - 2.00y2
-z1 = 2.00 + y1 +     y2
-z2 = 1.00 - y1 +     y2
+-\(\xi\) =      +     y1 - 9.00y2
+z1 = 7.00 + 2.00y1 + 4.00y2
+z2 = 8.00 - 3.00y1 + 5.00y2
 \end{alltt}
-The negative coefficients of the original objective $-2x-y$ show up in the dual
-dictionary as the positive constants $2.00$ and $1.00$ of the first and the second 
-linear equation, respectively. Since they are positive, the dual dictionary is actually feasible.
-The maximum value $1$ of \(-\xi\) in the dual problem is found after one pivot:
+The negative coefficients of the original objective $-7x-8y$ show up in the dual
+dictionary as the positive constants $7.00$ and $8.00$ of the first and the second 
+linear equation, respectively. Since they are positive, the dual dictionary is feasible.
+The maximum value $\frac{8}{3}$ of \(-\xi\) in the dual problem is found after one pivot:
 \begin{alltt}
 pplex> pivot dual 1 2
--\(\xi\) = 1.00 - z2 -     y2
-z1 = 3.00 - z2 + 2.00y2
-y1 = 1.00 - z2 +     y2
+-\(\xi\) =  2.67 - 0.33z2 - 7.33y2
+z1 = 12.33 - 0.67z2 + 7.33y2
+y1 =  2.67 - 0.33z2 + 1.67y2
 \end{alltt}
 The primal version of this dictionary shows that we have indeed found the
-maximum $-1$ of $\zeta$ for $x=0,~y=1$ in the original problem:
+maximum $-\frac{8}{3}$ of $\zeta$ for $x=0,~y=\frac{1}{3}$ in the original problem:
 \begin{alltt}
 pplex> show primal
- \(\zeta\) = - 1.00 - 3.00x - w1
- y =   1.00 +     x + w1
-w2 =   1.00 - 2.00x - w1
+ \(\zeta\) = - 2.67 - 12.33x - 2.67w1
+ y =   0.33 +  0.67x + 0.33w1
+w2 =   7.33 -  7.33x - 1.67w1
 \end{alltt}
 
-In the last example, the dual dictionary was feasible. What to do if both the primal and
-the dual dictionary are infeasible? The standard solution in this case is to change
-the objective of the primal dictionary to one having \emph{only} negative coefficients.
-Let's call the resulting problem the \emph{mock} primal, having a mock dual.
-Then the mock dual is feasible and one can attempt to solve it. 
-If the mock dual is solvable, then the mock primal is \emph{and the resulting
-mock primal dictionary is feasible}. The equations of the mock primal dictionary
-are equivalent to those of the original dictionary. Then it suffices to put the original objective
-in place, \emph{adapted to the equations of the mock primal dictionary}.
-Duality theory also explains that when the mock dual problem has arbitrarily large
-solutions, the primal problem has no solutions. So-called \emph{unboundedness}
-will be treated in Section~\ref{sec:unbounded}.
-
-To get an example which is both primally and dually infeasible,
-we just negate the objective of the previous example:
+In the last example, the dual dictionary was feasible. If both the primal and
+the dual dictionary are infeasible, the dual phase I method has to be executed, 
+which can be demonstrated in \url{pplex} with the following commands:
+%The standard solution in this case is to change
+%the objective of the primal dictionary to one having \emph{only} negative coefficients.
+%Let's call the resulting problem the \emph{mock} primal, having a mock dual.
+%Then the mock dual is feasible and one can attempt to solve it. 
+%If the mock dual is solvable, then the mock primal is \emph{and the resulting
+%mock primal dictionary is feasible}. The equations of the mock primal dictionary
+%are equivalent to those of the original dictionary. Then it suffices to put the original objective
+%in place, \emph{adapted to the equations of the mock primal dictionary}.
+%Duality theory also explains that when the mock dual problem has arbitrarily large
+%solutions, the primal problem has no solutions. So-called \emph{unboundedness}
+%will be treated in Section~\ref{sec:unbounded}.
+%
+%To get an example which is both primally and dually infeasible,
+%we just negate the objective of the previous example:
 \begin{alltt}
  \(\zeta\) =        + 2.00x + y
 w1 = - 1.00 -     x + y
 w2 =   2.00 -     x - y
 \end{alltt}
-The command \verb|replace -2 -1| is used to negate (back) the objective,
+The command \verb|replace -2 -1| is used to negate the objective,
 yielding the dually feasible previous example:
 \begin{alltt}
 pplex> replace -2 -1
@@ -411,7 +442,7 @@ yielding of course the same feasible final dictionary:
 w2 =   1.00 - 2.00x - w1
 \end{alltt}
 This is now a mock solution since the original objective was $2x+y$,
-not $-2x-y$. The only thing one has to do is to put the original objective in place,
+not $-2x-y$. Now the original objective must be reinstated,
 replacing non-basic variables by their right-hand sides: $2x+(1+x+w_1)$.
 This is achieved by the command \verb|update|:
 \begin{alltt}
@@ -430,7 +461,7 @@ pplex> pivot 1 2
 \end{alltt}
 
 
-\section{Examples of Degeneracy and Cycling}\label{sec:cycling}
+\subsection{Degeneracy and Cycling}\label{sec:cycling}
 Degeneracy is the phenomenon that the constant of a pivot
 is zero. Pivoting will then not improve the value of the basic solution. 
 There can be hope, of course, that one of the next pivots will improve
@@ -444,16 +475,15 @@ albeit written out in a permuted way. Note that each pivot has been
 chosen picking the basic variable with the largest coefficient in the objective.
 
 
-\section{Unbounded Examples}\label{sec:unbounded}
+\subsection{Unbounded Example}\label{sec:unbounded}
 Recall that solving an LP problem is to find the maximum of a linear
 function on a polyhedron. There are basically two reasons that
 an LP problem has no solution. The first is that the polyhedron is
 empty, that is, the inequalities defining the polyhedron do not allow
 a solution at all. The second reason is that the polyhedron is
-infinite in a direction in which the objective function increases.
+\emph{unbounded} in a direction in which the objective function increases.
 In the latter case there is no maximum since the objective can
-take arbitrarily large values on the polyhedron. In this case we
-speak of \emph{unboundedness}. We let the following example
+take arbitrarily large values on the polyhedron. We let the following example
 speak for itself:
 \begin{alltt}
 \input{../input/nik6.txt}
@@ -470,16 +500,34 @@ Problem is unbounded.
 In the last dictionary we see that for $w_2 = 0,~x=100+y$ we have a solution
 for any $y \geq 19900$. This was not so easy to see in the initial dictionary. 
 
+%\subsection{Example for an Introduction into Sensitivity Analysis}
 
-
+%Once the optimum is found, it is natural to study how depended the optimum is on the available data. 
+%As an introduction, the lecturer can ask the students: How much can we fiddle with the coefficients in the objective function without changing the optimal solution? 
+%They then can use \texttt{pplex} to experiment with the optimal dictionary, f.ex. of our first example:
 
 
 
 %\section{Features}\label{sec:features}
 %Short overview of the software, dicussion of design decisions.
 
-\section{Future extensions}\label{sec:future}
-3D visualization
+\subsection{Future extensions}\label{sec:future}
+\begin{itemize}
+         \item 2D GUI
+         \item 3D visualization
+	\item We'll make an effort to keep it up to date and will support future standard
+formats for LP problems upon request.
+	
+\end{itemize}
+
+\begin{figure}[htb]
+	\begin{center}
+		\includegraphics{ex_gui.jpg}
+	\end{center}
+	\caption{Example of the Graphical User Unterface}
+	\label{fig:ex_gui}
+\end{figure}
+
 
 
 
