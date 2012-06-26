@@ -26,6 +26,11 @@ package model;
  * @version 0.2
  */
 public class Matrix {
+    public static final int HORIZONTAL = 0;
+    public static final int VERTICAL = 1;
+
+
+
     private double[][] data;
     private int m;
     private int n;
@@ -103,31 +108,7 @@ public class Matrix {
      *         An augmented {@code Matrix}.
      */
     public Matrix augment(Matrix B) {
-        if (m != B.m) {
-            String e = String.format("Illegal operation: Cannot augment a"
-                                                  + " %d x %d matrix with"
-                                                  + " a %d x %d matrix",
-                                                  m, n, B.m, B.n);
-            throw new IllegalArgumentException(e);
-        }
-
-        Matrix C = new Matrix(m, n+B.n);
-
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                C.data[i][j] = data[i][j];
-            }
-        }
-
-
-
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < B.n; j++) {
-                C.data[i][j+n] = B.data[i][j];
-            }
-        }
-
-        return C;
+        return addBlock(B, HORIZONTAL);
     }
 
 
@@ -156,6 +137,67 @@ public class Matrix {
                 C.data[i][j] = data[i][j] + B.data[i][j];
             }
         }
+        return C;
+    }
+
+
+
+    /**
+     * Return a newly created {@code Matrix} with a new block
+     * {@code Matrix} added either horizontally or vertically
+     * next to the original {@code Matrix}.
+     *
+     * @param  B
+     *         {@code Matrix} to append to the parent {@code Matrix}.
+     * @param  modifier
+     *         Matrix.HORIZONTAL or Matrix.VERTICAL.
+     * @return
+     *         The original {@code Matrix} with a new {@code Matrix} block.
+     */
+    public Matrix addBlock(Matrix B, int modifier) {
+        String e = String.format("Illegal operation: Cannot add a matrix block"
+                               + "of size %d x %d to a matrix of size %d x %d."
+                               , B.m, B.n, m, n);
+
+        if  ((modifier == HORIZONTAL && m != B.m)
+                           || modifier == VERTICAL && n != B.n) { 
+            throw new IllegalArgumentException(e);
+        }
+
+        int newm = m;
+        int newn = n;
+
+        int ci = 0;
+        int cj = 0;
+
+        switch (modifier) {
+        case HORIZONTAL:
+            newn += B.n;
+            cj = n;
+            break;
+        case VERTICAL:
+        /* Fall through */
+        default:
+            newm += B.m;
+            ci = m;
+        }
+
+        Matrix C = new Matrix(newm, newn);
+
+        /* Copy existing data into C */
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                C.data[i][j] = data[i][j];
+            }
+        }
+
+        /* Add the new block of data */
+        for (int i = 0; i < B.m; i++) {
+            for (int j = 0; j < B.n; j++) {
+                C.data[i+ci][j+cj] = B.data[i][j];
+            }
+        }
+
         return C;
     }
 
