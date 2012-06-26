@@ -26,8 +26,8 @@ package model;
  * @version 0.2
  */
 public class Matrix {
-    public static final int HORIZONTAL = 0;
-    public static final int VERTICAL = 1;
+    public static final int UNDER = 0;
+    public static final int RIGHT = 1;
 
 
 
@@ -108,7 +108,7 @@ public class Matrix {
      *         An augmented {@code Matrix}.
      */
     public Matrix augment(Matrix B) {
-        return addBlock(B, HORIZONTAL);
+        return addBlock(B, RIGHT);
     }
 
 
@@ -156,11 +156,11 @@ public class Matrix {
      */
     public Matrix addBlock(Matrix B, int modifier) {
         String e = String.format("Illegal operation: Cannot add a matrix block"
-                               + "of size %d x %d to a matrix of size %d x %d."
+                               + " of size %d x %d to a matrix of size %d x %d."
                                , B.m, B.n, m, n);
 
-        if  ((modifier == HORIZONTAL && m != B.m)
-                           || modifier == VERTICAL && n != B.n) { 
+        if  ((modifier == RIGHT && m != B.m)
+                           || modifier == UNDER && n != B.n) { 
             throw new IllegalArgumentException(e);
         }
 
@@ -171,11 +171,11 @@ public class Matrix {
         int cj = 0;
 
         switch (modifier) {
-        case HORIZONTAL:
+        case RIGHT:
             newn += B.n;
             cj = n;
             break;
-        case VERTICAL:
+        case UNDER:
         /* Fall through */
         default:
             newm += B.m;
@@ -698,6 +698,7 @@ public class Matrix {
             data[i][k] = data[i][k] - scalar*data[j][k];
         }
      }
+
 
 
     /*
