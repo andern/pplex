@@ -68,7 +68,7 @@ class GUI extends JFrame {
          * NB! setSize MUST be placed after setVisible(true)! On
          * some system the window is drawn completely blank if it is not.
          */
-        setSize(800, 400);
+        setSize(820, 400);
         setLocationRelativeTo(null);
     }
     

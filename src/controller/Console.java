@@ -105,6 +105,7 @@ class Console extends JPanel {
                  * according to the new changes done by the console.
                  */
                 getParent().repaint();
+                Coordinates.rangeSet = false;
                 break;
                 
             case KeyEvent.VK_UP:

@@ -35,7 +35,7 @@ public class LP {
     public Matrix B_;
     public Matrix N_;
 
-    public final Matrix b;
+    public Matrix b;
     public final Matrix c;
     private Matrix x_b;
     private Matrix z_n;
@@ -434,6 +434,12 @@ public class LP {
             basic[i] = x.get(Bi[i]);
         }
         return basic;
+    }
+    
+    
+    
+    public Matrix getConstraints() {
+        return N_.augment(b);
     }
 
 
