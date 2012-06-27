@@ -62,15 +62,15 @@ Andreas Halle$^*$}
 Linear programs occur frequently in various important disciplines, such as economics, management, and engineering.
 The simplex method is the best known and most widely used method to solve linear programs.
 Therefore, it is taught to a wide range of students with varying background in mathematics.
-	We present the software \url{pplex} for supporting
+We present the software \url{pplex} for supporting
 the classroom presentation of the simplex method.
 \end{abstract}
 
 \section{Introduction and Motivation}\label{sec:intro}
-In an optimization problem, the objective is to decide on how to utilize given ressources such that they maximize some ``profit'' (or minimize some ``cost''), while satisfying a set of additional constraints on the ressources.
-This is commonly done by assoziating the possible decisions with variables, such that the profit and the constraints can be formulated as functions of these variables. 
-If the profit (in general called \emph{objective (function)} is linear and the constraints can be formulated as linear (in)equalities, then the optimization problem has a \emph{linear programming (LP)} formulation. An instance of an LP formulation is called \emph{linear program}.
-Solving a linear program means identifying those values for the variables which maximize the objective while satisfying all constraints.
+In an optimization problem, the objective is to decide on how to utilize given resources such that they maximize some ``profit'' (or minimize some ``cost''), while satisfying a set of additional constraints on the resources.
+This is commonly modeled by associating the possible decisions with variables, such that the profit and the constraints can be formulated as functions of these variables. 
+If the profit function, the so-called \emph{objective (function)}, is linear and the constraints can be formulated as linear (in)equalities, then the optimization problem has a \emph{linear programming (LP)} formulation. A concrete instance of an LP formulation is called a \emph{linear program}.
+Solving a linear program means identifying those values for the variables that maximize the objective while satisfying all constraints.
 Linear programs occur frequently in economics, mangagement, and engineering.
 
 The simplex method is by far the most widely used method for solving linear programs. 
@@ -84,9 +84,9 @@ introducing the simplex method by a simple example:
 \[
     \begin{array}{lrcrcrl}
 			\text{Maximize}  &    x &+&    y &	&	& \quad\quad \text{(objective function)}\\
-			\text{subject to}&  2 x &+&    y &\leq&   6	& \quad\quad \text{(constraints)}\\
-    	\text{and}&         7 x &+& 13 y &\leq&  40\\
-    	\text{and}       &    x &,&    y &\geq&0    &
+			\text{subject to}&  2 x &+&    y &\leq&   6	& \quad\quad \text{(constraint)}\\
+    	\text{and}&         7 x &+& 13 y &\leq&  40 & \quad\quad \text{(constraint)}\\
+    	\text{and}       &    x &,&    y &\geq&0    &\quad\quad \text{(two constraints)}
     \end{array}
 \]
 where the variables $x$ and $y$ range over the real numbers.
@@ -195,7 +195,7 @@ $0\leq v = 19 + 3.5u - 9.5y$ allows to increase $y$ to $2$,
 and that the other equation allows an even larger increase.
 Hence, we pivot $y$ and $v$ using the second equation.
 The incumbent dictionary becomes:
-
+\vspace{.2cm}
 	\begin{minipage}{.45\textwidth}
 \[    
     \begin{array}{lcrcrcrcr}
@@ -273,7 +273,7 @@ This paper is organized as follows.
 In Section~\ref{sec:pplex} we introduce 
 our tool \url{pplex}, applied to several examples in Sections~\ref{sec:examples}.
 %The tool is further described in Section~\ref{sec:features}.
-We conclude by discussing future work in Section~\ref{sec:future}.
+We conclude by discussing ongoing work in Section~\ref{sec:future}.
 
 \section{A tool for teaching the Simplex method}\label{sec:pplex}
 Our contribution \url{pplex},
@@ -344,6 +344,9 @@ pplex> pivot 1 1
 Due to (or despite?) the double precision arithmetic, one obtains exactly the same result.
 
 \section{Examples of Using \texttt{pplex}}\label{sec:examples}
+In this section we present examples using duality and examples illustrating
+degeneracy, cycling and unboundedness.
+
 \subsection{Duality}
 
 Giving an introduction into LP duality theory is beyond the scope of this work. We therefore assume knowledge of duality theory throughout this section.
@@ -511,25 +514,23 @@ for any $y \geq 19900$. This was not so easy to see in the initial dictionary.
 %\section{Features}\label{sec:features}
 %Short overview of the software, dicussion of design decisions.
 
-\subsection{Future extensions}\label{sec:future}
-\begin{itemize}
-         \item 2D GUI
-         \item 3D visualization
-	\item We'll make an effort to keep it up to date and will support future standard
-formats for LP problems upon request.
-	
-\end{itemize}
+\subsection{Work in Progress}\label{sec:future}
+We'll make an effort to keep \url{pplex} up to date and will support 
+future standard formats for LP problems upon request.
+More importantly, we work on a graphical user interface in which one
+can work with a linear program in two variables alongside its graphical representation. The graphical representation will show the feasible
+region, highlighting the corner with the incumbent basic solution.
+See the screenshot in Figure~\ref{fig:ex_gui}.
+As a challenge for the future, we plan some suitable graphical
+representation of linear programs in three variables.
 
 \begin{figure}[htb]
 	\begin{center}
 		\includegraphics{ex_gui.jpg}
 	\end{center}
-	\caption{Example of the Graphical User Unterface}
+	\caption{Example of the Graphical User Interface}
 	\label{fig:ex_gui}
 \end{figure}
-
-
-
 
 \bibliographystyle{abbrv}
 \begin{thebibliography}{99}
