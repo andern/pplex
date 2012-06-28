@@ -36,17 +36,18 @@ import model.Matrix;
  * 2. An emulated coordinate system where x and y can
  *    lie in any range definable by double precision
  *    numbers.
- *    
- *    The method coordinate(double x, doubly y) is
- *    used to translate from system 2 to system 1.
- *    
- *    Throughout this class Point is used to represent
- *    a point in system 1 while Point2D is used to
- *    represent a point in system 2.
+ * 
+ * Throughout this class, Point is used to represent
+ * a point in system 1 while Point2D is used to
+ * represent a point in system 2.
+ * 
+ * The method coordinate(Point2D) is
+ * used to translate from system 2 to system 1.
  */
 public class Coordinates extends JPanel {
     private static final long serialVersionUID = 1L;
     
+    // TODO: Solve this in another way.
     public static LP lp = null;
     
     /* Define the range of the visible xy-plane */
@@ -55,8 +56,7 @@ public class Coordinates extends JPanel {
     private double loY = -10;
     private double hiY = 10;
     
-    public static boolean rangeSet;
-    
+    /* The length of each range */
     private double distX = hiX - loX;
     private double distY = hiY - loY;
     
@@ -164,7 +164,7 @@ public class Coordinates extends JPanel {
     
     
     
-    /* Draw a single constraint */
+    /* Draw a single linear constraint */
     private void drawConstraint(Graphics2D g2d, double cx, double cy, double b) {
         Point2D p2d1;
         Point2D p2d2;
@@ -187,7 +187,6 @@ public class Coordinates extends JPanel {
     private void drawLine(Graphics2D g2d, Point2D p2d1, Point2D p2d2) {
         Point p1 = coordinate(p2d1);
         Point p2 = coordinate(p2d2);
-        g2d.setColor(Color.BLUE);
         g2d.drawLine(p1.x, p1.y, p2.x, p2.y);
     }
     
@@ -317,14 +316,26 @@ public class Coordinates extends JPanel {
     
     /* Draw an LP problems constraints and color its feasible region. */
     private void drawLP(Graphics2D g2d, LP lp) {
-        drawConstraints(g2d, lp); 
-        
         Point2D[] pconv = convex(getFeasibleIntersections(lp));
+        
         Polygon poly = polygon(pconv);
         
-        g2d.setColor(Color.orange);
+        g2d.setColor(new Color(245, 234, 230));
         g2d.drawPolygon(poly);
         g2d.fillPolygon(poly);
+
+        g2d.setColor(Color.GRAY);
+        drawConstraints(g2d, lp);
+//        g2d.setColor(Color.black);
+//        for (Point2D p : pconv) drawPoint(g2d, p);
+    }
+    
+    
+    
+    private void drawObjPoint(Graphics2D g2d, LP lp) {
+        double[] pdouble = lp.point();
+        Point2D p2d = new Point2D.Double(pdouble[0], pdouble[1]);
+        drawPoint(g2d, p2d);
     }
     
     
@@ -344,6 +355,11 @@ public class Coordinates extends JPanel {
                 
                 drawLP(g2d, lp);
                 drawAxes(g2d);
+                
+                g2d.setColor(Color.RED);
+                drawObjPoint(g2d, lp);
+                
+                drawConstraint(g2d, lp.c.get(0, 0), lp.c.get(1, 0), lp.objVal());
             }
         }
     }
@@ -362,6 +378,38 @@ public class Coordinates extends JPanel {
         if (quot > 2.0) return scale.multiply(new BigDecimal(4), mc);
         if (quot > 1.0) return scale.multiply(new BigDecimal(2), mc);
         else return scale;
+    }
+    
+    
+    
+    private BigDecimal findDist(int power, BigDecimal udist) {
+        BigDecimal pow = new BigDecimal(10).pow(power, mc);
+        if (udist.compareTo(pow) < 0) return findDist(power-1, udist);
+        
+        BigDecimal pow2 = pow.multiply(new BigDecimal(2));
+        if (udist.compareTo(pow2) < 0) return pow;
+        
+        BigDecimal pow4 = pow.multiply(new BigDecimal(4));
+        if (udist.compareTo(pow4) < 0) return pow2;
+        
+        BigDecimal pow5 = pow.multiply(new BigDecimal(5));
+        if (udist.compareTo(pow5) < 0) return pow4;
+        
+        BigDecimal pow10 = pow.multiply(new BigDecimal(10));
+        if (udist.compareTo(pow10) < 0) return pow5;
+        
+        return findDist(power+1, udist);
+        
+        /* Method without BigDecimal is kept to make this less confusing */
+        /*
+        double pow = Math.pow(10, power);
+        if (udist < pow) return findDist(power-1, udist);
+        if (udist < 2*pow) return pow;
+        if (udist < 4*pow) return 2*pow;
+        if (udist < 5*pow) return 4*pow;
+        if (udist < 10*pow) return 5*pow;
+        return findDist(power+1, udist); // if (udist >= 10*pow);
+        */
     }
     
     
@@ -402,30 +450,27 @@ public class Coordinates extends JPanel {
         }
         
         /* Remove intersections that are not satisfied by ALL inequalities. */
-        boolean rem;
         Iterator<Point2D> iter = points.iterator();
         
         while (iter.hasNext()) {
             Point2D p2d = iter.next();
-            rem = false;
             for (int i = 0; i < lp.N_.rows(); i++) {
                 double x = p2d.getX();
                 double y = p2d.getY();
                 
-                double val = lp.N_.get(i, 0)*x + lp.N_.get(i, 1)*y;
+                float val = (float) (lp.N_.get(i, 0)*x + lp.N_.get(i, 1)*y);
                 if (val > lp.b.get(i, 0)) {
-                    rem = true;
+                    iter.remove();
                     break;
                 }
             }
-            if (rem) iter.remove();
         }
         return points.toArray(new Point2D[0]);
     }
     
     
     
-    void drawAxes(Graphics2D g2d) {
+    private void drawAxes(Graphics2D g2d) {
         /* Find "origo" */
         double ox = 0;
         double oy = 0;
@@ -453,11 +498,22 @@ public class Coordinates extends JPanel {
         
         
         /* Approximate number of pixels needed between each "unit" */
-        int pbu = 65;
+        int pbux = 65;
+        int pbuy = 65;
+        double absloX = Math.abs(loX);
+        double abshiX = Math.abs(hiX);
+        double absloY = Math.abs(loY);
+        double abshiY = Math.abs(hiY);
+        if (absloX >= 10000 || abshiX >= 10000 || absloX < 0.0001 || abshiX < 0.0001) { 
+            pbux = 110;
+        }
+        if (absloY >= 10000 || abshiY >= 10000 || absloY < 0.0001 || abshiY < 0.0001) { 
+            pbuy = 110;
+        }
         
         /* Total number of units on both axes */
-        int unitsX = getWidth() / pbu;
-        int unitsY = getHeight() / pbu;
+        int unitsX = getWidth() / pbux;
+        int unitsY = getHeight() / pbuy;
         
         /* Exact value between each unit */
         double udistX = distX / unitsX;
@@ -467,8 +523,11 @@ public class Coordinates extends JPanel {
          * The exact value rounded to a value that can be written with
          * very few decimals. Is also "easily" divisible by 5. 
          */
-        BigDecimal vbux = findScale(udistX);
-        BigDecimal vbuy = findScale(udistY);
+//        BigDecimal vbux = findScale(udistX);
+//        BigDecimal vbuy = findScale(udistY);
+        
+        BigDecimal vbux = findDist(1, new BigDecimal(udistX, mc));
+        BigDecimal vbuy = findDist(1, new BigDecimal(udistY, mc));
         
         /* Divide by 5 to get value between each "minor" unit. */
         BigDecimal five = new BigDecimal(5, mc);
@@ -501,8 +560,9 @@ public class Coordinates extends JPanel {
                  */
                 String strval = Double.toString(rval);
                 g2d.drawString(strval, p.x-strval.length()/2*8, p.y+20);
+                g2d.drawLine(p.x, p.y-size, p.x, p.y+size);
             }
-            g2d.drawLine(p.x, p.y-size, p.x, p.y+size);
+//            g2d.drawLine(p.x, p.y-size, p.x, p.y+size);
             pix = p.x;
         }
         
@@ -525,8 +585,9 @@ public class Coordinates extends JPanel {
                 
                 String strval = Double.toString(rval);
                 g2d.drawString(strval, p.x-strval.length()*8, p.y+5);
+                g2d.drawLine(p.x-size, p.y, p.x+size, p.y);
             }
-            g2d.drawLine(p.x-size, p.y, p.x+size, p.y);
+//            g2d.drawLine(p.x-size, p.y, p.x+size, p.y);
             pix = p.y;
         }
     }
@@ -536,8 +597,7 @@ public class Coordinates extends JPanel {
     private void drawPoint(Graphics2D g2d, Point2D p2d) {
         Point p = coordinate(p2d);
         Ellipse2D r2d = new Ellipse2D.Double(p.x-3, p.y-3, 6, 6);
-        g2d.setColor(Color.RED);
-        g2d.draw(r2d);
+        g2d.fill(r2d);
     }
     
     
