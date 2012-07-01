@@ -341,9 +341,9 @@ class CLI {
         LP lp = lps.get(p-1);
 
         if (lp.feasible(false))
-            sb.append("Incumbent basic solution is primally feasible\n");
+            sb.append("Incumbent basic solution is primal feasible\n");
         else
-            sb.append("Incumbent basic solution is primally infeasible.\n");
+            sb.append("Incumbent basic solution is primal infeasible.\n");
 
         if (lp.feasible(true))
             sb.append("Incumbent basic solution is dually feasible.\n");

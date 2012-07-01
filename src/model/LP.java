@@ -149,8 +149,8 @@ public class LP {
      * to the largest coefficients rule.
      *
      * @param  dual
-     *         If true, find an entering variable index for the dual problem.
-     *         Otherwise, find one for the primal problem.
+     *         If true, find an entering variable index for the dual dictionary.
+     *         Otherwise, find one for the primal dictionary.
      * @return
      *         An entering variable index.
      */
@@ -168,9 +168,9 @@ public class LP {
         }
 
         if (index == -1) {
-            String e = "Problem is optimal.";
-            String e2 = String.format("Problem is %s infeasible",
-                                       dual ? "dual" : "primal");
+            String e = "Incumbent basic solution is optimal.";
+            String e2 = String.format("Incumbent basic solution is %s infeasible",
+                                       dual ? "dually" : "primal");
 
             if (optimal(dual)) throw new RuntimeException(e);
             if (!feasible(dual)) throw new RuntimeException(e2);
@@ -203,8 +203,8 @@ public class LP {
      * @param  entering
      *         an entering variable index.
      * @param  dual
-     *         If true, find a leaving variable index for the dual problem.
-     *         Otherwise, find one for the primal problem.
+     *         If true, find a leaving variable index for the dual dictionary.
+     *         Otherwise, find one for the primal dictionary.
      * @return
      *         A leaving variable index.
      */
@@ -212,7 +212,7 @@ public class LP {
         Matrix check, sd;
         Matrix bin = B.inverse().product(N);
 
-        String e = "Problem is unbounded.";
+        String e = "Program is unbounded.";
         if (dual) {
             check = z_n;
             Matrix unit = Matrix.unitVector(bin.rows(), entering+1);
