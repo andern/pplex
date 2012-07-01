@@ -330,8 +330,8 @@ class CLI {
         LP lp = lps.get(p-1);
 
         if (lp.feasible(false) && lp.feasible(true))
-            return "Problem is optimal\n";
-        return "Problem is not optimal\n";
+            return "Incumbent basic solution is optimal\n";
+        return "Incumbent basic solution is not optimal\n";
     }
 
 
@@ -340,11 +340,15 @@ class CLI {
         StringBuilder sb = new StringBuilder();
         LP lp = lps.get(p-1);
 
-        if (lp.feasible(false)) sb.append("Primal problem is feasible.\n");
-        else sb.append("Primal problem is infeasible.\n");
+        if (lp.feasible(false))
+            sb.append("Incumbent basic solution is primally feasible\n");
+        else
+            sb.append("Incumbent basic solution is primally infeasible.\n");
 
-        if (lp.feasible(true)) sb.append("Dual problem is feasible.\n");
-        else sb.append("Dual problem is infeasible.\n");
+        if (lp.feasible(true))
+            sb.append("Incumbent basic solution is dually feasible.\n");
+        else
+            sb.append("Incumbent basic solution is dually infeasible.\n");
 
         return sb.toString();
     }
