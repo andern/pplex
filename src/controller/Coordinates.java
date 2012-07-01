@@ -380,14 +380,17 @@ public class Coordinates extends JPanel {
 
     /* Draw a single linear constraint */
     private void drawConstraint(Graphics2D g2d, double cx, double cy, double b) {
+        System.out.printf("%fx + %fy <= %f%n", cx, cy, b);
         Point2D p2d1;
         Point2D p2d2;
         if (cy == 0.0) {
-            p2d1 = new Point2D.Double(b, loY);
-            p2d2 = new Point2D.Double(b, hiY);
+            int mul = (cx < 0) ? -1 : 1;
+            p2d1 = new Point2D.Double(b*mul, loY);
+            p2d2 = new Point2D.Double(b*mul, hiY);
         } else if (cx == 0.0) {
-            p2d1 = new Point2D.Double(loX, b);
-            p2d2 = new Point2D.Double(hiX, b);
+            int mul = (cy < 0) ? -1 : 1;
+            p2d1 = new Point2D.Double(loX, b*mul);
+            p2d2 = new Point2D.Double(hiX, b*mul);
         } else {
             p2d1 = new Point2D.Double(loX, (b-cx*loX)/cy);
             p2d2 = new Point2D.Double(hiX, (b-cx*hiX)/cy);
