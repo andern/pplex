@@ -380,7 +380,6 @@ public class Coordinates extends JPanel {
 
     /* Draw a single linear constraint */
     private void drawConstraint(Graphics2D g2d, double cx, double cy, double b) {
-        System.out.printf("%fx + %fy <= %f%n", cx, cy, b);
         Point2D p2d1;
         Point2D p2d2;
         if (cy == 0.0) {
