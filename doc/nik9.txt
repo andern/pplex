@@ -1,0 +1,12 @@
+pplex> read input/nik6.lps
+Read input/nik6.lps OK.
+
+pplex> show primal
+ \(\zeta\) =       + x +     y
+w1 = 10.00 - x + 2.00y
+w2 = 10.00 + x - 2.00y
+
+pplex> pivot
+ \(\zeta\) = 10.00 - w1 + 3.00y
+ x = 10.00 - w1 + 2.00y
+w2 = 20.00 - w1        
