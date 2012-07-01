@@ -65,17 +65,13 @@ public class Coordinates extends JPanel {
     
     
     
+    /**
+     * Initialize a new empty coordinate system.
+     */
     public Coordinates() {
         this.addMouseListener(new mouseListener());
         this.addMouseMotionListener(new mouseListener());
         this.addMouseWheelListener(new mouseScrollListener());
-    }
-    
-    
-    
-    private void updateDist() {
-        distX = hiX - loX;
-        distY = hiY - loY;
     }
     
     
@@ -120,101 +116,9 @@ public class Coordinates extends JPanel {
             lp.b = lp.b.addBlock(c, Matrix.UNDER);
         }
     }
-    
-    
-    
-    private void move(double moveX, double moveY) {
-        loX += moveX;
-        hiX += moveX;
-        loY += moveY;
-        hiY += moveY;
-        updateDist();
-    }
-    
-    
-    
-    private void zoom(double zoomX, double zoomY) {
-        loX -= zoomX;
-        hiX += zoomX;
-        loY -= zoomY;
-        hiY += zoomY;
-        updateDist();
-    }
-    
-    
-    
-    private void setRange(double loX, double hiX, double loY, double hiY) {
-        this.loX = loX;
-        this.hiX = hiX;
-        this.loY = loY;
-        this.hiY = hiY;
-        updateDist();
-    }
-    
-    
-    
-    /* Draw all constraints of an LP problem. */
-    private void drawConstraints(Graphics2D g2d, LP lp) {
-        Matrix cons = lp.getConstraints();
-        for (int i = 0; i < cons.rows(); i++) {
-            drawConstraint(g2d, cons.get(i, 0), cons.get(i, 1),
-                                                              cons.get(i, 2));
-        }
-    }
-    
-    
-    
-    /* Draw a single linear constraint */
-    private void drawConstraint(Graphics2D g2d, double cx, double cy, double b) {
-        Point2D p2d1;
-        Point2D p2d2;
-        if (cy == 0.0) {
-            p2d1 = new Point2D.Double(b, loY);
-            p2d2 = new Point2D.Double(b, hiY);
-        } else if (cx == 0.0) {
-            p2d1 = new Point2D.Double(loX, b);
-            p2d2 = new Point2D.Double(hiX, b);
-        } else {
-            p2d1 = new Point2D.Double(loX, (b-cx*loX)/cy);
-            p2d2 = new Point2D.Double(hiX, (b-cx*hiX)/cy);
-        }
-        drawLine(g2d, p2d1, p2d2);
-    }
-    
-    
-    
-    /* Draw a straight line between the given points. */
-    private void drawLine(Graphics2D g2d, Point2D p2d1, Point2D p2d2) {
-        Point p1 = coordinate(p2d1);
-        Point p2 = coordinate(p2d2);
-        g2d.drawLine(p1.x, p1.y, p2.x, p2.y);
-    }
-    
-    
-    
-    /*
-     * Convert points in coordinate system 2 to system 1
-     * as described in the class documentation.
-     */
-    private Point coordinate(Point2D p2d) {
-        /* Includes padding */
-        double xscale = (hiX - loX) / (getWidth() - 10);
-        double yscale = (hiY - loY) / (getHeight() - 10);
-        
-        int newx = (int) Math.round((p2d.getX() - loX) / xscale);
-        int newy = (int) Math.round((p2d.getY() - loY) / yscale);
-        /* Convert so that increasing y takes you north instead of south. */
-        newy = getHeight() - newy;
-        
-        /* More padding */
-        newx += 5;
-        newy -= 5;
-        
-        return new Point(newx, newy);
-    }
-    
-    
-    
+
+
+
     /*
      * Input: Unordered list of points that can form a
      *        convex polygon, but in the given order
@@ -295,77 +199,290 @@ public class Coordinates extends JPanel {
         
         return upper.toArray(new Point2D[0]);
     }
-    
-    
-    
-    /* Create a polygon of value points. */
-    private Polygon polygon(Point2D[] points) {
-        int[] xpoints = new int[points.length];
-        int[] ypoints = new int[points.length];
-        
-        int i = 0;
-        for (Point2D p2d : points) {
-            Point p = coordinate(p2d);
-            xpoints[i] = p.x;
-            ypoints[i++] = p.y;
-        }
-        return new Polygon(xpoints, ypoints, points.length);
-    }
-    
-    
-    
-    /* Draw an LP problems constraints and color its feasible region. */
-    private void drawLP(Graphics2D g2d, LP lp) {
-        Point2D[] pconv = convex(getFeasibleIntersections(lp));
-        
-        Polygon poly = polygon(pconv);
-        
-        g2d.setColor(new Color(245, 234, 230));
-        g2d.drawPolygon(poly);
-        g2d.fillPolygon(poly);
 
-        g2d.setColor(Color.GRAY);
-        drawConstraints(g2d, lp);
-//        g2d.setColor(Color.black);
-//        for (Point2D p : pconv) drawPoint(g2d, p);
-    }
-    
-    
-    
-    private void drawObjPoint(Graphics2D g2d, LP lp) {
-        double[] pdouble = lp.point();
-        Point2D p2d = new Point2D.Double(pdouble[0], pdouble[1]);
-        drawPoint(g2d, p2d);
-    }
-    
-    
-    
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) g;
+
+
+    /*
+     * Convert points in coordinate system 2 to system 1
+     * as described in the class documentation.
+     */
+    private Point coordinate(Point2D p2d) {
+        /* Includes padding */
+        double xscale = (hiX - loX) / (getWidth() - 10);
+        double yscale = (hiY - loY) / (getHeight() - 10);
         
-        if (lp != null) {
-            if (lp.getNoBasic() != 2) {
-                String s  = "Current LP problem is not";
-                String s2 = "representable in two dimensions";
-                g2d.drawString(s, getWidth()/2-s.length()*2, getHeight()/2);
-                g2d.drawString(s2, getWidth()/2-s2.length()*3, getHeight()/2+20);
-            } else {
-                checkLPForBounds();
-                
-                drawLP(g2d, lp);
-                drawAxes(g2d);
-                
-                g2d.setColor(Color.RED);
-                drawObjPoint(g2d, lp);
-                
-                drawConstraint(g2d, lp.c.get(0, 0), lp.c.get(1, 0), lp.objVal());
-            }
+        int newx = (int) Math.round((p2d.getX() - loX) / xscale);
+        int newy = (int) Math.round((p2d.getY() - loY) / yscale);
+        /* Convert so that increasing y takes you north instead of south. */
+        newy = getHeight() - newy;
+        
+        /* More padding */
+        newx += 5;
+        newy -= 5;
+        
+        return new Point(newx, newy);
+    }
+
+
+
+    /*
+     * Draw the axes and unit lines in the best looking
+     * way possible for the given x- and y-ranges.
+     */
+    private void drawAxes(Graphics2D g2d) {
+        /* Find left/right position for the unit line values. */
+        boolean xsouth = true;
+        boolean ywest = true;
+        
+        /* Find origo */
+        double ox = 0;
+        double oy = 0;
+        
+        if (loX >= 0) {
+            ox = loX;
+            ywest = false;
+        } else if (hiX <= 0) {
+            ox = hiX;
+        }
+        
+        if (loY >= 0) {
+            oy = loY;
+            xsouth = false;
+        } else if (hiY <= 0) {
+            oy = hiY;
+        }
+        
+        Point2D o2d = new Point2D.Double(ox, oy);
+        Point o = coordinate(o2d);
+
+        /* Find axes points in the system */
+        Point xaxis_start = new Point(0, o.y);
+        Point xaxis_end = new Point(getWidth(), o.y);
+        Point yaxis_start = new Point(o.x, 0);
+        Point yaxis_end = new Point(o.x, getHeight());
+
+        g2d.setColor(Color.BLACK);
+        /* Create the axes and draw them */
+        g2d.drawLine(xaxis_start.x, xaxis_start.y,
+                xaxis_end.x, xaxis_end.y);
+        g2d.drawLine(yaxis_start.x, yaxis_start.y,
+                yaxis_end.x, yaxis_end.y);
+
+        /* Approximate number of pixels needed between each "unit" */
+        int pbux = 65;
+        int pbuy = 65;
+
+        /* Total number of units on both axes */
+        int unitsX = getWidth() / pbux;
+        int unitsY = getHeight() / pbuy;
+
+        /* Exact value between each unit */
+        double udistX = distX / unitsX;
+        double udistY = distY / unitsY;
+
+        /* 
+         * The exact value rounded to a value that can be written with
+         * very few decimals.
+         * 
+         * TODO: Find a better mathematical term
+         *       for the numbers described above.
+         */
+        //        BigDecimal vbux = findScale(udistX);
+        //        BigDecimal vbuy = findScale(udistY);
+
+        BigDecimal vbuX = findDist(1, new BigDecimal(udistX, mc));
+        BigDecimal vbuY = findDist(1, new BigDecimal(udistY, mc));
+
+        int pix = o.x;
+        /* Find coefficient for vbuX for the first visible unit */
+        int q = (int) (loX / vbuX.doubleValue());
+
+        /* Draw the units on the x-axis */
+        while (pix <= getWidth()) {
+            /*
+             * Simply using double here introduces rounding errors
+             * when rval reaches the order of 10^23 or higher or
+             * 10^-23 or lower. Therefore using BigDecimal.
+             */
+            BigDecimal qbd = new BigDecimal(q++, mc);
+            BigDecimal val = vbuX.multiply(qbd, mc);
+            
+            double rval = val.doubleValue();
+            
+            Point2D p2d = new Point2D.Double(rval, oy);
+            Point p = coordinate(p2d);
+
+            /*
+             * Cannot use BigDecimal's toString-method since it does not
+             * use scientific notation on positive numbers.
+             */
+            String strval = Double.toString(rval);
+            
+            int offset = xsouth ? 20 : -10;
+            
+            int pixelPerChar = 7;
+            int strValPixels = pixelPerChar * strval.length();
+            
+            if (val.floatValue() != 0.0)
+                g2d.drawString(strval, p.x-strValPixels/2, p.y+offset);
+            
+            /* Length of unit line in pixels. */
+            int size = 4;
+            g2d.drawLine(p.x, p.y-size, p.x, p.y+size);
+            
+            pix = p.x;
+        }
+        
+        
+        
+        pix = o.y;
+        /* Find coefficient for vbuX for the first visible unit */
+        q = (int) (loY / vbuY.doubleValue());
+
+        /* Draw the units on the x-axis */
+        while (pix >= 0) {
+            /*
+             * Simply using double here introduces rounding errors
+             * when rval reaches the order of 10^23 or higher or
+             * 10^-23 or lower. Therefore using BigDecimal.
+             */
+            BigDecimal qbd = new BigDecimal(q++, mc);
+            BigDecimal val = vbuX.multiply(qbd, mc);
+            
+            double rval = val.doubleValue();
+            
+            Point2D p2d = new Point2D.Double(ox, rval);
+            Point p = coordinate(p2d);
+
+            /*
+             * Cannot use BigDecimal's toString-method since it does not
+             * use scientific notation on positive numbers.
+             */
+            String strval = Double.toString(rval);
+            
+            int pixelPerChar = 8;
+            int strValPixels = pixelPerChar * strval.length();
+            
+            int offset = ywest ? -strValPixels : 5;
+            
+            if (val.floatValue() != 0.0)
+                g2d.drawString(strval, p.x+offset, p.y+5);
+            
+            /* Length of unit line in pixels. */
+            int size = 4;
+            g2d.drawLine(p.x-size, p.y, p.x+size, p.y);
+            
+            pix = p.y;
         }
     }
+
+
+
+    /* Draw a single linear constraint */
+    private void drawConstraint(Graphics2D g2d, double cx, double cy, double b) {
+        Point2D p2d1;
+        Point2D p2d2;
+        if (cy == 0.0) {
+            p2d1 = new Point2D.Double(b, loY);
+            p2d2 = new Point2D.Double(b, hiY);
+        } else if (cx == 0.0) {
+            p2d1 = new Point2D.Double(loX, b);
+            p2d2 = new Point2D.Double(hiX, b);
+        } else {
+            p2d1 = new Point2D.Double(loX, (b-cx*loX)/cy);
+            p2d2 = new Point2D.Double(hiX, (b-cx*hiX)/cy);
+        }
+        drawLine(g2d, p2d1, p2d2);
+    }
+
+
+
+    /* Draw all constraints of an LP. */
+    private void drawConstraints(Graphics2D g2d, LP lp) {
+        Matrix cons = lp.getConstraints();
+        for (int i = 0; i < cons.rows(); i++) {
+            drawConstraint(g2d, cons.get(i, 0), cons.get(i, 1),
+                                                              cons.get(i, 2));
+        }
+    }
+
+
+
+    /* Draw a straight line between the given points. */
+    private void drawLine(Graphics2D g2d, Point2D p2d1, Point2D p2d2) {
+        Point p1 = coordinate(p2d1);
+        Point p2 = coordinate(p2d2);
+        g2d.drawLine(p1.x, p1.y, p2.x, p2.y);
+    }
+
+
+
+    /* Draw an LP's constraints and color its feasible region. */
+        private void drawLP(Graphics2D g2d, LP lp) {
+            Point2D[] pconv = convex(getFeasibleIntersections(lp));
+            
+            Polygon poly = polygon(pconv);
+            
+            g2d.setColor(new Color(245, 234, 230));
+            g2d.drawPolygon(poly);
+            g2d.fillPolygon(poly);
     
-    
-    
+            g2d.setColor(Color.GRAY);
+            drawConstraints(g2d, lp);
+            g2d.setColor(Color.black);
+            for (Point2D p : pconv) drawPoint(g2d, p);
+        }
+
+
+
+    private void drawObjPoint(Graphics2D g2d, LP lp) {
+            double[] pdouble = lp.point();
+            Point2D p2d = new Point2D.Double(pdouble[0], pdouble[1]);
+            drawPoint(g2d, p2d);
+        }
+
+
+
+    private void drawPoint(Graphics2D g2d, Point2D p2d) {
+        Point p = coordinate(p2d);
+        Ellipse2D r2d = new Ellipse2D.Double(p.x-3, p.y-3, 6, 6);
+        g2d.fill(r2d);
+    }
+
+
+
+    private BigDecimal findDist(int power, BigDecimal udist) {
+            BigDecimal pow = new BigDecimal(10).pow(power, mc);
+            if (udist.compareTo(pow) < 0) return findDist(power-1, udist);
+            
+            BigDecimal pow2 = pow.multiply(new BigDecimal(2));
+            if (udist.compareTo(pow2) < 0) return pow;
+            
+    //        BigDecimal pow4 = pow.multiply(new BigDecimal(4));
+    //        if (udist.compareTo(pow4) < 0) return pow2;
+            
+            BigDecimal pow5 = pow.multiply(new BigDecimal(5));
+            if (udist.compareTo(pow5) < 0) return pow2;
+            
+            BigDecimal pow10 = pow.multiply(new BigDecimal(10));
+            if (udist.compareTo(pow10) < 0) return pow5;
+            
+            return findDist(power+1, udist);
+            
+            /* Method without BigDecimal is kept to make this less confusing */
+            /*
+            double pow = Math.pow(10, power);
+            if (udist < pow) return findDist(power-1, udist);
+            if (udist < 2*pow) return pow;
+            if (udist < 4*pow) return 2*pow;
+            if (udist < 5*pow) return 4*pow;
+            if (udist < 10*pow) return 5*pow;
+            return findDist(power+1, udist); // if (udist >= 10*pow);
+            */
+        }
+
+
+
     // TODO: Fix this method. Earlier versions were better but slower.
     private BigDecimal findScale(double udist) {
         int x = (int)Math.log10(udist);
@@ -379,44 +496,12 @@ public class Coordinates extends JPanel {
         if (quot > 1.0) return scale.multiply(new BigDecimal(2), mc);
         else return scale;
     }
-    
-    
-    
-    private BigDecimal findDist(int power, BigDecimal udist) {
-        BigDecimal pow = new BigDecimal(10).pow(power, mc);
-        if (udist.compareTo(pow) < 0) return findDist(power-1, udist);
-        
-        BigDecimal pow2 = pow.multiply(new BigDecimal(2));
-        if (udist.compareTo(pow2) < 0) return pow;
-        
-        BigDecimal pow4 = pow.multiply(new BigDecimal(4));
-        if (udist.compareTo(pow4) < 0) return pow2;
-        
-        BigDecimal pow5 = pow.multiply(new BigDecimal(5));
-        if (udist.compareTo(pow5) < 0) return pow4;
-        
-        BigDecimal pow10 = pow.multiply(new BigDecimal(10));
-        if (udist.compareTo(pow10) < 0) return pow5;
-        
-        return findDist(power+1, udist);
-        
-        /* Method without BigDecimal is kept to make this less confusing */
-        /*
-        double pow = Math.pow(10, power);
-        if (udist < pow) return findDist(power-1, udist);
-        if (udist < 2*pow) return pow;
-        if (udist < 4*pow) return 2*pow;
-        if (udist < 5*pow) return 4*pow;
-        if (udist < 10*pow) return 5*pow;
-        return findDist(power+1, udist); // if (udist >= 10*pow);
-        */
-    }
-    
-    
-    
+
+
+
     /* 
      * Return all intersections that are satisfied
-     * by ALL inequalities of the LP problem.
+     * by ALL inequalities of the LP.
      */
     private Point2D[] getFeasibleIntersections(LP lp) {
         LinkedList<Point2D> points = new LinkedList<Point2D>();
@@ -467,137 +552,89 @@ public class Coordinates extends JPanel {
         }
         return points.toArray(new Point2D[0]);
     }
-    
-    
-    
-    private void drawAxes(Graphics2D g2d) {
-        /* Find "origo" */
-        double ox = 0;
-        double oy = 0;
-        if (loX >= 0) ox = loX;
-        else if (hiX <= 0) ox = hiX;
-        if (loY >= 0) oy = loY;
-        else if (hiY <= 0) oy = hiY;
-        Point2D o2d = new Point2D.Double(ox, oy);
-        Point o = coordinate(o2d);
+
+
+
+    private void move(double moveX, double moveY) {
+        loX += moveX;
+        hiX += moveX;
+        loY += moveY;
+        hiY += moveY;
+        updateDist();
+    }
+
+
+
+    /* Create a convex polygon of ordered value points.
+     * 
+     * Points must be ordered so that drawing lines
+     * between the points in the given order forms a
+     * convex polygon.
+     */
+    private Polygon polygon(Point2D[] points) {
+        int[] xpoints = new int[points.length];
+        int[] ypoints = new int[points.length];
         
-        /* Find axes points in the system */
-        Point xaxis_start = new Point(0, o.y);
-        Point xaxis_end = new Point(getWidth(), o.y);
-        Point yaxis_start = new Point(o.x, 0);
-        Point yaxis_end = new Point(o.x, getHeight());
-        
-        
-        g2d.setColor(Color.BLACK);
-        /* Create the axes and draw them */
-        g2d.drawLine(xaxis_start.x, xaxis_start.y,
-                     xaxis_end.x, xaxis_end.y);
-        g2d.drawLine(yaxis_start.x, yaxis_start.y,
-                     yaxis_end.x, yaxis_end.y);
-        
-        
-        
-        /* Approximate number of pixels needed between each "unit" */
-        int pbux = 65;
-        int pbuy = 65;
-        double absloX = Math.abs(loX);
-        double abshiX = Math.abs(hiX);
-        double absloY = Math.abs(loY);
-        double abshiY = Math.abs(hiY);
-        if (absloX >= 10000 || abshiX >= 10000 || absloX < 0.0001 || abshiX < 0.0001) { 
-            pbux = 110;
-        }
-        if (absloY >= 10000 || abshiY >= 10000 || absloY < 0.0001 || abshiY < 0.0001) { 
-            pbuy = 110;
-        }
-        
-        /* Total number of units on both axes */
-        int unitsX = getWidth() / pbux;
-        int unitsY = getHeight() / pbuy;
-        
-        /* Exact value between each unit */
-        double udistX = distX / unitsX;
-        double udistY = distY / unitsY;
-        
-        /* 
-         * The exact value rounded to a value that can be written with
-         * very few decimals. Is also "easily" divisible by 5. 
-         */
-//        BigDecimal vbux = findScale(udistX);
-//        BigDecimal vbuy = findScale(udistY);
-        
-        BigDecimal vbux = findDist(1, new BigDecimal(udistX, mc));
-        BigDecimal vbuy = findDist(1, new BigDecimal(udistY, mc));
-        
-        /* Divide by 5 to get value between each "minor" unit. */
-        BigDecimal five = new BigDecimal(5, mc);
-        BigDecimal svbux = vbux.divide(five, mc);
-        BigDecimal svbuy = vbuy.divide(five, mc);
-        
-        /* Draw the units on the x-axis */
-        int pix = o.x;
-        /* Find coefficient for svbux for the first unit */
-        int q = (int) (loX / svbux.doubleValue());
-        while (pix <= getWidth()) {
-            /*
-             * Simply using double here introduces rounding errors
-             * when rval reaches the order of 10^23 or higher or
-             * 10^-23 or lower.
-             */
-            BigDecimal qbd = new BigDecimal(q, mc);
-            BigDecimal val = svbux.multiply(qbd, mc);
-            double rval = val.doubleValue();
-            Point2D p2d = new Point2D.Double(rval, oy);
+        int i = 0;
+        for (Point2D p2d : points) {
             Point p = coordinate(p2d);
-
-            int size = 2;
-
-            if (q++ % 5 == 0 && p.x != o.x) {
-                size = 4;
-                /*
-                 * Cannot use BigDecimal's toString-method since it does not
-                 * use scientific notation on positive numbers.
-                 */
-                String strval = Double.toString(rval);
-                g2d.drawString(strval, p.x-strval.length()/2*8, p.y+20);
-                g2d.drawLine(p.x, p.y-size, p.x, p.y+size);
-            }
-//            g2d.drawLine(p.x, p.y-size, p.x, p.y+size);
-            pix = p.x;
+            xpoints[i] = p.x;
+            ypoints[i++] = p.y;
         }
-        
-        
-        
-        /* Draw the units on the y-axis */
-        pix = o.y;
-        q = (int) (loY / svbuy.doubleValue());
-        while (pix >= 0) {
-            BigDecimal qbd = new BigDecimal(q, mc);
-            BigDecimal val = svbuy.multiply(qbd, mc);
-            double rval = val.doubleValue();
-            Point2D p2d = new Point2D.Double(ox, rval);
-            Point p = coordinate(p2d);
+        return new Polygon(xpoints, ypoints, points.length);
+    }
 
-            int size = 2;
 
-            if (q++ % 5 == 0 && p.y != o.y) {
-                size = 4;
-                
-                String strval = Double.toString(rval);
-                g2d.drawString(strval, p.x-strval.length()*8, p.y+5);
-                g2d.drawLine(p.x-size, p.y, p.x+size, p.y);
-            }
-//            g2d.drawLine(p.x-size, p.y, p.x+size, p.y);
-            pix = p.y;
-        }
+
+    private void setRange(double loX, double hiX, double loY, double hiY) {
+        this.loX = loX;
+        this.hiX = hiX;
+        this.loY = loY;
+        this.hiY = hiY;
+        updateDist();
+    }
+
+
+
+    private void updateDist() {
+        distX = hiX - loX;
+        distY = hiY - loY;
     }
     
     
     
-    private void drawPoint(Graphics2D g2d, Point2D p2d) {
-        Point p = coordinate(p2d);
-        Ellipse2D r2d = new Ellipse2D.Double(p.x-3, p.y-3, 6, 6);
-        g2d.fill(r2d);
+    private void zoom(double zoomX, double zoomY) {
+        loX -= zoomX;
+        hiX += zoomX;
+        loY -= zoomY;
+        hiY += zoomY;
+        updateDist();
+    }
+    
+    
+    
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2d = (Graphics2D) g;
+        
+        if (lp != null) {
+            if (lp.getNoBasic() != 2) {
+                String s  = "Current LP is not representable";
+                String s2 = "in two dimensions";
+                g2d.drawString(s, getWidth()/2-s.length()*2-20, getHeight()/2);
+                g2d.drawString(s2, getWidth()/2-s2.length()*3, getHeight()/2+20);
+            } else {
+                checkLPForBounds();
+                
+                drawLP(g2d, lp);
+                drawAxes(g2d);
+                
+                g2d.setColor(Color.RED);
+                drawObjPoint(g2d, lp);
+                
+                drawConstraint(g2d, lp.c.get(0, 0), lp.c.get(1, 0), lp.objVal());
+            }
+        }
     }
     
     
