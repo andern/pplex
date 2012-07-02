@@ -94,16 +94,16 @@ where the variables $x$ and $y$ range over the real numbers.
 A \emph{feasible} point is an assignment of real numbers to the variables 
 such that all constraints are satisfied. 
 The inequality constraints correspond to halfspaces (here halfplanes), and the constraints of a program 
-define the \emph{polyhedron} containing the feasible points (see Fig.~\ref{fig:ex1}).
+define the \emph{polyhedron} containing the feasible points.
 In the example above there exist feasible points,
 since the polyhedron given by the four inequalities contains,
-among other points, the origin. 
+among other points, the origin  (see Figure~\ref{fig:ex1}). 
 
 \begin{figure}[htb]
 	\begin{center}
 		\includegraphics{ex1.jpg}
 	\end{center}
-	\caption{Geometric Interpretation of our Linear Program}
+	\caption{Geometric interpretation of our example linear program}
 	\label{fig:ex1}
 \end{figure}
 
@@ -111,10 +111,11 @@ Since inequalities cannot be manipulated algebraically as easily
 as equations, a first step is to reformulate the program such that it is expressed
 by linear equations in combination with simple inequalities of the form
 $\mathit{variable}\geq 0$. For this purpose, we introduce
-two new variables, $u$ and $v$, called \emph{slack variables}, measuring to what extent the first
-two inequalities are satisfied. 
-We also introduce a new variable
-for the objective function $x+y$. Thus our LP program is brought into the following form, 
+two new variables, here $u$ and $v$, called \emph{slack variables}, 
+measuring to what extent the linear inequalities are satisfied. 
+We also introduce a new variable $\zeta$
+for the objective function $x+y$. 
+Thus our linear program is brought into the following form, 
 called a \emph{dictionary} in \cite{Vanderbei}:
 %\emph{standard form}: ``Standard form'' is Ax \leq b , Vanderbei p.7
 \[    
@@ -143,8 +144,7 @@ Such an assignment is called a \emph{basic solution}, with the variables being z
 Every basic solution corresponds to a dictionary with the basic variables on the right side of ``='', 
 enforcing the variables on the left to equal the constants in the equations. 
 If one of the constants is negative, then the corresponding basic solution is not feasible. 
-(Geometrically, a non-feasible basic solution lies outside of the polyhedron with respect to the inequality corresponding to the 
-variable which is assigned a negative value.)
+(Geometrically, a non-feasible basic solution lies outside of the polyhedron with respect to the inequality corresponding to the variable that is assigned a negative value.)
 We  call a dictionary \emph{(in)feasible} if the corresponding basic solution is (not) feasible.
 
 In the example above, we start in the origin $x=y=0$ and get
@@ -162,12 +162,12 @@ and that the other linear equation allows an even larger increase. Since both
 $u\geq 0$ and $v\geq 0$ must be respected, we increase $x$ to $3$,
 thereby getting $u=0$ as a consequence. Moreover, the objective $x+y$ evaluates to 3.
 
-With value increased to $3$, $x$ doesn't qualify as a basic variable anymore.
+With its value increased to $3$, variable $x$ doesn't qualify as a basic variable anymore.
 Fortunately, the variable $u$ has become zero. Interchanging the roles of
 $x$ and $u$ as basic and non-basic variable, respectively, restores 
-the invariant of the standard form. The limiting equation $u = 6 -2x-y$ makes it
+the invariant of the dictionary form. The limiting equation $u = 6 -2x-y$ makes it
 possible to express $x$ in $u$ and $y$ such that $x$ can be eliminated from the
-right-hand side of the standard form. The equation $u = 6 -2x-y$ is
+right-hand side of the dictionary form. The equation $u = 6 -2x-y$ is
 called the \emph{pivot} and interchanging the roles of
 a basic and a non-basic variable is called \emph{pivoting}.
 In the dictionary, pivoting is done by standard row operations in linear algebra. 
@@ -251,7 +251,7 @@ are not completely identical and ask for an explanation. After some discussion, 
 out that the fraction $\frac{2}{19}$ in the (last) final dictionary is correct,
 and that the corresponding fraction $\frac{1}{19}$ in the (previous) final dictionary was wrong.
 The mistake may have gone unnoticed, since it didn't spoil the answer, the maximum stays
-$4$ at $x=y=2$. However, the mistake may have confused a student working through the details at a later point.
+$4$ at $x=y=2$. However, the mistake may have confused a student working through the details at a later moment.
 
 What do we conclude form the above example? It is certainly useful to demonstrate some
 linear algebra calculations explicitly. Nevertheless, linear algebra should be a prerequisite for a course
@@ -267,7 +267,8 @@ issues in linear programming. These issues include:
 \end{itemize}
 Even for simple examples it is unnatural (and often impossible)
 to design them in such a way that the linear algebra calculations stay simple.
-A computerized tool for these calculations facilitates their demonstration. Such a tool facilitates also the study of larger, more interesting examples. 
+A computerized tool for these calculations facilitates their demonstration. 
+Such a tool also facilitates the study of larger, more interesting examples. 
 
 This paper is organized as follows.
 In Section~\ref{sec:pplex} we introduce 
@@ -277,9 +278,9 @@ We conclude by discussing ongoing work in Section~\ref{sec:future}.
 
 \section{A tool for teaching the Simplex method}\label{sec:pplex}
 Our contribution \url{pplex}~\cite{pplex},
-(a \emph{pedagogical implementation of the Simplex method}),
+a \emph{pedagogical implementation of the Simplex method},
 is free software distributed under the GNU General Public License \cite{GNUGPL}.
-It runs under Java 6 and Java 7 and is portable to any supporting platform.
+It runs under Java 6 and Java 7 and is portable to any supportive platform.
 
 We start by demonstrating \url{pplex} on the example from the introduction.
 The input file for our example reads:
@@ -288,7 +289,7 @@ The input file for our example reads:
 \end{alltt}
 Note that the inequalities $x,y \geq 0$ are implicitly assumed, and omitted in both the input file and the generated dictionaries.
 
-\url{pplex} launches with the prompt \verb|pplex>|.
+The program \url{pplex} launches with the prompt \verb|pplex>|.
 We read the above input file, which is confirmed OK:
 \begin{verbatim}
 pplex> read input/nik2.lps
@@ -296,7 +297,7 @@ Read input/nik2.lps OK.
 \end{verbatim}
 To show the initial dictionary of this program one writes after the prompt:
 \begin{alltt}
-pplex> show primal
+pplex> show
  \(\zeta\) =       +     x +      y
 w1 =  6.00 - 2.00x -      y
 w2 = 40.00 - 7.00x - 13.00y
@@ -304,7 +305,7 @@ w2 = 40.00 - 7.00x - 13.00y
 Numbers are by default displayed with two decimals precision, whereas
 calculations are performed in double precision arithmetic.
 We can now let \url{pplex} execute a pivot by specifying
-the variable by its \emph{column} ($1$ for $x$ and $2$ for $y$)
+the variable by its \emph{column} (here $1$ for $x$ and $2$ for $y$)
 and the linear equation by its \emph{row}. 
 Here comes the command and the resulting dictionary:
 \begin{alltt}
@@ -379,7 +380,6 @@ pplex> show primal
 w1 = - 1.00 - 2.00x + 3.00y
 w2 =   9.00 - 4.00x - 5.00y
 \end{alltt}
-
 One possible approach in such a case is to solve the dual instead:
 \begin{alltt}
 pplex> show dual
@@ -407,9 +407,15 @@ w2 =   7.33 -  7.33x - 1.67w1
 \end{alltt}
 
 In the last example, the dual dictionary was feasible. If both the primal and
-the dual dictionary are infeasible, the dual phase I method has to be executed, 
-which can be demonstrated in \url{pplex} with the following commands:
+the dual dictionary are infeasible, solving goes in two phases. In the first phase
+we modify the linear program into one which \emph{is} dually feasible.
+We do this by changing the objective into one with all coefficients negative.
+By solving the modified program we find a feasible solution of the original
+program. In the second phase, we solve the original program starting from the 
+feasible solution found in the first phase.
+The two phases are demonstrated in \url{pplex} by the following example:
 \begin{alltt}
+plex> show primal
  \(\zeta\) =        + 2.00x + y
 w1 = - 1.00 -     x + y
 w2 =   2.00 -     x - y
@@ -431,7 +437,7 @@ w2 =   1.00 - 2.00x - w1
 \end{alltt}
 This is now a mock solution since the original objective was $2x+y$,
 not $-2x-y$. Now the original objective must be reinstated,
-replacing non-basic variables by their right-hand sides: $2x+(1+x+w_1)$.
+replacing non-basic variables by their right-hand sides: $2x+y = 2x+(1+x+w_1)$.
 This is achieved by the command \verb|reinstate|:
 \begin{alltt}
 pplex> reinstate
