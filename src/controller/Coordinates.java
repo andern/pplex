@@ -379,7 +379,8 @@ public class Coordinates extends JPanel {
 
 
     /* Draw a single linear constraint */
-    private void drawConstraint(Graphics2D g2d, double cx, double cy, double b) {
+    private void drawConstraint(Graphics2D g2d, double cx, double cy,
+                                                            double b) {
         Point2D p2d1;
         Point2D p2d2;
         if (cy == 0.0) {
@@ -420,28 +421,28 @@ public class Coordinates extends JPanel {
 
 
     /* Draw an LP's constraints and color its feasible region. */
-        private void drawLP(Graphics2D g2d, LP lp) {
-            Point2D[] pconv = convex(getFeasibleIntersections(lp));
-            
-            Polygon poly = polygon(pconv);
-            
-            g2d.setColor(new Color(245, 234, 230));
-            g2d.drawPolygon(poly);
-            g2d.fillPolygon(poly);
-    
-            g2d.setColor(Color.GRAY);
-            drawConstraints(g2d, lp);
-            g2d.setColor(Color.black);
-            for (Point2D p : pconv) drawPoint(g2d, p);
-        }
+    private void drawLP(Graphics2D g2d, LP lp) {
+        Point2D[] pconv = convex(getFeasibleIntersections(lp));
+
+        Polygon poly = polygon(pconv);
+
+        g2d.setColor(new Color(245, 234, 230));
+        g2d.drawPolygon(poly);
+        g2d.fillPolygon(poly);
+
+        g2d.setColor(Color.GRAY);
+        drawConstraints(g2d, lp);
+        g2d.setColor(Color.black);
+        for (Point2D p : pconv) drawPoint(g2d, p);
+    }
 
 
 
     private void drawObjPoint(Graphics2D g2d, LP lp) {
-            double[] pdouble = lp.point();
-            Point2D p2d = new Point2D.Double(pdouble[0], pdouble[1]);
-            drawPoint(g2d, p2d);
-        }
+        double[] pdouble = lp.point();
+        Point2D p2d = new Point2D.Double(pdouble[0], pdouble[1]);
+        drawPoint(g2d, p2d);
+    }
 
 
 
@@ -454,34 +455,31 @@ public class Coordinates extends JPanel {
 
 
     private BigDecimal findDist(int power, BigDecimal udist) {
-            BigDecimal pow = new BigDecimal(10).pow(power, mc);
-            if (udist.compareTo(pow) < 0) return findDist(power-1, udist);
-            
-            BigDecimal pow2 = pow.multiply(new BigDecimal(2));
-            if (udist.compareTo(pow2) < 0) return pow;
-            
-    //        BigDecimal pow4 = pow.multiply(new BigDecimal(4));
-    //        if (udist.compareTo(pow4) < 0) return pow2;
-            
-            BigDecimal pow5 = pow.multiply(new BigDecimal(5));
-            if (udist.compareTo(pow5) < 0) return pow2;
-            
-            BigDecimal pow10 = pow.multiply(new BigDecimal(10));
-            if (udist.compareTo(pow10) < 0) return pow5;
-            
-            return findDist(power+1, udist);
-            
-            /* Method without BigDecimal is kept to make this less confusing */
-            /*
-            double pow = Math.pow(10, power);
-            if (udist < pow) return findDist(power-1, udist);
-            if (udist < 2*pow) return pow;
-            if (udist < 4*pow) return 2*pow;
-            if (udist < 5*pow) return 4*pow;
-            if (udist < 10*pow) return 5*pow;
-            return findDist(power+1, udist); // if (udist >= 10*pow);
-            */
-        }
+        BigDecimal pow = new BigDecimal(10).pow(power, mc);
+        if (udist.compareTo(pow) < 0) return findDist(power-1, udist);
+
+        BigDecimal pow2 = pow.multiply(new BigDecimal(2));
+        if (udist.compareTo(pow2) < 0) return pow;
+
+        BigDecimal pow5 = pow.multiply(new BigDecimal(5));
+        if (udist.compareTo(pow5) < 0) return pow2;
+
+        BigDecimal pow10 = pow.multiply(new BigDecimal(10));
+        if (udist.compareTo(pow10) < 0) return pow5;
+
+        return findDist(power+1, udist);
+
+        /* Method without BigDecimal is kept to make this less confusing */
+        /*
+         * double pow = Math.pow(10, power);
+         * if (udist < pow) return findDist(power-1, udist);
+         * if (udist < 2*pow) return pow;
+         * if (udist < 4*pow) return 2*pow;
+         * if (udist < 5*pow) return 4*pow;
+         * if (udist < 10*pow) return 5*pow;
+         * return findDist(power+1, udist); // if (udist >= 10*pow);
+         */
+    }
 
 
 
@@ -530,7 +528,7 @@ public class Coordinates extends JPanel {
                 } catch (IllegalArgumentException e) {
                     /* 
                      * Two lines that don't intersect forms an invertible
-                     * matrix. Skip these points for now.
+                     * matrix. Skip these points.
                      */
                 }
             }
