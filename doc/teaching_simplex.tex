@@ -447,6 +447,7 @@ w2 = 1.00 - 2.00x - w1
 \end{alltt}
 It now takes only one step to find the maximum value $2\frac{1}{2}$ 
 for $2x+y$ in $(\frac{1}{2},1\frac{1}{2})$:
+
 \begin{alltt}
 pplex> pivot 1 2
  \(\zeta\) = 2.50 - 1.50w2 - 0.50w1
@@ -482,9 +483,9 @@ since the objective can take arbitrarily large values:
 \begin{minipage}{.45\textwidth}
 	\includegraphics{ex_unbound.jpg}
 \end{minipage}
-
-This dictionary is feasible and all coefficients of $y$ are positive. This means that $y$ can increase 
-unboundedly, yielding arbitrarily high values for the objective.
+This dictionary is feasible and all coefficients of $y$ are positive. 
+This means that $y$ can increase unboundedly, 
+yielding arbitrarily high values for the objective.
 The command \verb|pivot|, which can pick a suitable pivot itself,
 discovers this:
 \begin{alltt}
@@ -500,7 +501,16 @@ They then can use \texttt{pplex} to experiment with the optimal dictionary, for 
 \begin{alltt}
 \input{nik9.txt}
 \end{alltt}
-The optimal solution is not longer (2,2), but (3,0).
+The optimal solution is not longer (2,2), but (3,0). 
+Note the rounding error in the coefficients of $x$ and $y$ in the objective.
+Pedagogically an ideal occasion to introduce another feature of \url{pplex}: 
+\begin{alltt}
+lpped> show primal 3
+ \(\zeta\) =  3.000 - 1.005w1 - 0.005y
+ x =  3.000 - 0.500w1 - 0.500y
+w2 = 19.000 + 3.500w1 - 9.500y
+\end{alltt}
+Increasing the precision reduces the rounding error.
 
 \section{Work in Progress}\label{sec:future}
 We are currently implementing a graphical interface illustrating the operations executed in \url{pplex} on programs with two variables. The graphical illustration shows the feasible
