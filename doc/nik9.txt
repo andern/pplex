@@ -1,12 +1,20 @@
-pplex> read input/nik6.lps
-Read input/nik6.lps OK.
+pplex> read input/nik2.lps
+Read input/nik2.lps OK.
 
 pplex> show primal
- \(\zeta\) =       + x +     y
-w1 = 10.00 - x + 2.00y
-w2 = 10.00 + x - 2.00y
+\(\zeta\)  =       +     x +      y
+w1 =  6.00 - 2.00x -      y
+w2 = 40.00 - 7.00x - 13.00y
+
+pplex> replace 2.01 1
+\(\zeta\)  =       + 2.01x +      y
+w1 =  6.00 - 2.00x -      y
+w2 = 40.00 - 7.00x - 13.00y
 
 pplex> pivot
- \(\zeta\) = 10.00 - w1 + 3.00y
- x = 10.00 - w1 + 2.00y
-w2 = 20.00 - w1        
+\(\zeta\)  =  3.00 - 1.01w1 - 0.00y
+ x =  3.00 - 0.50w1 - 0.50y
+w2 = 19.00 + 3.50w1 - 9.50y
+
+pplex> pivot
+Incumbent solution is optimal.
