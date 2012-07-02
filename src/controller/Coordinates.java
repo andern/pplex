@@ -41,8 +41,8 @@ import model.Matrix;
  * a point in system 1 while Point2D is used to
  * represent a point in system 2.
  * 
- * The method coordinate(Point2D) is
- * used to translate from system 2 to system 1.
+ * The method translate(Point) and translate(Point2D)
+ * is used to translate between the two systems.
  */
 public class Coordinates extends JPanel {
     private static final long serialVersionUID = 1L;
@@ -199,6 +199,21 @@ public class Coordinates extends JPanel {
         
         return upper.toArray(new Point2D[0]);
     }
+    
+    
+    /*
+     * Convert points in coordinate system 1 to system 2
+     * as described in the class documentation.
+     */
+    Point2D.Double translate(Point p) {
+        double xscale = (hiX - loX) / this.getWidth();
+        double yscale = (hiY - loY) / this.getHeight();
+
+        double newx = p.x * xscale + loX;
+        double newy = p.y * yscale + loY;
+
+        return new Point2D.Double(newx, newy);
+    }
 
 
 
@@ -206,7 +221,7 @@ public class Coordinates extends JPanel {
      * Convert points in coordinate system 2 to system 1
      * as described in the class documentation.
      */
-    private Point coordinate(Point2D p2d) {
+    private Point translate(Point2D p2d) {
         /* Includes padding */
         double xscale = (hiX - loX) / (getWidth() - 10);
         double yscale = (hiY - loY) / (getHeight() - 10);
@@ -253,7 +268,7 @@ public class Coordinates extends JPanel {
         }
         
         Point2D o2d = new Point2D.Double(ox, oy);
-        Point o = coordinate(o2d);
+        Point o = translate(o2d);
 
         /* Find axes points in the system */
         Point xaxis_start = new Point(0, o.y);
@@ -310,7 +325,7 @@ public class Coordinates extends JPanel {
             double rval = val.doubleValue();
             
             Point2D p2d = new Point2D.Double(rval, oy);
-            Point p = coordinate(p2d);
+            Point p = translate(p2d);
 
             /*
              * Cannot use BigDecimal's toString-method since it does not
@@ -352,7 +367,7 @@ public class Coordinates extends JPanel {
             double rval = val.doubleValue();
             
             Point2D p2d = new Point2D.Double(ox, rval);
-            Point p = coordinate(p2d);
+            Point p = translate(p2d);
 
             /*
              * Cannot use BigDecimal's toString-method since it does not
@@ -413,8 +428,8 @@ public class Coordinates extends JPanel {
 
     /* Draw a straight line between the given points. */
     private void drawLine(Graphics2D g2d, Point2D p2d1, Point2D p2d2) {
-        Point p1 = coordinate(p2d1);
-        Point p2 = coordinate(p2d2);
+        Point p1 = translate(p2d1);
+        Point p2 = translate(p2d2);
         g2d.drawLine(p1.x, p1.y, p2.x, p2.y);
     }
 
@@ -447,7 +462,7 @@ public class Coordinates extends JPanel {
 
 
     private void drawPoint(Graphics2D g2d, Point2D p2d) {
-        Point p = coordinate(p2d);
+        Point p = translate(p2d);
         Ellipse2D r2d = new Ellipse2D.Double(p.x-3, p.y-3, 6, 6);
         g2d.fill(r2d);
     }
@@ -577,7 +592,7 @@ public class Coordinates extends JPanel {
         
         int i = 0;
         for (Point2D p2d : points) {
-            Point p = coordinate(p2d);
+            Point p = translate(p2d);
             xpoints[i] = p.x;
             ypoints[i++] = p.y;
         }
