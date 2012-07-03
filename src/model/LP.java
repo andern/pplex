@@ -32,11 +32,21 @@ public class LP {
     private Matrix B;
     private Matrix N;
     
-    public Matrix B_;
+    /* These are temporarily public and not private final
+     * so not to break the current GUI implementation.
+     * 
+     * TODO: Use a clever mark (maybe _) to symbolize which
+     * matrices stay unchanged and which do not.
+     * 
+     * REALLY BAD: Currently N_ never changes and N changes,
+     *             but c never changes and c_ changes. This
+     *             is to not break the current GUI impl.
+     */
     public Matrix N_;
-
     public Matrix b;
-    public final Matrix c;
+    public Matrix c;
+    public Matrix c_;
+    
     private Matrix x_b;
     private Matrix z_n;
 
@@ -74,7 +84,7 @@ public class LP {
      *        basic and non-basic variables to their names.
      */
     public LP(Matrix N, Matrix b, Matrix c, HashMap<Integer, String> x) {
-        this(Matrix.identity(N.rows()), N, Matrix.identity(N.rows()), N, b, c,
+        this(Matrix.identity(N.rows()), N, N, b, c, c,
                                               b, c.scale(-1),
                                               new int[N.rows()],
                                               new int[N.cols()], x);
@@ -96,9 +106,6 @@ public class LP {
      * @param N
      *        A {@code Matrix} with the coefficients
      *        of the non-basic variables.
-     * @param B_
-     *        A {@code Matrix} with the coefficients of the
-     *        basic variables in the original dictionary.
      * @param N_
      *        A {@code Matrix} with the coefficients of the
      *        non-basic variables in the original dictionary.
@@ -108,6 +115,9 @@ public class LP {
      * @param c
      *        A {@code Matrix} with the coefficients of the
      *        decision variables in the original program.
+     * @param c_
+     *        A {@code Matrix} with the coefficients of the
+     *        decision variables in the current linear program.
      * @param x_b
      *        A {@code Matrix} with the upper bounds on the constraints
      *        in the current iteration of the simplex method.
@@ -122,15 +132,15 @@ public class LP {
      *        A {@code HashMap} mapping the indices of the
      *        basic and non-basic variables to their names.
      */
-    private LP(Matrix B, Matrix N, Matrix B_, Matrix N_, Matrix b, Matrix c,
+    public LP(Matrix B, Matrix N, Matrix N_, Matrix b, Matrix c, Matrix c_,
                                             Matrix x_b, Matrix z_n,
                                             int[] Bi, int[] Ni,
                                             HashMap<Integer, String> x) {
         this.B = B;
         this.N = N;
         
-        this.B_ = B_;
         this.N_ = N_;
+        this.c_ = c_;
     
         this.b = b;
         this.c = c;
@@ -257,7 +267,7 @@ public class LP {
         double sum = 0;
         for (int i = 0; i < Bi.length; i++) {
             int j = Bi[i];
-            if (j < c.rows()) sum += c.get(j, 0)*x_b.get(i, 0);
+            if (j < c_.rows()) sum += c_.get(j, 0)*x_b.get(i, 0);
         }
         return sum;
     }
@@ -290,7 +300,7 @@ public class LP {
         Arrays.fill(zdata, 1);
 
         Matrix z_n = new Matrix(zdata).transpose();
-        return new LP(B, N, B_, N_, b, c, x_b, z_n, Bi, Ni, x);
+        return new LP(B, N, N_, b, c, c_, x_b, z_n, Bi, Ni, x);
     }
 
 
@@ -306,7 +316,15 @@ public class LP {
      */
     public LP replaceObj(double[] coeff) {
         Matrix z_n = new Matrix(coeff).transpose().scale(-1);
-        return new LP(B, N, B_, N_, b, c, x_b, z_n, Bi, Ni, x);
+        
+        double[] c_data = new double[Ni.length];
+        for (int i = 0; i < Ni.length; i++) {
+            if (Ni[i] < Bi.length) c_data[i] = -z_n.get(i, 0);
+            else c_data[i] = c.get(i, 0);
+        }
+        
+        Matrix c_ = new Matrix(c_data).transpose();
+        return new LP(B, N, N_, b, c, c_, x_b, z_n, Bi, Ni, x);
     }
 
 
@@ -358,7 +376,7 @@ public class LP {
         nBi[leaving] = Ni[entering];
         nNi[entering] = Bi[leaving];
 
-        return new LP(nB, nN, B_, N_, b, c, nx_b, nz_n, nBi, nNi, x);
+        return new LP(nB, nN, N_, b, c, c_, nx_b, nz_n, nBi, nNi, x);
     }
 
 
@@ -400,7 +418,7 @@ public class LP {
         }
 
         Matrix z_n = new Matrix(zdata).transpose();
-        return new LP(B, N, B_, N_, b, c, x_b, z_n, Bi, Ni, x);
+        return new LP(B, N, N_, b, c, c_, x_b, z_n, Bi, Ni, x);
     }
 
 
@@ -496,7 +514,7 @@ public class LP {
      *         A {@code Matrix} of double precision numbers representing
      *         the dictionary of the current Linear Program.
      */
-    public  Matrix dictionary() {
+    public Matrix dictionary() {
         double[][] data = new double[Bi.length+1][Ni.length+1];
         for (int i = 0; i < Ni.length; i++) { data[0][i+1] = -z_n.get(i, 0); }
         for (int i = 0; i < Bi.length; i++) { data[i+1][0] = x_b.get(i, 0); }
@@ -511,5 +529,54 @@ public class LP {
         }
 
         return new Matrix(data);
+    }
+    
+    
+    
+    /**
+     * Constraints being on the form:
+     * c11x1 + c12x2 + ... + c1nxn <= b1
+     * c21x1 + c22x2 + ... + c2nxn <= b2
+     *                 ...
+     * cm1x1 + cm2x2 + ... + cmnxn <= bm
+     * 
+     * Cx <= b. This method returns the matrix C.
+     * 
+     * @return
+     *         A {@code Matrix} of double precision numbers representing
+     *         the coefficients for the variables in the constraints.
+     */
+    public Matrix getConsCoeffs() {
+        return N_;
+    }
+    
+    
+    
+    /**
+     * Constraints being on the form:
+     * c11x1 + c12x2 + ... + c1nxn <= b1
+     * c21x1 + c22x2 + ... + c2nxn <= b2
+     *                 ...
+     * cm1x1 + cm2x2 + ... + cmnxn <= bm
+     * 
+     * Cx <= b. This method returns the vector b.
+     * 
+     * @return
+     *         A {@code Matrix} of double precision numbers representing
+     *         the values in the constraints. 
+     */
+    public Matrix getConsValues() {
+        return b;
+    }
+    
+    
+    
+    /**
+     * @return
+     *         A row {@code Matrix} of double precision numbers representing
+     *         the coefficients in the objective function.
+     */
+    public Matrix getObjFunction() {
+        return c;
     }
 }
