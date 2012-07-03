@@ -29,6 +29,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import controller.GUI;
+
 /**
  * The {@code Console} class represents a visual/graphical console
  * relaying messages from/to the command line interface.
@@ -50,14 +52,16 @@ class Console extends JPanel {
     private ArrayList<String> cliHistory;
     private int p;
     
-    private CLI cli = new CLI();
+    private CLI cli;
     
     
     
     /**
      * Initialize the console.
      */
-    public Console() {
+    public Console(CLI cli) {
+        this.cli = cli;
+        
         setLayout(new BorderLayout());
         
         jtaConsole = new JTextArea(Data.FWELCOME + "\n");
@@ -104,7 +108,8 @@ class Console extends JPanel {
                  * Update parent so that the coordinate system gets updated
                  * according to the new changes done by the console.
                  */
-                getParent().repaint();
+                getTopLevelAncestor().repaint();
+                repaint();
                 break;
                 
             case KeyEvent.VK_UP:
