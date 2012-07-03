@@ -496,21 +496,35 @@ Program is unbounded.
 \subsection{Introduction into Sensitivity Analysis}
 
 Once an optimum is found, it is natural to ask how sensitive it is to the accuracy of the available data. 
-As an introduction into sensitivity analysis, the lecturer may for example ask the students: How much can we fiddle with the coefficients in the objective function without changing the optimal solution? 
-They then can use \texttt{pplex} to experiment with the optimal dictionary, for example of our first example:
+As an introduction into sensitivity analysis, the lecturer may for example ask the students: 
+How much can we fiddle with the coefficients in the objective function without changing the optimal solution?
+Students can use \texttt{pplex} to experiment with the optimal dictionary.
+Consider for example the following variation of our first example,
+where the objective and the first inequality are almost parallel:
 \begin{alltt}
-\input{nik9.txt}
+pplex> read input/nik9.lps
+Read input/nik9.lps OK.
+
+pplex> show        
+ \(\zeta\) =       + 2.01x +      y
+w1 =  6.00 - 2.00x -      y
+w2 = 40.00 - 7.00x - 13.00y
+
+pplex> pivot
+ \(\zeta\) =  6.03 - 1.01w1 - 0.00y
+ x =  3.00 - 0.50w1 - 0.50y
+w2 = 19.00 + 3.50w1 - 9.50y
 \end{alltt}
 The optimal solution is not longer (2,2), but (3,0). 
-Note the rounding error in the coefficients of $x$ and $y$ in the objective.
+Note the rounding error in the coefficients of $w_1$ and $y$ in the objective.
 Pedagogically an ideal occasion to introduce another feature of \url{pplex}: 
 \begin{alltt}
-lpped> show primal 3
- \(\zeta\) =  3.000 - 1.005w1 - 0.005y
+pplex> show primal 3
+ \(\zeta\) =  6.030 - 1.005w1 - 0.005y
  x =  3.000 - 0.500w1 - 0.500y
 w2 = 19.000 + 3.500w1 - 9.500y
 \end{alltt}
-Increasing the precision reduces the rounding error.
+Increasing the precision eliminates the rounding error here.
 
 \section{Work in Progress}\label{sec:future}
 We are currently implementing a graphical interface illustrating the operations executed in \url{pplex} on programs with two variables. The graphical illustration shows the feasible
