@@ -407,15 +407,14 @@ w2 =   7.33 -  7.33x - 1.67w1
 \end{alltt}
 
 In the last example, the dual dictionary was feasible. If both the primal and
-the dual dictionary are infeasible, solving goes in two phases. In the first phase
-we modify the linear program into one which \emph{is} dually feasible.
-We do this by changing the objective into one with all coefficients negative.
-By solving the modified program we find a feasible solution of the original
-program. In the second phase, we solve the original program starting from the 
+the dual dictionary are infeasible, the linear program is solved in two phases: In the first phase
+we modify the linear program into one which \emph{is} dually feasible, by substituting all coefficients in the objective with negative values.
+By solving the modified dual program we find a feasible solution of the original primal
+program. In the second phase, we solve the original primal program starting from the 
 feasible solution found in the first phase.
 The two phases are demonstrated in \url{pplex} by the following example:
 \begin{alltt}
-plex> show primal
+pplex> show primal
  \(\zeta\) =        + 2.00x + y
 w1 = - 1.00 -     x + y
 w2 =   2.00 -     x - y
@@ -517,7 +516,7 @@ w2 = 19.00 + 3.50w1 - 9.50y
 \end{alltt}
 The optimal solution is not longer (2,2), but (3,0). 
 Note the rounding error in the coefficients of $w_1$ and $y$ in the objective.
-Pedagogically an ideal occasion to introduce another feature of \url{pplex}: 
+Pedagogically, an ideal occasion to introduce another feature of \url{pplex}: 
 \begin{alltt}
 pplex> show primal 3
  \(\zeta\) =  6.030 - 1.005w1 - 0.005y
