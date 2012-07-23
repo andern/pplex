@@ -64,6 +64,11 @@ The simplex method is the best known and most widely used method to solve linear
 Therefore, it is taught to a wide range of students with varying background in mathematics.
 We present the software \url{pplex} for supporting
 the classroom presentation of the simplex method.
+Distinctive features of our tool are: 
+portability, 
+simple command line interface, 
+file input in standard LP format,
+geometric interpretation (two variables).
 \end{abstract}
 
 \section{Introduction and Motivation}\label{sec:intro}
@@ -117,7 +122,6 @@ We also introduce a new variable $\zeta$
 for the objective function $x+y$. 
 Thus our linear program is brought into the following form, 
 called a \emph{dictionary} in \cite{Vanderbei}:
-%\emph{standard form}: ``Standard form'' is Ax \leq b , Vanderbei p.7
 \[    
     \begin{array}{lcrcrcrcr}
       \zeta&=&   & &     x &+&     y & &  \\\hline
@@ -144,7 +148,8 @@ Such an assignment is called a \emph{basic solution}, with the variables being z
 Every basic solution corresponds to a dictionary with the basic variables on the right side of ``='', 
 enforcing the variables on the left to equal the constants in the equations. 
 If one of the constants is negative, then the corresponding basic solution is not feasible. 
-(Geometrically, a non-feasible basic solution lies outside of the polyhedron with respect to the inequality corresponding to the variable that is assigned a negative value.)
+(Geometrically, a non-feasible basic solution lies outside of the polyhedron with respect to 
+the inequality corresponding to the variable that is assigned a negative value.)
 We  call a dictionary \emph{(in)feasible} if the corresponding basic solution is (not) feasible.
 
 In the example above, we start in the origin $x=y=0$ and get
@@ -267,13 +272,25 @@ issues in linear programming. These issues include:
 \end{itemize}
 Even for simple examples it is unnatural (and often impossible)
 to design them in such a way that the linear algebra calculations stay simple.
-A computerized tool for these calculations facilitates their demonstration. 
-Such a tool also facilitates the study of larger, more interesting examples. 
+A computerized tool for these calculations facilitates their demonstration.
+The benefits of such a tool are three-fold: no precious class-room time is wasted
+on elementary calculations, no calculation errors distract attention, and
+the demonstration of larger, more interesting examples becomes feasible.
+There is also a danger associated with the use of such tools in teaching: 
+one should make sure that the students really understand the elementary
+calculations the tool is performing. The idea of having a tool
+for experimenting with the simplex method is, of course, not new. 
+See, for example, \cite{SimplexPivotTool, AdvancedPivotTool}.
+However, tools tend to gradually go out-of-date on newer platforms
+than those used to develop them. Distinctive features of our tool are: 
+portability, 
+simple command line interface, 
+file input in standard LP format,
+geometric interpretation (two variables, so far).
 
 This paper is organized as follows.
 In Section~\ref{sec:pplex} we introduce 
 our tool \url{pplex}, applied to several examples in Section~\ref{sec:examples}.
-%The tool is further described in Section~\ref{sec:features}.
 We conclude by discussing ongoing work in Section~\ref{sec:future}.
 
 \section{A tool for teaching the Simplex method}\label{sec:pplex}
@@ -526,18 +543,18 @@ w2 = 19.000 + 3.500w1 - 9.500y
 Increasing the precision eliminates the rounding error here.
 
 \section{Work in Progress}\label{sec:future}
-We are currently implementing a graphical interface illustrating the operations executed in \url{pplex} on programs with two variables. The graphical illustration shows the feasible
+ 
+We are currently finishing a graphical interface illustrating \url{pplex} working on programs with two variables. 
+The graphical illustration shows the feasible
 region and highlights the vertex with the incumbent basic solution (see Figure~\ref{fig:ex_gui}).
-Once accomplished, we will implement a graphical
-illustration for linear programs in three variables.
 
-\begin{figure}[h!]
-	\begin{center}
-		\includegraphics[width=\textwidth]{ex_gui.jpg}
-	\end{center}
-	\caption{Example of the Graphical User Interface}
-	\label{fig:ex_gui}
-\end{figure}
+An interesting extension is the case of \emph{unbound} variables, that is, variables that may take
+negative values. The standard solution is to substitute $u = x-y$ for an unbound variable $u$,
+where $x$ and $y$ are two new, non-negative variables. However, on the geometrical side one would
+like to see only $u$ and stay in two dimensions.
+
+Once this has been accomplished, we plan to implement a graphical
+illustration for linear programs in three variables.
 
 We will make an effort to keep \url{pplex} up to date and will support 
 future standard formats for LP programs upon request.
@@ -560,8 +577,20 @@ W.H.~Freeman and Company, 1983.
 \bibitem{GNUGPL}
 \url{http://www.gnu.org/licenses/}
 
+\bibitem{SimplexPivotTool}
+\url{http://campuscgi.princeton.edu/~rvdb/JAVA/pivot/simple.html}
+
+\bibitem{AdvancedPivotTool}
+\url{http://campuscgi.princeton.edu/~rvdb/JAVA/pivot/advanced.html}
+
 \end{thebibliography}
 
-
+\begin{figure}[htpb]
+	\begin{center}
+		\includegraphics[width=\textwidth]{ex_gui.jpg}
+	\end{center}
+	\caption{Example of the Graphical User Interface}
+	\label{fig:ex_gui}
+\end{figure}
 
 \end{document}
