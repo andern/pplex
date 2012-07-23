@@ -58,6 +58,13 @@ class CLI {
 
 
 
+    LP getCurrentProgram() {
+        if (p == 0) return null;
+        return lps.get(p-1);
+    }
+    
+    
+    
     private boolean requireProgram(String cmd) {
         for (String s : reqProg)
             if (cmd.equals(s))
@@ -95,9 +102,6 @@ class CLI {
         else if (args[0].equals(Data.update))  { s = parseUpdate(args); }
 
         else return String.format("Invalid command %s%n", args[0]);
-        
-        // TODO: REMOVE
-        if (p != 0) Coordinates.lp = lps.get(p-1);
 
         /* Only log valid commands. */
         log.add(cmd);

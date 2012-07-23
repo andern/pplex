@@ -29,6 +29,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 
+import ccs.CCSystem;
+
+import model.LP;
+
 /**
  * The GUI class creates a {@code JFrame} consisting of two parts:
  * a console and a coordinate system.
@@ -44,6 +48,12 @@ class GUI extends JFrame {
     private JSplitPane jspSplitPane;
     private JMenuItem jmiExit, jmiAbout;
     
+    private CCSystem ccs;
+    private CLI cli;
+    private Console console;
+    
+    private LP lp;
+    
     
     
     /**
@@ -53,8 +63,12 @@ class GUI extends JFrame {
         super("lpped");
         setTitle("lpped");
         
+        ccs = new CCSystem();
+        cli = new CLI();
+        console = new Console(cli);
+        
         jspSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-                                            new Console(), new Coordinates());
+                                            console, ccs);
         jspSplitPane.setDividerSize(3);
         jspSplitPane.setDividerLocation(500);
         jspSplitPane.setResizeWeight(0);
@@ -107,6 +121,15 @@ class GUI extends JFrame {
         jmiAbout.addActionListener(new aboutListener());
         
         return jmbMenu;
+    }
+    
+    
+    
+    @Override
+    public void repaint() {
+        super.repaint();
+        lp = cli.getCurrentProgram();
+        VisLP.drawLP(ccs, lp);
     }
     
     
