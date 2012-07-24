@@ -94,7 +94,7 @@ introducing the simplex method by a simple example:
     	\text{and}       &    x &,&    y &\geq&0    &\quad\quad \text{(two constraints)}
     \end{array}
 \]
-where the variables $x$ and $y$ range over the real numbers.
+where the variables $x$ and $y$ range over the real numbers. We write $x,y \geq 0$ to indicate that both $x$ and $y$ are required to be non-negative.
 
 A \emph{feasible} point is an assignment of real numbers to the variables 
 such that all constraints are satisfied. 
@@ -273,9 +273,10 @@ issues in linear programming. These issues include:
 Even for simple examples it is unnatural (and often impossible)
 to design them in such a way that the linear algebra calculations stay simple.
 A computerized tool for these calculations facilitates their demonstration.
-The benefits of such a tool are three-fold: no precious class-room time is wasted
-on elementary calculations, no calculation errors distract attention, and
-the demonstration of larger, more interesting examples becomes feasible.
+The benefits of such a tool are four-fold: no precious class-room time is wasted
+on elementary calculations, no calculation errors distract attention,
+the demonstration of larger, more interesting examples becomes feasible, and 
+understanding of the simplex method is enhanced by showing the geometric interpretation of two-dimensional problems along executing the simplex method.
 There is also a danger associated with the use of such tools in teaching: 
 one should make sure that the students really understand the elementary
 calculations the tool is performing. The idea of having a tool
@@ -283,7 +284,7 @@ for experimenting with the simplex method is, of course, not new.
 See, for example, \cite{SimplexPivotTool, AdvancedPivotTool}.
 However, tools tend to gradually go out-of-date on newer platforms
 than those used to develop them. Distinctive features of our tool are: 
-portability, 
+Portability, 
 simple command line interface, 
 file input in standard LP format,
 geometric interpretation (two variables, so far).
