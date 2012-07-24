@@ -251,7 +251,7 @@ question in detail, but manages as by miracle to finally produce the following d
 \end{minipage}
 \vspace{.2cm}
 
-A Happy End? Not yet. Some attentive students point out that the two final dictionaries
+A Happy Ending? Not yet. Some attentive students point out that the two final dictionaries
 are not completely identical and ask for an explanation. After some discussion, it turns
 out that the fraction $\frac{2}{19}$ in the (last) final dictionary is correct,
 and that the corresponding fraction $\frac{1}{19}$ in the (previous) final dictionary was wrong.
@@ -358,7 +358,9 @@ pplex> pivot 1 1
  x = 2.00 - 0.68w1 + 0.05w2
  y = 2.00 + 0.37w1 - 0.11w2
 \end{alltt}
-Due to (or despite?) the double precision arithmetic, one obtains exactly the same result.
+The lecturer may use the opportunity to call the students' attention to an important implementation issue: Numerically, exactly the same result is obtained by two different pivot sequences. Is that due to, or despite of the implementation using double precision arithmetic?
+In general, it is impossible to answer which of the two is the case. Higher precision means smaller rounding errors,
+but at the same time, smaller errors become visible. 
 
 \section{Examples of Using \texttt{pplex}}\label{sec:examples}
 In this section we present examples using duality and examples illustrating
@@ -385,7 +387,7 @@ feasible solution? Here is an example:
 The feasible region of this program is the
 triangle with points $(0,\frac{1}{3}),(0,1.8),(1,1)$
 in the $x,y$-plane, on which we maximize the objective $-7x-8y$.
-Clearly, the solution $-\frac{8}{3}$ is to be found in the point $(0,\frac{1}{3})$.
+Clearly, the maximum $-\frac{8}{3}$ is to be found in the point $(0,\frac{1}{3})$.
 However, we cannot proceed as in the previous section since the
 initial dictionary is not feasible:
 \begin{alltt}
@@ -473,15 +475,14 @@ pplex> pivot 1 2
 
 
 \subsection{Degeneracy and Cycling}\label{sec:cycling}
-If the constant of a pivot is zero, pivoting does not improve the value of the basic solution (\emph{degenerated pivot}; geometrically, one stays at the same vertex of the polyhedron). 
-Hopefully, one of the next pivots will improve
-the objective. Unfortunately, it is possible to \emph{cycle},
-as shown effortlessly by the following example \cite{Chvatal,Vanderbei}:
+If the constant of a pivot is zero, pivoting does not improve the value of the basic solution (\emph{degenerated pivot}; geometrically, one stays at the same vertex of the polyhedron). Degenerated pivots occur commonly during execution of the simplex method. Usually, they are unproblematic, because one of the subsequent pivots improves
+the objective. However, students need to be made aware that there is the very rare possibility of \emph{cycling},
+which is demonstrated effortlessly by the following example \cite{Chvatal,Vanderbei}:
 \begin{alltt}
 \input{nik5.txt}
 \end{alltt}
 With this last dictionary we are back at the beginning, 
-albeit written out in a permuted way. Note that each pivot has been
+albeit displayed with permuted columns. Note that each pivot has been
 chosen picking the non-basic variable with the largest coefficient in the objective.
 
 
@@ -540,7 +541,7 @@ pplex> show primal 3
  x =  3.000 - 0.500w1 - 0.500y
 w2 = 19.000 + 3.500w1 - 9.500y
 \end{alltt}
-Increasing the precision eliminates the rounding error here.
+Increasing the precision to three decimals by the command \texttt{show primal 3} eliminates the rounding error in this example.
 
 \section{Work in Progress}\label{sec:future}
  
