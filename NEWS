@@ -1,3 +1,11 @@
+Tue Jul 31, 2012 - 0.2.0
+* NEW FEATURE: A graphical interface for pplex that
+               can visualize a linear program in two
+               dimensions.
+* MISC: The terminology in the help menu has been
+        greatly improved.
+* MISC: Changed name from lpped to pplex.
+
 Mon Apr 23, 2012 - 0.1.1
 ===========================
 * BUG FIX: Fixed a bug that caused `show optimality`
