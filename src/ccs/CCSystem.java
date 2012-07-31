@@ -1,20 +1,20 @@
 /*
  * Copyright (C) 2012 Andreas Halle
  *
- * This file is part of lpped.
+ * This file is part of pplex.
  *
- * lpped is free software; you can redistribute it and/or modify
+ * pplex is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * lpped is distributed in the hope that it will be useful,
+ * pplex is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public license
- * along with lpped. If not, see <http://www.gnu.org/licenses/>.
+ * along with pplex. If not, see <http://www.gnu.org/licenses/>.
  */
 package ccs;
 
@@ -244,7 +244,7 @@ public class CCSystem extends JPanel {
              * TODO: Find a better mathematical term
              *       for the numbers described above.
              */
-            BigDecimal vbuX = findDist(1, new BigDecimal(udistX, MC));
+            BigDecimal vbuX = findScale(udistX);
             
             int pix = o.x;
             /* Find coefficient for vbuX for the first visible unit */
@@ -292,7 +292,7 @@ public class CCSystem extends JPanel {
             int pbuy = 65;
             int unitsY = getHeight() / pbuy;
             double udistY = distY / unitsY;
-            BigDecimal vbuY = findDist(1, new BigDecimal(udistY, MC));
+            BigDecimal vbuY = findScale(udistY);
 
             int pix = o.y;
             int q = (int) (loY / vbuY.doubleValue());
@@ -365,45 +365,14 @@ public class CCSystem extends JPanel {
 
 
 
-    private BigDecimal findDist(int power, BigDecimal udist) {
-        BigDecimal pow = new BigDecimal(10).pow(power, MC);
-        if (udist.compareTo(pow) < 0) return findDist(power-1, udist);
-
-        BigDecimal pow2 = pow.multiply(new BigDecimal(2));
-        if (udist.compareTo(pow2) < 0) return pow;
-
-        BigDecimal pow5 = pow.multiply(new BigDecimal(5));
-        if (udist.compareTo(pow5) < 0) return pow2;
-
-        BigDecimal pow10 = pow.multiply(new BigDecimal(10));
-        if (udist.compareTo(pow10) < 0) return pow5;
-
-        return findDist(power+1, udist);
-
-        /* Method without BigDecimal is kept to make this less confusing */
-        /*
-         * double pow = Math.pow(10, power);
-         * if (udist < pow) return findDist(power-1, udist);
-         * if (udist < 2*pow) return pow;
-         * if (udist < 4*pow) return 2*pow;
-         * if (udist < 5*pow) return 4*pow;
-         * if (udist < 10*pow) return 5*pow;
-         * return findDist(power+1, udist); // if (udist >= 10*pow);
-         */
-    }
-
-
-
-    // TODO: Fix this method. Earlier versions were better but slower.
     private BigDecimal findScale(double udist) {
-        int x = (int)Math.log10(udist);
+        int x = (int)Math.floor(Math.log10(udist));
         /* scale = 10 ^ x */
         BigDecimal scale = new BigDecimal(10, MC).pow((int)x, MC);
         
         double quot = udist / scale.doubleValue();
         if (quot > 5.0) return scale.multiply(new BigDecimal(10), MC);
-        if (quot > 4.0) return scale.multiply(new BigDecimal(5), MC);
-        if (quot > 2.0) return scale.multiply(new BigDecimal(4), MC);
+        if (quot > 2.0) return scale.multiply(new BigDecimal(5), MC);
         if (quot > 1.0) return scale.multiply(new BigDecimal(2), MC);
         else return scale;
     }

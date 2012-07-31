@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
-<project name="lpped" default="jar">
+<project name="pplex" default="jar">
 
   <target name="clean" description="remove intermediate files">
     <delete dir="bin"/>
   </target>
 
   <target name="clobber" depends="clean" description="remove all artifact files">
-    <delete file="lpped.jar"/>
+    <delete file="pplex.jar"/>
   </target>
 
   <target name="compile" description="compile the Java source code to class files">
@@ -15,13 +15,16 @@
   </target>
 
   <target name="jar" depends="compile" description="create a Jar file for the application">
-    <jar destfile="lpped.jar">
+    <jar destfile="pplex.jar">
       <fileset dir="bin" includes="**/*.class"/>
       <manifest>
         <attribute name="Main-class" value="controller/Main"/>
       </manifest>
     </jar>
   </target>
-
+  
+  <target name="mac" depends="jar" description="create a runnable app file for Mac OS">
+    <jarbundler dir="." name="pplex" jar="pplex.jar" />
+  </target>
 </project>
 

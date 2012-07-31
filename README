@@ -1,35 +1,37 @@
-lpped readme
-Last updated:    2012-04-22
-Release version: 0.1.1
+pplex readme
+Last updated:    2012-07-31
+Release version: 0.2.0
 ------------------------------------------------------------------------
 
 Table of contents
 -----------------
 1.0) About
-2.0) Installing and running lpped
+2.0) Installing and running pplex
 
 1.0) About
 ---- -----
-lpped is an application that can interpret linear programs (LP) and show
+pplex is an application that can interpret linear programs (LP) and show
 how the LP dictionary evolves throughout the execution of the simplex method.
 
-lpped is free software; you can redistribute it and/or modify
+pplex is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-2.0) Installing and running lpped
+2.0) Installing and running pplex 
 ---- ----------------------------
-Compiling lpped requires 'apache ant'.
+Compiling pplex requires 'apache ant'.
 
-To only compile the sources of lpped, run
+To only compile the sources of pplex, run
     `ant compile`
 
-To compile the sources of lppend and build a runnable jar, run
+To compile the sources of pplex and build a runnable jar, run
     `ant jar`
     or simply
     `ant`
 
 To run the newly built jar, run
-    `java -jar lpped.jar`
+    `java -jar pplex.jar`
 
+To run pplex in console-mode, run
+    `java -jar pplex.jar -nogui`

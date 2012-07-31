@@ -1,6 +1,5 @@
 bin
 .git
-lpped.jar
 *.swp
 doc/*.pdf
 doc/*.aux

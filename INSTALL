@@ -1,13 +1,15 @@
-Compiling lpped requires 'apache ant'.
+Compiling pplex requires 'apache ant'.
 
-To only compile the sources of lpped, run
+To only compile the sources of pplex, run
     `ant compile`
 
-To compile the sources of lppend and build a runnable jar, run
+To compile the sources of pplex and build a runnable jar, run
     `ant jar`
     or simply
     `ant`
 
 To run the newly built jar, run
-    `java -jar lpped.jar`
+    `java -jar pplex.jar`
 
+To run pplex in console-mode, run
+    `java -jar pplex.jar -nogui`
