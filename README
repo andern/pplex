@@ -1,12 +1,13 @@
 pplex readme
-Last updated:    2012-07-31
+Last updated:    2012-08-07
 Release version: 0.2.0
 ------------------------------------------------------------------------
 
 Table of contents
 -----------------
 1.0) About
-2.0) Installing and running pplex
+2.0) Just running pplex
+3.0) Installing and running pplex
 
 1.0) About
 ---- -----
@@ -18,7 +19,15 @@ it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-2.0) Installing and running pplex 
+2.0) Just running pplex
+
+Open http://www.github.com/andern/lpped in your favorite browser.
+Click the zip-button and download the repository as a zip-archive.
+Extract the archive (you only really need to extract pplex.jar).
+Double-click pplex.jar and start using pplex on the command-line in
+the left half of the window. More information in doc/teaching_simplex.
+
+3.0) Installing and running pplex 
 ---- ----------------------------
 Compiling pplex requires 'apache ant'.
 
