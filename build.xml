@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
+
 <project name="pplex" default="jar">
+  <taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" />
 
   <target name="clean" description="remove intermediate files">
     <delete dir="bin"/>
@@ -7,6 +9,7 @@
 
   <target name="clobber" depends="clean" description="remove all artifact files">
     <delete file="pplex.jar"/>
+    <delete dir="pplex.app"/>
   </target>
 
   <target name="compile" description="compile the Java source code to class files">
@@ -24,7 +27,7 @@
   </target>
   
   <target name="mac" depends="jar" description="create a runnable app file for Mac OS">
-    <jarbundler dir="." name="pplex" jar="pplex.jar" />
+    <jarbundler dir="release" name="pplex" mainclass="controller/Main" jar="pplex.jar" />
   </target>
 </project>
 
