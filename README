@@ -1,19 +1,19 @@
 pplex readme
-Last updated:    2012-08-14
+Last updated:    2012-08-15
 Release version: 0.2.0
 ------------------------------------------------------------------------
 
 Table of contents
 -----------------
 1.0) About
-2.0) Just running pplex
- 2.1) Using a pre-compiled cross-platform jar-file (recommended)
- 2.2) Using a pre-compiled executable .exe in Windows (coming soon)
- 2.3) Using a pre-compiled executable .app in Mac OS (coming soon)
-3.0) Installing and running pplex
- 3.1) Compiling a cross-platform jar file
- 3.2) Compiling an executable .exe file for Windows (coming soon)
- 3.3) Compiling an executable .app file for Mac OS
+2.0) Compiling pplex from sources
+ * 2.1 Compiling a cross-platform jar file
+ * 2.2 (Coming) Compiling a .exe file for Windows
+ * 2.3 Compiling a .app file for Mac OS
+3.0) Just running pplex
+ * 3.1 (Recommended) Using a pre-compiled cross-platform .jar-file
+ * 3.2 (Coming) Using a pre-compiled .exe in Windows
+ * 3.3 (Coming) Using a pre-compiled .app in Mac OS
 
 
 
@@ -27,49 +27,17 @@ it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-2.0) Just running pplex
----- ------------------
-You need Java Runtime Environment to run pplex on any platform.
 
-Open http://www.github.com/andern/lpped in your favorite browser.
 
-Download the repository as an archive:
-  To download the latest revision just click the zip-button on the project's front page.
-  To get a specific version of pplex click on tags on the project's front page
-  [here: https://github.com/andern/lpped/tags] and choose the version you want as a zip
-  archive or a tar.gz archive.
-  You can also clone the repository by running
-  `git clone https://github.com/andern/lpped.git` from the command line.
-
-2.1) Using a pre-compiled cross-platform jar-file. (recommended)
----- -----------------------------------------------------------
-Extract the archive acquired in 2.0 (you only really need to extract pplex.jar)
-
-Double-click on pplex.jar or run `java -jar pplex.jar` from the command line.
-
-To run pplex without a GUI (no visualization) run `java -jar pplex.jar -nogui`.
-
-2.2) Using a pre-compiled executable .exe in Windows (coming soon)
----- -------------------------------------------------------------
-Extract the archive acquired in 2.0 (you only really need to extract pplex.exe)
-
-Double-click on pplex.exe or run `pplex`from the command line.
-
-To run pplex without a GUI (no visualisation) run `pplex -nogui`.
-
-2.3) Using a pre-compiled executable .app in Mac OS (coming soon)
----- ------------------------------------------------------------
-Extract the archive acquired in 2.0 (you only really need to extract pplex.app)
-
-Double-click on pplex.app or run `open pplex.app` from the command line.
-
-To run pplex without a GUI (no visualization) run `open pplex.app -nogui`.
-
-3.0) Compiling pplex from sources
+2.0) Compiling pplex from sources
 ---- ----------------------------
-Compiling pplex requires 'apache ant'.
+Don't want to compile? Check out section 3 on how to run pplex from
+pre-compiled binaries.
 
-3.1) Compiling a cross-platform jar file
+Compiling pplex requires Apache Ant.
+
+
+2.1) Compiling a cross-platform jar file
 ---- -----------------------------------
 To only compile the sources of pplex, run
   `ant compile`
@@ -79,20 +47,66 @@ To compile the sources of pplex and build a runnable jar, run
   or simply
   `ant`
 
-See 2.1 on how to use your newly compiled jar.
+See 3.1 on how to use your newly compiled jar.
 
-3.2) Compiling an executable .exe file for Windows (coming soon)
----- -----------------------------------------------------------
+
+2.2) (Coming) Compiling a .exe file for Windows
+---- ------------------------------------------
 No instructions yet.
 
-3.3) Compiling an executable .app file for Mac OS
----- --------------------------------------------
-Compiling pplex as an .app for Mac OS requires `jarbundler` for `apache ant`.
 
-Instructions on how to install `jar bundler` can be found here:
+2.3) Compiling a .app file for Mac OS
+---- --------------------------------
+Compiling pplex as an .app for Mac OS requires JarBundler for Apache Ant.
+
+Instructions on how to install JarBundler can be found here:
  http://informagen.com/JarBundler/
 
 To compile pplex as an .app, run
   `ant mac`
 
-See 2.3 on how to use your newly compiled app.
+See 3.3 on how to use your newly compiled app.
+
+
+
+3.0) Just running pplex
+---- ------------------
+You need Java Runtime Environment to run pplex on any platform.
+
+Open http://www.github.com/andern/lpped in your favorite browser.
+
+Download pplex as an archive in one of the following ways:
+  * To download the latest revision just click the zip-button on 
+    the project's front page.
+  * To get a specific version of pplex click on tags on the project's
+    front page [here: https://github.com/andern/lpped/tags] and choose
+    the version you want, as a zip archive or a tar.gz archive.
+  * You can also clone the git repository by running
+    `git clone https://github.com/andern/lpped.git` from the command line.
+
+
+3.1) (Recommended) Using a pre-compiled cross-platform .jar-file
+---- -----------------------------------------------------------
+Extract the archive acquired in 3.0 (you only really need to extract pplex.jar)
+
+Double-click on pplex.jar or run `java -jar pplex.jar` from the command line.
+
+To run pplex without a GUI (no visualization) run `java -jar pplex.jar -nogui`.
+
+
+3.2) (Coming) Using a pre-compiled .exe in Windows
+---- ---------------------------------------------
+Extract the archive acquired in 3.0 (you only really need to extract pplex.exe)
+
+Double-click on pplex.exe or run `pplex` from the command line.
+
+To run pplex without a GUI (no visualisation) run `pplex -nogui`.
+
+
+3.3) (Coming) Using a pre-compiled .app in Mac OS
+---- --------------------------------------------
+Extract the archive acquired in 3.0 (you only really need to extract pplex.app)
+
+Double-click on pplex.app or run `open pplex.app` from the command line.
+
+To run pplex without a GUI (no visualization) run `open pplex.app -nogui`.
