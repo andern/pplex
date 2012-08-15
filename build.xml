@@ -27,7 +27,7 @@
   </target>
   
   <target name="mac" depends="jar" description="create a runnable app file for Mac OS">
-    <jarbundler dir="release" name="pplex" mainclass="controller/Main" jar="pplex.jar" />
+    <jarbundler dir="." name="pplex" mainclass="controller/Main" jar="pplex.jar" />
   </target>
 </project>
 
