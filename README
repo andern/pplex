@@ -33,7 +33,9 @@ The pplex homepage is http://github.com/andern/lpped
 
 2.1) Reporting Bugs
 ---- --------------
-GitHub's issue tracker is used for tracking bugs of pplex. Before submitting a bug you should make sure that you are running the latest version of pplex, and that it has not already been submitted to the tracker on GitHub.
+GitHub's issue tracker is used for tracking bugs of pplex. Before submitting a
+bug you should make sure that you are running the latest version of pplex, and
+that the bug has not already been submitted to the tracker on GitHub.
 
 
 
