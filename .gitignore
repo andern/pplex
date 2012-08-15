@@ -29,4 +29,5 @@ doc/*.vrb
 doc/*.maf
 doc/*.mtc
 doc/*.mtc0
-
+.project
+.classpath
