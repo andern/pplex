@@ -1,0 +1,9 @@
+max              3x  +  2y
+subject to        x  -  2y <= 1 
+                  x  -   y <= 2
+                 2x  -   y <= 6
+                  x        <= 5
+                 2x  +   y <= 16
+                  x  +   y <= 12
+                  x  +  2y <= 21
+                         y <= 10
