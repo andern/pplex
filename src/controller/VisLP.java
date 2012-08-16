@@ -282,15 +282,15 @@ class VisLP {
         
         
         
-        /* Remove intersections that are not satisfied by ALL inequalities. */
         Iterator<Point2D> iter = points.iterator();
-        
+        /* Remove intersections that are not satisfied by ALL inequalities. */
         while (iter.hasNext()) {
             Point2D p2d = iter.next();
+            
+            double x = p2d.getX();
+            double y = p2d.getY();
+            
             for (int i = 0; i < N.rows(); i++) {
-                double x = p2d.getX();
-                double y = p2d.getY();
-                
                 float val = (float) (N.get(i, 0)*x + N.get(i, 1)*y);
                 if (val > b.get(i, 0)) {
                     iter.remove();
