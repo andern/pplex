@@ -49,16 +49,16 @@ Running pplex requires Java Runtime Environment installed on your computer.
 
 
 (Optional) Getting started:
-1. Download test.lps from http://folk.uib.no/xif001/pplex/test.lps and
+3. Download test.lps from http://folk.uib.no/xif001/pplex/test.lps and
    put it in the same directory as pplex.jar.
-2. Type 'read test.lps' in pplex' console.
+4. Type 'read test.lps' in pplex' console.
 
 
 3.1) Running pplex
 ---- -------------
-pplex starts in visual mode by default. pplex can easily be run
-without a graphical interface in the console by passing the '-nogui'
-argument like this:
+pplex starts in visual mode by default. This is only relevant for linear
+programs with two variables. pplex can easily be run without a graphical
+interface in a terminal window by passing the '-nogui' argument like this:
   `java -jar pplex.jar -nogui`
 
 
