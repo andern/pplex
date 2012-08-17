@@ -19,6 +19,7 @@
 package ccs;
 
 import java.awt.Color;
+import java.awt.Paint;
 import java.awt.geom.Point2D;
 
 /**
@@ -29,12 +30,10 @@ import java.awt.geom.Point2D;
  * @author Andreas Halle
  */
 public class CCSPolygon {
-    private static final long serialVersionUID = 1L;
-    
     protected double[] xpoints;
     protected double[] ypoints;
     protected int npoints;
-    protected Color color;
+    protected Paint paint;
     protected boolean fill;
     
     
@@ -48,17 +47,17 @@ public class CCSPolygon {
      *        y-value for each point
      * @param npoints
      *        the number of points
-     * @param color
-     *        Draw the polygon in this color
+     * @param paint
+     *        Draw the polygon with this paint
      * @param fill
      *        If true, fill the polygon. Otherwise outline it.
      */
     public CCSPolygon(double[] xpoints, double[] ypoints, int npoints,
-                                                Color color, boolean fill) {
+                                                Paint paint, boolean fill) {
         this.xpoints = xpoints;
         this.ypoints = ypoints;
         this.npoints = npoints;
-        this.color = color;
+        this.paint = paint;
         this.fill = fill;
     }
     
@@ -81,25 +80,24 @@ public class CCSPolygon {
     }
     
     
+    
     /**
      * Create a polygon formed by the given points.
      * 
      * @param points
      *        Array of points
-     * @param color
-     *        Draw the polygon in this color
+     * @param paint
+     *        Draw the polygon with this paint
      * @param fill
      *        If true, fill the polygon. Otherwise outline it.
      */
-    public CCSPolygon(Point2D[] points, Color color, boolean fill) {
+    public CCSPolygon(Point2D[] points, Paint paint, boolean fill) {
         this(new double[points.length], new double[points.length],
-                                      points.length, color, fill);
+                                      points.length, paint, fill);
         
         for (int i = 0; i < points.length; i++) {
             xpoints[i] = points[i].getX();
             ypoints[i] = points[i].getY();
         }
-        
-        
     }
 }

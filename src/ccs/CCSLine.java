@@ -30,8 +30,6 @@ import java.awt.Color;
  * @author Andreas Halle
  */
 public class CCSLine {
-    private static final long serialVersionUID = 1L;
-
     protected double a;
     protected double b;
     protected double c;

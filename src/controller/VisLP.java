@@ -19,13 +19,14 @@
 package controller;
 
 import java.awt.Color;
+import java.awt.GradientPaint;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 
 import ccs.CCSLine;
 import ccs.CCSPoint;
@@ -46,6 +47,8 @@ import model.Matrix;
  * @see     ccs.Coordinates
  */
 class VisLP {
+    private static HashSet<Point2D> unb;
+    
     /*
      * Input: Unordered list of points that can form a
      *        convex polygon, but in the given order
@@ -85,7 +88,7 @@ class VisLP {
      *    value. Again, sort in descending Y value in
      *    the event of multiple points with the same X
      *    value (which should only happen for points
-     *    with X component Xmin.
+     *    with X component Xmin).
      *    
      * 5. Append the two lists together (it doesn't
      *    matter which is first).
@@ -131,7 +134,7 @@ class VisLP {
         ArrayList<Point2D> lower = new ArrayList<Point2D>();
         
         upper.add(x_min);
-        lower.add(x_max);
+//        lower.add(x_max); 
         
         /* Find the slope of the line L connecting x_min and x_max */
         double mx = x_max.getX() - x_min.getX();
@@ -149,21 +152,10 @@ class VisLP {
             if (p2d.getY() >= y) upper.add(p2d);
             else lower.add(p2d);
         }
-
-        /* Sort the lower list in descending order. */
-        Collections.sort(lower, new Comparator<Point2D>() {
-            @Override public int compare(Point2D o1, Point2D o2) {
-                double s = o1.getX() - o2.getX();
-                if (s < 0) return 1;
-                if (s > 0) return -1;
-                
-                s = o1.getY() - o2.getY();
-                if (s < 0) return 1;
-                if (s > 0) return -1;
-                
-                return 0;
-            }
-        });
+        
+        /* Sort the lower list in descending order */
+        lower.add(x_max);
+        Collections.reverse(lower);
         
         upper.addAll(lower);
         return upper.toArray(new Point2D[0]);
@@ -189,6 +181,8 @@ class VisLP {
         boolean lowerx = false;
         boolean lowery = false;
         
+        double valsum = 0;
+        
         /* Does lower bounds already exist? */
         for (int i = 0; i < cons.rows(); i++) {
             double x = cons.get(i, 0);
@@ -198,6 +192,8 @@ class VisLP {
             } else if (x == 0 && y < 0) {
                 lowery = true;
             }
+            
+            valsum += Math.abs(cons.get(i, 2));
         }
         
         Matrix ncons = new Matrix(cons);
@@ -211,6 +207,9 @@ class VisLP {
             Matrix c = new Matrix(new double[] {0, -1, 0});
             ncons = ncons.addBlock(c, Matrix.UNDER);
         }
+        
+        Matrix c = new Matrix(new double[] {1, 1, (valsum+2)*valsum});
+        ncons = ncons.addBlock(c,  Matrix.UNDER);
         return ncons;
     }
     
@@ -230,8 +229,8 @@ class VisLP {
         Matrix cons = lp.getConstraints();
         cons = checkForBounds(cons);
         
-        /* Draw all constraints as lines */
-        for (int i = 0; i < cons.rows(); i++) {
+        /* Draw all constraints as lines, except hidden bounded constraint */
+        for (int i = 0; i < cons.rows()-1; i++) {
             line = new CCSLine(cons.get(i, 0), cons.get(i, 1),
                                cons.get(i, 2), Color.gray);
             cs.addLine(line);
@@ -240,9 +239,30 @@ class VisLP {
         /* Draw all feasible solutions as points */
         Point2D[] pconv = convex(getFeasibleIntersections(cons));
         for (Point2D p2d : pconv) {
-            cs.addPoint(new CCSPoint(p2d.getX(), p2d.getY()));
+            CCSPoint ccsp = new CCSPoint(p2d.getX(), p2d.getY());
+            if (!unb.contains(p2d)) cs.addPoint(ccsp);
         }
-        cs.addPolygon(new CCSPolygon(pconv, Color.pink, true));
+        
+        Iterator<Point2D> iter = unb.iterator();
+        
+        if (iter.hasNext()) {
+            Point2D p1 = iter.next();
+            Point2D p2 = iter.next();
+            double xavg = (p1.getX() + p2.getX()) / 2.0;
+            double yavg = (p1.getY() + p2.getY()) / 2.0;
+            
+            Point2D pavg = new Point2D.Double(xavg, yavg);
+            
+            /* Fade into the background color */
+            GradientPaint gp = new GradientPaint(pconv[0], Color.pink,
+                    pavg, cs.getBackground());
+
+            cs.addPolygon(new CCSPolygon(pconv, gp, true));
+            System.out.println("Gradient");
+        } else {
+            cs.addPolygon(new CCSPolygon(pconv, Color.pink, true));
+            System.out.println("No gradient");
+        }
         
         /* Draw the current objective function */
         Matrix obj = lp.getObjFunction();
@@ -265,7 +285,8 @@ class VisLP {
         Matrix N = cons.subMatrix(0, cons.rows()-1, 0, cons.cols()-2);
         Matrix b = cons.getCol(cons.cols()-1);
         
-        LinkedList<Point2D> points = new LinkedList<Point2D>();
+        HashSet<Point2D> points = new HashSet<Point2D>();
+        unb = new HashSet<Point2D>();
         
         /* Find all intersections */
         for (int i = 0; i < N.rows(); i++) {
@@ -285,7 +306,11 @@ class VisLP {
                     double y = point.get(1, 0);
                     Point2D p2d = new Point2D.Double(x, y);
                 
-                    points.add(p2d);
+                    /* Only add feasible points */
+                    if (feasible(p2d, N, b)) {
+                        if (i >= N.rows()-2) unb.add(p2d);
+                        points.add(p2d);
+                    }
                 } catch (IllegalArgumentException e) {
                     /* 
                      * Two lines that don't intersect forms an invertible
@@ -294,25 +319,20 @@ class VisLP {
                 }
             }
         }
-        
-        
-        
-        Iterator<Point2D> iter = points.iterator();
-        /* Remove intersections that are not satisfied by ALL inequalities. */
-        while (iter.hasNext()) {
-            Point2D p2d = iter.next();
-            
-            double x = p2d.getX();
-            double y = p2d.getY();
-            
-            for (int i = 0; i < N.rows(); i++) {
-                float val = (float) (N.get(i, 0)*x + N.get(i, 1)*y);
-                if (val > b.get(i, 0)) {
-                    iter.remove();
-                    break;
-                }
-            }
-        }
         return points.toArray(new Point2D[0]);
+    }
+    
+    
+    
+    private static boolean feasible(Point2D p2d, Matrix N, Matrix b) {
+        double x = p2d.getX();
+        double y = p2d.getY();
+        
+        for (int j = 0; j < N.rows(); j++) {
+            float val = (float) (N.get(j, 0)*x + N.get(j, 1)*y);
+            if (val > b.get(j, 0)) return false;
+        }
+        
+        return true;
     }
 }

@@ -19,6 +19,7 @@
 package ccs;
 
 import java.awt.Color;
+import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -408,7 +409,27 @@ public class CCSystem extends JPanel {
         }
         Polygon poly = new Polygon(xpoints, ypoints, ccspoly.npoints);
         
-        g2d.setColor(ccspoly.color);
+        /* 
+         * Support the use of GradientPaint. We need to
+         * translate the points of the gradient paint.
+         */
+        if (ccspoly.paint instanceof GradientPaint) {
+            GradientPaint gp = (GradientPaint) ccspoly.paint;
+            
+            Point2D gp1 = gp.getPoint1();
+            Point2D gp2 = gp.getPoint2();
+            
+            Point p1 = translate(gp1);
+            Point p2 = translate(gp2);
+            
+            Color c1 = gp.getColor1();
+            Color c2 = gp.getColor2();
+            
+            g2d.setPaint(new GradientPaint(p1, c1, p2, c2));
+        } else {
+            g2d.setPaint(ccspoly.paint);
+        }
+        
         if (ccspoly.fill) g2d.fill(poly);
         else g2d.draw(poly);
     }
