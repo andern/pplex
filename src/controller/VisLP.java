@@ -22,6 +22,7 @@ import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -148,9 +149,23 @@ class VisLP {
             if (p2d.getY() >= y) upper.add(p2d);
             else lower.add(p2d);
         }
+
+        /* Sort the lower list in descending order. */
+        Collections.sort(lower, new Comparator<Point2D>() {
+            @Override public int compare(Point2D o1, Point2D o2) {
+                double s = o1.getX() - o2.getX();
+                if (s < 0) return 1;
+                if (s > 0) return -1;
+                
+                s = o1.getY() - o2.getY();
+                if (s < 0) return 1;
+                if (s > 0) return -1;
+                
+                return 0;
+            }
+        });
         
         upper.addAll(lower);
-        
         return upper.toArray(new Point2D[0]);
     }
     
