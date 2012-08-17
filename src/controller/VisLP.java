@@ -258,10 +258,8 @@ class VisLP {
                     pavg, cs.getBackground());
 
             cs.addPolygon(new CCSPolygon(pconv, gp, true));
-            System.out.println("Gradient");
         } else {
             cs.addPolygon(new CCSPolygon(pconv, Color.pink, true));
-            System.out.println("No gradient");
         }
         
         /* Draw the current objective function */
