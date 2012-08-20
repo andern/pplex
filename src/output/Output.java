@@ -18,8 +18,9 @@
  */
 package output;
 
+import org.apache.commons.math3.fraction.BigFraction;
+import org.apache.commons.math3.linear.FieldMatrix;
 import model.LP;
-import model.Matrix;
 
 /**
  * The {@code Output} class contains methods that
@@ -31,102 +32,103 @@ import model.Matrix;
  * @see     controller.CLI
  */
 public final class Output {
-    /**
-     * Return a nicely formatted LaTeX-formatted
-     * dual dictionary as a {@code String}.
-     *
-     * @param  lp
-     *         A {@code LP}.
-     * @param  precision
-     *         Limit each double precision number to this many decimals.
-     *         Give a negative value to automatically set precision.
-     * @return
-     *         A nicely formated {@code String}.
-     *         
-     */
-    public static String texDual(LP lp, int precision) {
-        Matrix dict = lp.dictionary().transpose().scale(-1);
-
-        String[] basic = OLP.insert(lp.getDualBasic(), "-\\xi");
-        String[] nb = OLP.insert(lp.getDualNonBasic(), "");
-
-        int max = OLP.longest(basic);
-        String format = String.format("%%%ds &=& ", max);
-
-        String[][] terms = OMatrix.texNiceTerms(dict, nb, precision);
-
-        StringBuilder sb = new StringBuilder();
-        
-        sb.append("\\begin{array}{l");
-        for (int i = 0; i < nb.length-1; i++) {
-            sb.append("cr");
-        }
-        sb.append("}\n");
-        
-        for (int i = 0; i < basic.length; i++) {
-            sb.append(" ");
-            sb.append(String.format(format, basic[i]));
-            sb.append(OMatrix.join(terms[i], " "));
-            sb.append("\\\\");
-            if (i == 0) {
-                sb.append("\\hline");
-            }
-            sb.append("\n");
-        }
-        
-        sb.append("\\end{array}\n");
-
-        return sb.toString();
-    }
-    
-    
-    
-    /**
-     * Return a nicely formatted LaTeX-formatted
-     * primal dictionary as a {@code String}.
-     * 
-     * 
-     * @param  lp
-     *         A {@code LP}.
-     * @param  precision
-     *         Limit each double precision number to this many decimals.
-     *         Give a negative value to automatically set precision.
-     * @return
-     *         A nicely formated {@code String}.
-     */
-    public static String texPrimal(LP lp, int precision) {
-        Matrix dict = lp.dictionary();
-        
-        String[] basic = OLP.insert(lp.getBasic(), "\\zeta");
-        String[] nb = OLP.insert(lp.getNonBasic(), "");
-        
-        int max = OLP.longest(basic);
-        String format = String.format("%%%ds &=& ", max);
-        
-        String[][] terms = OMatrix.texNiceTerms(dict, nb, precision);
-        
-        StringBuilder sb = new StringBuilder();
-        sb.append("\\begin{array}{l");
-        for (int i = 0; i < nb.length-1; i++) {
-            sb.append("cr");
-        }
-        sb.append("}\n");
-        
-        for (int i = 0; i < basic.length; i++) {
-            sb.append(" ");
-            sb.append(String.format(format, basic[i]));
-            sb.append(OMatrix.join(terms[i], " "));
-            sb.append("\\\\");
-            if (i == 0) {
-                sb.append("\\hline");
-            }
-            sb.append("\n");
-        }
-        
-        sb.append("\\end{array}\n");
-        
-        return sb.toString();
-    }
+//    /**
+//     * Return a nicely formatted LaTeX-formatted
+//     * dual dictionary as a {@code String}.
+//     *
+//     * @param  lp
+//     *         A {@code LP}.
+//     * @param  precision
+//     *         Limit each double precision number to this many decimals.
+//     *         Give a negative value to automatically set precision.
+//     * @return
+//     *         A nicely formated {@code String}.
+//     *         
+//     */
+//    public static String texDual(LP lp, int precision) {
+//        FieldMatrix<BigFraction> dict = lp.dictionary().transpose()
+//                .scalarMultiply(BigFraction.MINUS_ONE);
+//
+//        String[] basic = OLP.insert(lp.getDualBasic(), "-\\xi");
+//        String[] nb = OLP.insert(lp.getDualNonBasic(), "");
+//
+//        int max = OLP.longest(basic);
+//        String format = String.format("%%%ds &=& ", max);
+//
+//        String[][] terms = OMatrix.texNiceTerms(dict, nb, precision);
+//
+//        StringBuilder sb = new StringBuilder();
+//        
+//        sb.append("\\begin{array}{l");
+//        for (int i = 0; i < nb.length-1; i++) {
+//            sb.append("cr");
+//        }
+//        sb.append("}\n");
+//        
+//        for (int i = 0; i < basic.length; i++) {
+//            sb.append(" ");
+//            sb.append(String.format(format, basic[i]));
+//            sb.append(OMatrix.join(terms[i], " "));
+//            sb.append("\\\\");
+//            if (i == 0) {
+//                sb.append("\\hline");
+//            }
+//            sb.append("\n");
+//        }
+//        
+//        sb.append("\\end{array}\n");
+//
+//        return sb.toString();
+//    }
+//    
+//    
+//    
+//    /**
+//     * Return a nicely formatted LaTeX-formatted
+//     * primal dictionary as a {@code String}.
+//     * 
+//     * 
+//     * @param  lp
+//     *         A {@code LP}.
+//     * @param  precision
+//     *         Limit each double precision number to this many decimals.
+//     *         Give a negative value to automatically set precision.
+//     * @return
+//     *         A nicely formated {@code String}.
+//     */
+//    public static String texPrimal(LP lp, int precision) {
+//        Matrix dict = lp.dictionary();
+//        
+//        String[] basic = OLP.insert(lp.getBasic(), "\\zeta");
+//        String[] nb = OLP.insert(lp.getNonBasic(), "");
+//        
+//        int max = OLP.longest(basic);
+//        String format = String.format("%%%ds &=& ", max);
+//        
+//        String[][] terms = OMatrix.texNiceTerms(dict, nb, precision);
+//        
+//        StringBuilder sb = new StringBuilder();
+//        sb.append("\\begin{array}{l");
+//        for (int i = 0; i < nb.length-1; i++) {
+//            sb.append("cr");
+//        }
+//        sb.append("}\n");
+//        
+//        for (int i = 0; i < basic.length; i++) {
+//            sb.append(" ");
+//            sb.append(String.format(format, basic[i]));
+//            sb.append(OMatrix.join(terms[i], " "));
+//            sb.append("\\\\");
+//            if (i == 0) {
+//                sb.append("\\hline");
+//            }
+//            sb.append("\n");
+//        }
+//        
+//        sb.append("\\end{array}\n");
+//        
+//        return sb.toString();
+//    }
 
 
 
@@ -145,11 +147,12 @@ public final class Output {
      * @return
      *         A nicely formatted {@code String}.
      */
-    public static String toString(Matrix A, String[] x, int precision) {
+    public static String toString(FieldMatrix<BigFraction> A,
+                                  String[] x, int precision) {
         StringBuilder sb = new StringBuilder();
         String[][] terms = OMatrix.niceTerms(A, x, precision);
 
-        for (int i = 0; i < A.rows(); i++) {
+        for (int i = 0; i < A.getRowDimension(); i++) {
             if (i != 0) {
                 sb.append("\n");
             }
@@ -173,11 +176,11 @@ public final class Output {
      *         
      */
     public static String primal(LP lp, int precision) {
-        Matrix dict = lp.dictionary();
+        FieldMatrix<BigFraction> dict = lp.dictionary();
 
         String[] basic = OLP.insert(lp.getBasic(), "ζ");
         String[] nb = OLP.insert(lp.getNonBasic(), "");
-
+        
         int max = OLP.longest(basic);
         String format = String.format("%%%ds = ", max);
 
@@ -208,7 +211,8 @@ public final class Output {
      *         
      */
     public static String dual(LP lp, int precision) {
-        Matrix dict = lp.dictionary().transpose().scale(-1);
+        FieldMatrix<BigFraction> dict = lp.dictionary().transpose()
+                .scalarMultiply(BigFraction.MINUS_ONE);
 
         String[] basic = OLP.insert(lp.getDualBasic(), "-ξ");
         String[] nb = OLP.insert(lp.getDualNonBasic(), "");

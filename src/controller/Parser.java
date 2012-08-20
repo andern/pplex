@@ -20,13 +20,16 @@ package controller;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.math3.fraction.BigFraction;
+import org.apache.commons.math3.linear.Array2DRowFieldMatrix;
+import org.apache.commons.math3.linear.ArrayFieldVector;
 
 import model.LP;
-import model.Matrix;
 
 class Parser {
     final static String dvarreg =
@@ -96,9 +99,12 @@ class Parser {
             constraints++;
         }
 
-        double[][] Ndata = new double[constraints][x.size()];
-        double[] bdata = new double[constraints];
-        double[] cdata = new double[x.size()];
+        BigFraction[][] Ndata = new BigFraction[constraints][x.size()];
+        for (int i = 0; i < Ndata.length; i++) {
+            Arrays.fill(Ndata[i], BigFraction.ZERO);
+        }
+        BigFraction[] bdata = new BigFraction[constraints];
+        BigFraction[] cdata = new BigFraction[x.size()];
 
         s = new Scanner(f);
 
@@ -113,9 +119,13 @@ class Parser {
             if (sign == null) sign = "+";
 
             String coeffStr = m.group(2);
-            double coeff =
-                (coeffStr == null) ? 1 : Double.parseDouble(coeffStr);
-            if (sign.equals("-")) coeff = -coeff;
+            BigFraction coeff;
+            if (coeffStr == null) {
+                coeff = BigFraction.ONE;
+            } else {
+                coeff = new BigFraction(Double.parseDouble(coeffStr));
+            }
+            if (sign.equals("-")) coeff = coeff.negate();
 
             cdata[x.get(var)] = coeff;
         }
@@ -124,7 +134,8 @@ class Parser {
         while (s.hasNextLine()) {
             String line = s.nextLine();
             m = p.matcher(line);
-            bdata[row] = Double.parseDouble(line.split("<=")[1]);
+            bdata[row]
+                    = new BigFraction(Double.parseDouble(line.split("<=")[1]));
 
             while (m.find()) {
                 String var = m.group(3);
@@ -134,16 +145,21 @@ class Parser {
                 if (sign == null) sign = "+";
 
                 String coeffStr = m.group(2);
-                double coeff =
-                    (coeffStr == null) ? 1 : Double.parseDouble(coeffStr);
-                if (sign.equals("-")) coeff = -coeff;
+                BigFraction coeff;
+                if (coeffStr == null) {
+                    coeff = BigFraction.ONE;
+                } else {
+                    coeff = new BigFraction(Double.parseDouble(coeffStr));
+                }
+                if (sign.equals("-")) coeff = coeff.negate();
 
                 Ndata[row][x.get(var)] = coeff;
             }
             row++;
         }
-
-        return new LP(new Matrix(Ndata), new Matrix(bdata).transpose(),
-                                      new Matrix(cdata).transpose(), xReverse);
+        
+        return new LP(new Array2DRowFieldMatrix<BigFraction>(Ndata),
+                      new ArrayFieldVector<BigFraction>(bdata),
+                      new ArrayFieldVector<BigFraction>(cdata), xReverse);
     }
 }

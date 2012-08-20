@@ -3,6 +3,22 @@
 <project name="pplex" default="jar">
   <taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" />
 
+  <path id="build.classpath">
+    <fileset dir="lib">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+
+  <pathconvert property="mf.classpath" pathsep=" ">
+    <path refid="build.classpath"/>
+    <mapper>
+      <chainedmapper>
+        <flattenmapper/>
+        <globmapper from="*.jar" to="lib/*.jar"/>
+      </chainedmapper>
+    </mapper>
+  </pathconvert>
+
   <target name="clean" description="remove intermediate files">
     <delete dir="bin"/>
   </target>
@@ -14,14 +30,20 @@
 
   <target name="compile" description="compile the Java source code to class files">
     <mkdir dir="bin"/>
-    <javac includeantruntime="false" srcdir="src" destdir="bin"/>
+    <javac includeantruntime="false" srcdir="src" destdir="bin">
+      <classpath>
+        <pathelement location="lib/commons-math3-3.0.jar"/>
+      </classpath>
+    </javac>
   </target>
 
   <target name="jar" depends="compile" description="create a Jar file for the application">
-    <jar destfile="pplex.jar">
+    <jar destfile="pplex.jar" filesetmanifest="skip">
+      <zipgroupfileset dir="lib" includes="*.jar"/>
       <fileset dir="bin" includes="**/*.class"/>
       <manifest>
         <attribute name="Main-class" value="controller/Main"/>
+        <attribute name="Class-path" value="${mf.classpath}"/>
       </manifest>
     </jar>
   </target>

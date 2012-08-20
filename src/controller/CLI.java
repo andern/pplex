@@ -23,6 +23,8 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Set;
+import org.apache.commons.math3.exception.MathArithmeticException;
+import org.apache.commons.math3.fraction.BigFraction;
 
 import output.Output;
 
@@ -224,11 +226,11 @@ class CLI {
             lp = lps.get(p-1).phaseOneObj();
         }
         else if (args.length == (size +1 )) {
-            double[] coeff = new double[size];
+            BigFraction[] coeff = new BigFraction[size];
 
             for (int i = 0; i < size; i++) {
                 try {
-                    coeff[i] = Double.parseDouble(args[i+1]);
+                    coeff[i] = new BigFraction(Double.parseDouble(args[i+1]));
                 } catch (NumberFormatException err) {
                     return Data.SYNTAX.get(Data.replace);
                 }
@@ -249,7 +251,7 @@ class CLI {
 
         if (args[1].equals(Data.showDual))        return parseDual(args);
         if (args[1].equals(Data.showFeasibility)) return parseFeasibility(args);
-        if (args[1].equals(Data.showLatex))       return parseLatex(args);
+//        if (args[1].equals(Data.showLatex))       return parseLatex(args);
         if (args[1].equals(Data.showOptimality))  return parseOptimality(args);
         if (args[1].equals(Data.showPrimal))      return parsePrimal(args);
         if (args[1].equals(Data.showSolution))    return parseSolution(args);
@@ -278,34 +280,34 @@ class CLI {
     
     
     
-    private String parseLatex(String[] args) {
-        int prec = stdPrec;
-        if (args.length == 4) {
-            try {
-                prec = Integer.parseInt(args[3]);
-            } catch (NumberFormatException e) {
-                return Data.SYNTAX.get(Data.showPrimal);
-            }
-        }
-        
-        try {
-            if (args[2].equals("dual")) {
-                return Output.texDual(lps.get(p-1), prec);
-            }
-            return Output.texPrimal(lps.get(p-1), prec);
-        } catch (IllegalArgumentException e) {
-            return e.getLocalizedMessage();
-        } catch (IndexOutOfBoundsException e) {
-            return Data.SYNTAX.get(Data.showLatex);
-        }
-    }
+//    private String parseLatex(String[] args) {
+//        int prec = stdPrec;
+//        if (args.length == 4) {
+//            try {
+//                prec = Integer.parseInt(args[3]);
+//            } catch (NumberFormatException e) {
+//                return Data.SYNTAX.get(Data.showPrimal);
+//            }
+//        }
+//        
+//        try {
+//            if (args[2].equals("dual")) {
+//                return Output.texDual(lps.get(p-1), prec);
+//            }
+//            return Output.texPrimal(lps.get(p-1), prec);
+//        } catch (IllegalArgumentException e) {
+//            return e.getLocalizedMessage();
+//        } catch (IndexOutOfBoundsException e) {
+//            return Data.SYNTAX.get(Data.showLatex);
+//        }
+//    }
 
 
 
     private String parseSolution(String[] args) {
         LP lp = lps.get(p-1);
-        double[] point = lp.point();
-        double val = lp.objVal();
+        BigFraction[] point = lp.point();
+        BigFraction val = lp.objVal();
 
         int prec = stdPrec;
 
@@ -409,6 +411,8 @@ class CLI {
             
             if (dual) return Output.dual(lp, stdPrec);
             return Output.primal(lp, stdPrec);
+        } catch (MathArithmeticException err) {
+            return "Invalid pivot";
         } catch (RuntimeException err) {
             return err.getLocalizedMessage();
         }

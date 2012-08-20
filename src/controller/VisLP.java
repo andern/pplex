@@ -27,6 +27,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
+import org.apache.commons.math3.fraction.BigFraction;
+import org.apache.commons.math3.linear.Array2DRowFieldMatrix;
+import org.apache.commons.math3.linear.ArrayFieldVector;
+import org.apache.commons.math3.linear.FieldLUDecomposition;
+import org.apache.commons.math3.linear.FieldMatrix;
+import org.apache.commons.math3.linear.FieldVector;
 
 import ccs.CCSLine;
 import ccs.CCSPoint;
@@ -34,7 +40,6 @@ import ccs.CCSPolygon;
 import ccs.CCSystem;
 
 import model.LP;
-import model.Matrix;
 
 /**
  * The {@code VisLP} class contains functions for visualizing
@@ -177,39 +182,57 @@ class VisLP {
      * @return
      *         A constraints matrix guaranteed to have lower bounds.
      */
-     static Matrix checkForBounds(Matrix cons) {
+     static FieldMatrix<BigFraction> checkForBounds(
+                                                FieldMatrix<BigFraction> cons) {
         boolean lowerx = false;
         boolean lowery = false;
         
-        double valsum = 0;
+        BigFraction valsum = BigFraction.ZERO;
         
         /* Does lower bounds already exist? */
-        for (int i = 0; i < cons.rows(); i++) {
-            double x = cons.get(i, 0);
-            double y = cons.get(i, 1);
-            if (x < 0 && y == 0) {
+        for (int i = 0; i < cons.getRowDimension(); i++) {
+            BigFraction x = cons.getEntry(i, 0);
+            BigFraction y = cons.getEntry(i, 1);
+            if (x.compareTo(BigFraction.ZERO) < 0
+                    && y.equals(BigFraction.ZERO)) {
                 lowerx = true;
-            } else if (x == 0 && y < 0) {
+            } else if (x.equals(BigFraction.ZERO)
+                    && y.compareTo(BigFraction.ZERO) < 0) {
                 lowery = true;
             }
             
-            valsum += Math.abs(cons.get(i, 2));
+            valsum = valsum.add(cons.getEntry(i, 2).abs());
         }
         
-        Matrix ncons = new Matrix(cons);
+        FieldMatrix<BigFraction> ncons = cons.copy();
         
+        BigFraction[] cxdata = new BigFraction[] {BigFraction.MINUS_ONE,
+                                                  BigFraction.ZERO,
+                                                  BigFraction.ZERO};
+        BigFraction[] cydata = new BigFraction[] {BigFraction.ZERO,
+                                                  BigFraction.MINUS_ONE,
+                                                  BigFraction.ZERO};
         /* Add lower bounds if they do not exist */
         if (!lowerx) {
-            Matrix c = new Matrix(new double[] {-1, 0, 0});
-            ncons = ncons.addBlock(c, Matrix.UNDER);
+            FieldMatrix<BigFraction> c =
+                    new Array2DRowFieldMatrix<BigFraction>(cxdata).transpose();
+            ncons = LP.addBlock(ncons, c, LP.UNDER);
         }
         if (!lowery) {
-            Matrix c = new Matrix(new double[] {0, -1, 0});
-            ncons = ncons.addBlock(c, Matrix.UNDER);
+            FieldMatrix<BigFraction> c =
+                    new Array2DRowFieldMatrix<BigFraction>(cydata).transpose();
+            ncons = LP.addBlock(ncons, c, LP.UNDER);
         }
         
-        Matrix c = new Matrix(new double[] {1, 1, (valsum+2)*valsum});
-        ncons = ncons.addBlock(c,  Matrix.UNDER);
+        valsum = valsum.add(BigFraction.TWO).multiply(valsum);
+        BigFraction[] uc = new BigFraction[] {BigFraction.ONE,
+                                              BigFraction.ONE,
+                                              valsum};
+        
+        FieldMatrix<BigFraction> c = new Array2DRowFieldMatrix<BigFraction>(uc)
+                .transpose();
+        ncons = LP.addBlock(ncons, c, LP.UNDER);
+        
         return ncons;
     }
     
@@ -226,18 +249,20 @@ class VisLP {
         cs.setVisibleAxes(true);
         
         CCSLine line;
-        Matrix cons = lp.getConstraints();
+        FieldMatrix<BigFraction> cons = lp.getConstraints();
         cons = checkForBounds(cons);
         
         /* Draw all constraints as lines, except hidden bounded constraint */
-        for (int i = 0; i < cons.rows()-1; i++) {
-            line = new CCSLine(cons.get(i, 0), cons.get(i, 1),
-                               cons.get(i, 2), Color.gray);
+        for (int i = 0; i < cons.getRowDimension()-1; i++) {
+            line = new CCSLine(cons.getEntry(i, 0).doubleValue(),
+                               cons.getEntry(i, 1).doubleValue(),
+                               cons.getEntry(i, 2).doubleValue(), Color.gray);
             cs.addLine(line);
         }
         
         /* Draw all feasible solutions as points */
         Point2D[] pconv = convex(getFeasibleIntersections(cons));
+        
         for (Point2D p2d : pconv) {
             CCSPoint ccsp = new CCSPoint(p2d.getX(), p2d.getY());
             if (!unb.contains(p2d)) cs.addPoint(ccsp);
@@ -263,14 +288,16 @@ class VisLP {
         }
         
         /* Draw the current objective function */
-        Matrix obj = lp.getObjFunction();
-        line = new CCSLine(obj.get(0, 0), obj.get(1, 0),
-                           lp.objVal(), Color.red);
+        FieldVector<BigFraction> obj = lp.getObjFunction();
+        line = new CCSLine(obj.getEntry(0).doubleValue(),
+                           obj.getEntry(1).doubleValue(),
+                           lp.objVal().doubleValue(), Color.red);
         cs.addLine(line);
         
         /* Draw the current basic solution as a point. */
-        double[] point = lp.point();
-        cs.addPoint(new CCSPoint(point[0], point[1], Color.red, true));
+        BigFraction[] point = lp.point();
+        cs.addPoint(new CCSPoint(point[0].doubleValue(),
+                                 point[1].doubleValue(), Color.red, true));
     }
     
     
@@ -279,34 +306,44 @@ class VisLP {
      * Return all intersections that are satisfied
      * by ALL inequalities of the LP.
      */
-    private static Point2D[] getFeasibleIntersections(Matrix cons) {
-        Matrix N = cons.subMatrix(0, cons.rows()-1, 0, cons.cols()-2);
-        Matrix b = cons.getCol(cons.cols()-1);
+    private static
+    Point2D[]
+    getFeasibleIntersections(FieldMatrix<BigFraction> cons) {
+        FieldMatrix<BigFraction> N =
+                cons.getSubMatrix(0, cons.getRowDimension()-1, 0,
+                                  cons.getColumnDimension()-2);
+        FieldVector<BigFraction> b =
+                cons.getColumnVector(cons.getColumnDimension()-1);
         
         HashSet<Point2D> points = new HashSet<Point2D>();
         unb = new HashSet<Point2D>();
         
         /* Find all intersections */
-        for (int i = 0; i < N.rows(); i++) {
-            for (int j = 0; j < N.rows(); j++) {
+        for (int i = 0; i < N.getRowDimension(); i++) {
+            for (int j = 0; j < N.getRowDimension(); j++) {
                 if (i == j) continue;
                 
-                Matrix line1 = N.getRow(i);
-                Matrix line2 = N.getRow(j);
+                FieldMatrix<BigFraction> line1 = N.getRowMatrix(i);
+                FieldMatrix<BigFraction> line2 = N.getRowMatrix(j);
                 
-                double[] bval = new double[] {b.get(i, 0), b.get(j, 0)};
-                Matrix bsys = new Matrix(bval).transpose();
-                Matrix sys = line1.addBlock(line2, Matrix.UNDER);
+                BigFraction[] bval = new BigFraction[] {b.getEntry(i),
+                                                        b.getEntry(j)};
+                FieldVector<BigFraction> bsys =
+                        new ArrayFieldVector<BigFraction>(bval);
+                FieldMatrix<BigFraction> sys =
+                        LP.addBlock(line1, line2, LP.UNDER);
                 
                 try {
-                    Matrix point = sys.inverse().product(bsys);
-                    double x = point.get(0, 0);
-                    double y = point.get(1, 0);
+                    FieldVector<BigFraction> point =
+                            new FieldLUDecomposition<BigFraction>(sys)
+                                    .getSolver().getInverse().operate(bsys);
+                    double x = point.getEntry(0).doubleValue();
+                    double y = point.getEntry(1).doubleValue();
                     Point2D p2d = new Point2D.Double(x, y);
                 
                     /* Only add feasible points */
                     if (feasible(p2d, N, b)) {
-                        if (i >= N.rows()-2) unb.add(p2d);
+                        if (i >= N.getRowDimension()-1) unb.add(p2d);
                         points.add(p2d);
                     }
                 } catch (IllegalArgumentException e) {
@@ -322,13 +359,16 @@ class VisLP {
     
     
     
-    private static boolean feasible(Point2D p2d, Matrix N, Matrix b) {
+    private static boolean feasible(Point2D p2d, FieldMatrix<BigFraction> N,
+                                    FieldVector<BigFraction> b) {
         double x = p2d.getX();
         double y = p2d.getY();
         
-        for (int j = 0; j < N.rows(); j++) {
-            float val = (float) (N.get(j, 0)*x + N.get(j, 1)*y);
-            if (val > b.get(j, 0)) return false;
+        for (int j = 0; j < N.getRowDimension(); j++) {
+            float nx = N.getEntry(j, 0).floatValue();
+            float ny = N.getEntry(j, 1).floatValue();
+            float val = (float) (nx*x + ny*y);
+            if (val > b.getEntry(j).floatValue()) return false;
         }
         
         return true;

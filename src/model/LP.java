@@ -20,42 +20,42 @@ package model;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import org.apache.commons.math3.fraction.BigFraction;
+import org.apache.commons.math3.linear.Array2DRowFieldMatrix;
+import org.apache.commons.math3.linear.ArrayFieldVector;
+import org.apache.commons.math3.linear.FieldLUDecomposition;
+import org.apache.commons.math3.linear.FieldMatrix;
+import org.apache.commons.math3.linear.FieldVector;
 
 /**
  * An {@code Object} representing a linear program (LP).
  *
  * @author  Andreas Halle
  * @version 0.2
+ * @param <E>
  * @see     controller.Parser
  */
 public class LP {
-    private Matrix B;
-    private Matrix N;
+    public static final int UNDER = 0;
+    public static final int RIGHT = 1;
     
-    /* These are temporarily public and not private final
-     * so not to break the current GUI implementation.
-     * 
-     * TODO: Use a clever mark (maybe _) to symbolize which
-     * matrices stay unchanged and which do not.
-     * 
-     * REALLY BAD: Currently N_ never changes and N changes,
-     *             but c never changes and c_ changes. This
-     *             is to not break the current GUI impl.
-     */
-    public Matrix N_;
-    public Matrix b;
-    public Matrix c;
-    public Matrix c_;
+    private FieldMatrix<BigFraction> B;
+    private FieldMatrix<BigFraction> N;
+    private FieldVector<BigFraction> b;
+    private FieldVector<BigFraction> c;
     
-    private Matrix x_b;
-    private Matrix z_n;
-
+    private FieldMatrix<BigFraction> B_;
+    private FieldMatrix<BigFraction> N_;
+    private FieldVector<BigFraction> b_; // x_b
+    private FieldVector<BigFraction> c_; // z_n which is c negated!
+    
+    private HashMap<Integer, String> x;
+    
     private int[] Bi;
     private int[] Ni;
-    private HashMap<Integer, String> x;
-
-
-
+    
+    
+    
     /**
      * Initializes a linear program.
      * <p>
@@ -83,76 +83,136 @@ public class LP {
      *        A {@code HashMap} mapping the indices of the
      *        basic and non-basic variables to their names.
      */
-    public LP(Matrix N, Matrix b, Matrix c, HashMap<Integer, String> x) {
-        this(Matrix.identity(N.rows()), N, N, b, c, c,
-                                              b, c.scale(-1),
-                                              new int[N.rows()],
-                                              new int[N.cols()], x);
+    public LP(FieldMatrix<BigFraction> N, FieldVector<BigFraction> b,
+              FieldVector<BigFraction> c, HashMap<Integer, String> x) {
+        this(null, N, b, c, null, N.copy(), b.copy(),
+                c.mapMultiply(BigFraction.MINUS_ONE).copy(), x,
+                new int[N.getRowDimension()], new int[N.getColumnDimension()]);
 
+        /* Create an identity matrix of BigFraction's */
+        int m = N.getRowDimension();
+        BigFraction[][] Bd = new BigFraction[m][m];
+        for (int i = 0; i < m; i++) {
+            Arrays.fill(Bd[i], BigFraction.ZERO);
+            Bd[i][i] = BigFraction.ONE;
+        }
+        FieldMatrix<BigFraction> B = new Array2DRowFieldMatrix<BigFraction>(Bd);
+        
+        this.B = B;
+        this.B_ = B.copy();
+        
         for (int i = 0; i < Ni.length; i++) Ni[i] = i;
         for (int i = 0; i < Bi.length; i++) {
             Bi[i] = i + Ni.length;
             x.put(Bi[i], "w" + (i+1));
         }
     }
-
-
-
-    /*
-     * Initializes a linear program.
-     *
-     * @param B
-     *        A {@code Matrix} with the coefficients of the basic variables.
-     * @param N
-     *        A {@code Matrix} with the coefficients
-     *        of the non-basic variables.
-     * @param N_
-     *        A {@code Matrix} with the coefficients of the
-     *        non-basic variables in the original dictionary.
-     * @param b
-     *        A {@code Matrix} with the upper bounds on
-     *        the constraints in the original program.
-     * @param c
-     *        A {@code Matrix} with the coefficients of the
-     *        decision variables in the original program.
-     * @param c_
-     *        A {@code Matrix} with the coefficients of the
-     *        decision variables in the current linear program.
-     * @param x_b
-     *        A {@code Matrix} with the upper bounds on the constraints
-     *        in the current iteration of the simplex method.
-     * @param z_n
-     *        A {@code Matrix} with the coefficients of the decision variables
-     *        in the current iteration of the simplex method.
-     * @param Bi
-     *        An {@code array} with the indices of the basic variables.
-     * @param Ni
-     *        An {@code array} with the indices of the non-basic variables.
-     * @param x
-     *        A {@code HashMap} mapping the indices of the
-     *        basic and non-basic variables to their names.
-     */
-    public LP(Matrix B, Matrix N, Matrix N_, Matrix b, Matrix c, Matrix c_,
-                                            Matrix x_b, Matrix z_n,
-                                            int[] Bi, int[] Ni,
-                                            HashMap<Integer, String> x) {
+    
+    
+    
+    LP(FieldMatrix<BigFraction> B,  FieldMatrix<BigFraction> N,
+       FieldVector<BigFraction> b,  FieldVector<BigFraction> c,
+       FieldMatrix<BigFraction> B_, FieldMatrix<BigFraction> N_,
+       FieldVector<BigFraction> b_, FieldVector<BigFraction> c_,
+       HashMap<Integer, String> x, int[] Bi, int[] Ni) {
         this.B = B;
         this.N = N;
-        
-        this.N_ = N_;
-        this.c_ = c_;
-    
         this.b = b;
         this.c = c;
-        this.x_b = x_b;
-        this.z_n = z_n;
-    
+
+        this.B_ = B_;
+        this.N_ = N_;
+        this.b_ = b_;
+        this.c_ = c_;
+
+        this.x = x;
+
         this.Bi = Bi;
         this.Ni = Ni;
-        this.x = x;
     }
+    
+    
+    
+    /**
+     * Return a newly created {@code Matrix} with a new block
+     * {@code Matrix} added either horizontally or vertically
+     * next to the original {@code Matrix}.
+     *
+     * @param  B
+     *         {@code Matrix} to append to the parent {@code Matrix}.
+     * @param  modifier
+     *         Matrix.HORIZONTAL or Matrix.VERTICAL.
+     * @return
+     *         The original {@code Matrix} with a new {@code Matrix} block.
+     */
+    public static FieldMatrix<BigFraction> addBlock(
+                        FieldMatrix<BigFraction> A, FieldMatrix<BigFraction> B,
+                        int modifier) {
+        int Am = A.getRowDimension();
+        int An = A.getColumnDimension();
+        int Bm = B.getRowDimension();
+        int Bn = B.getColumnDimension();
+        
+        String e = String.format("Illegal operation: Cannot add a matrix block"
+                               + " of size %d x %d to a matrix of size %d x %d."
+                               , Am, An, Bm, Bn);
 
+        if  ((modifier == RIGHT && Am != Bm || modifier == UNDER && An != Bn)) { 
+            throw new IllegalArgumentException(e);
+        }
 
+        int newm = Am;
+        int newn = An;
+
+        int ci = 0;
+        int cj = 0;
+
+        switch (modifier) {
+        case RIGHT:
+            newn += Bn;
+            cj = An;
+            break;
+        case UNDER:
+        /* Fall through */
+        default:
+            newm += Bm;
+            ci = Am;
+        }
+        
+        BigFraction cdata[][] = new BigFraction[newm][newn];
+        
+        /* Copy A's data into cdata */
+        for (int i = 0; i < Am; i++) {
+            for (int j = 0; j < An; j++) {
+                cdata[i][j] = A.getEntry(i, j);
+            }
+        }
+
+        /* Add the new block of data */
+        for (int i = 0; i < Bm; i++) {
+            for (int j = 0; j < Bn; j++) {
+                cdata[i+ci][j+cj] = B.getEntry(i, j);
+            }
+        }
+
+        return new Array2DRowFieldMatrix<BigFraction>(cdata);
+    }
+    
+    
+    
+    public static BigFraction getMinValue(FieldVector<BigFraction> bf) {
+        BigFraction min = bf.getEntry(0);
+        
+        for (int i = 1; i < bf.getDimension(); i++) {
+            BigFraction val = bf.getEntry(i);
+            if (val.compareTo(min) < 0) {
+                min = val;
+            }
+        }
+        return min;
+    }
+    
+    
 
     /**
      * Find an entering variable index according
@@ -165,25 +225,24 @@ public class LP {
      *         An entering variable index.
      */
     private int entering(boolean dual) {
-        Matrix check = dual ? x_b : z_n;
+        String e = "Incumbent basic solution is optimal.";
+        String e2 = String.format("Incumbent basic solution is %s infeasible",
+                                   dual ? "dually" : "primal");
 
-        double min = 0.0;
+        if (optimal(dual)) throw new RuntimeException(e);
+        if (!feasible(dual)) throw new RuntimeException(e2);
+        
+        FieldVector<BigFraction> check = dual ? b_ : c_;
+        
+        BigFraction min = BigFraction.ZERO;
         int index = -1;
-        for (int i = 0; i < check.rows(); i++) {
-            double val = check.get(i, 0);
-            if (val < min) {
+        
+        for (int i = 0; i < check.getDimension(); i++) {
+            BigFraction val = check.getEntry(i);
+            if (val.compareTo(min) < 0) {
                 min = val;
                 index = i;
             }
-        }
-
-        if (index == -1) {
-            String e = "Incumbent basic solution is optimal.";
-            String e2 = String.format("Incumbent basic solution is %s infeasible",
-                                       dual ? "dually" : "primal");
-
-            if (optimal(dual)) throw new RuntimeException(e);
-            if (!feasible(dual)) throw new RuntimeException(e2);
         }
         return index;
     }
@@ -200,8 +259,9 @@ public class LP {
      *         True if the program is feasible. False otherwise.
      */
     public boolean feasible(boolean dual) {
-        if (dual) return z_n.gte(0);
-        return x_b.gte(0);
+        if (dual) return getMinValue(c_).compareTo(BigFraction.ZERO) >= 0.0;
+        return getMinValue(b_).compareTo(BigFraction.ZERO) >= 0.0;
+        
     }
 
 
@@ -219,39 +279,61 @@ public class LP {
      *         A leaving variable index.
      */
     private int leaving(int entering, boolean dual) {
-        Matrix check, sd;
-        Matrix bin = B.inverse().product(N);
-
-        String e = "Program is unbounded.";
+        FieldVector<BigFraction> check;
+        FieldVector<BigFraction> sd;
+        
+        FieldMatrix<BigFraction> bin = new FieldLUDecomposition<BigFraction>(B_)
+                .getSolver().getInverse().multiply(N_);
+        
         if (dual) {
-            check = z_n;
-            Matrix unit = Matrix.unitVector(bin.rows(), entering+1);
-            sd = bin.transpose().scale(-1).product(unit);
+            check = c_;
+            FieldVector<BigFraction> unit = new ArrayFieldVector<BigFraction>(
+                    bin.getRowDimension(), BigFraction.ZERO);
+            unit.setEntry(entering, BigFraction.ONE);
+            sd = bin.transpose().scalarMultiply(BigFraction.MINUS_ONE)
+                    .operate(unit);
         }
         else {
-            check = x_b;
-            Matrix unit = Matrix.unitVector(bin.cols(), entering+1);
-            sd = bin.product(unit);
+            check = b_;
+            FieldVector<BigFraction> unit = new ArrayFieldVector<BigFraction>(
+                    bin.getColumnDimension(), BigFraction.ZERO);
+            unit.setEntry(entering, BigFraction.ONE);
+            sd = bin.operate(unit);
         }
 
-        double max = Double.MIN_VALUE;
+        boolean unbounded = true;
         int index = -1;
+        
+        /* Check for unboundedness and find first non-zero element in check */
+        for (int i = 0; i < sd.getDimension(); i++) {
+            if (!check.getEntry(i).equals(BigFraction.ZERO) && index == -1) {
+                index = i;
+            }
+            if (sd.getEntry(i).compareTo(BigFraction.ZERO) > 0) {
+                unbounded = false;
+            }
+        }
+        String e = "Program is unbounded.";
+        if (unbounded) throw new RuntimeException(e);
 
-        for (int i = 0; i < sd.rows(); i++) {
-            double num = sd.get(i, 0);
-            double denom = check.get(i, 0);
-
-            if (denom != 0) {
-                double val = num / denom;
-                if (val > max) {
+        /* Set temporarily max value as ratio of the first divisible pair. */
+        BigFraction max = sd.getEntry(index).divide(check.getEntry(index));
+        
+        for (int i = index; i < sd.getDimension(); i++) {
+            BigFraction num = sd.getEntry(i);
+            BigFraction denom = check.getEntry(i);
+            
+            if (!denom.equals(BigFraction.ZERO)) {
+                BigFraction val = num.divide(denom);
+                if (val.compareTo(max) > 0) {
                     max = val;
                     index = i;
                 }
             } else {
-               if (num > 0) return i;
+                if (num.compareTo(BigFraction.ZERO) > 0) return i;
             }
         }
-        if (index == -1) throw new RuntimeException(e);
+
         return index;
     }
 
@@ -263,11 +345,13 @@ public class LP {
      * @return
      *         the objective value.
      */
-    public double objVal() {
-        double sum = 0;
+    public BigFraction objVal() {
+        BigFraction sum = BigFraction.ZERO;
         for (int i = 0; i < Bi.length; i++) {
             int j = Bi[i];
-            if (j < c_.rows()) sum += c_.get(j, 0)*x_b.get(i, 0);
+            if (j < c.getDimension()) {
+                sum = sum.add(c.getEntry(j).multiply(b_.getEntry(i)));
+            }
         }
         return sum;
     }
@@ -283,8 +367,12 @@ public class LP {
      *         True if the program is optimal. False otherwise.
      */
     public boolean optimal(boolean dual) {
-        if (dual) return feasible(true) && x_b.gte(0);
-        return feasible(false) && z_n.gte(0);
+        if (dual) {
+            return feasible(true)
+                    && getMinValue(b_).compareTo(BigFraction.ZERO) >= 0;
+        }
+        return feasible(false)
+                && getMinValue(c_).compareTo(BigFraction.ZERO) >= 0;
     }
 
 
@@ -296,11 +384,9 @@ public class LP {
      * @return A linear program.
      */
     public LP phaseOneObj() {
-        double zdata[] = new double[z_n.rows()];
-        Arrays.fill(zdata, 1);
-
-        Matrix z_n = new Matrix(zdata).transpose();
-        return new LP(B, N, N_, b, c, c_, x_b, z_n, Bi, Ni, x);
+        FieldVector<BigFraction> nc_ = new ArrayFieldVector<BigFraction>(
+                c_.getDimension(), BigFraction.ONE);
+        return new LP(B, N, b, c, B_, N_, b_, nc_, x, Bi, Ni);
     }
 
 
@@ -314,17 +400,10 @@ public class LP {
      * @return
      *         A linear program with the new objective function.
      */
-    public LP replaceObj(double[] coeff) {
-        Matrix z_n = new Matrix(coeff).transpose().scale(-1);
-        
-        double[] c_data = new double[Ni.length];
-        for (int i = 0; i < Ni.length; i++) {
-            if (Ni[i] < Bi.length) c_data[i] = -z_n.get(i, 0);
-            else c_data[i] = c.get(i, 0);
-        }
-        
-        Matrix c_ = new Matrix(c_data).transpose();
-        return new LP(B, N, N_, b, c, c_, x_b, z_n, Bi, Ni, x);
+    public LP replaceObj(BigFraction[] coeff) {
+        // TODO: Is this the behavior we want?
+        FieldVector<BigFraction> nc_ = new ArrayFieldVector<BigFraction>(coeff);
+        return new LP(B, N, b, c, B_, N_, b_, nc_, x, Bi, Ni);
     }
 
 
@@ -340,43 +419,56 @@ public class LP {
      *         A linear program after one iteration.
      */
     public LP pivot(int entering, int leaving) {
-        Matrix bin = B.inverse().product(N);
-        // Step 1: Check for optimality
+        FieldMatrix<BigFraction> bin = new FieldLUDecomposition<BigFraction>(B_)
+                .getSolver().getInverse().multiply(N_);
+        
+        // Step 1: Check for optimpivality
         // Step 2: Select entering variable.
         // Naive method. Does not check for optimality. Assumes feasibility.
         // Entering variable is given.
 
         // Step 3: Compute primal step direction.
-        Matrix ej = Matrix.unitVector(bin.cols(), entering+1);
-        Matrix psd = bin.product(ej);
-
+        FieldVector<BigFraction> ej = new ArrayFieldVector<BigFraction>(
+                bin.getColumnDimension(), BigFraction.ZERO);
+        ej.setEntry(entering, BigFraction.ONE);
+        FieldVector<BigFraction> psd = bin.operate(ej);
+        
         // Step 4: Compute primal step length.
         // Step 5: Select leaving variable.
         // Leaving variable is given.
-        double t = x_b.get(leaving, 0) / psd.get(leaving, 0);
+        BigFraction t = b_.getEntry(leaving).divide(psd.getEntry(leaving));
 
         // Step 6: Compute dual step direction.
-        Matrix ei = Matrix.unitVector(bin.rows(), leaving+1);
-        Matrix dsd = bin.transpose().scale(-1).product(ei);
-
+        FieldVector<BigFraction> ei = new ArrayFieldVector<BigFraction>(
+                bin.getRowDimension(), BigFraction.ZERO);
+        ei.setEntry(leaving, BigFraction.ONE);
+        FieldVector<BigFraction> dsd = bin.transpose()
+                .scalarMultiply(BigFraction.MINUS_ONE).operate(ei);
+        
         // Step 7: Compute dual step length.
-        double s = z_n.get(entering, 0) / dsd.get(entering, 0);
+        BigFraction s = c_.getEntry(entering).divide(dsd.getEntry(entering));
 
         // Step 8: Update current primal and dual solutions.
-        Matrix nx_b = x_b.subtract(psd.scale(t)).set(leaving, 0, t);
-        Matrix nz_n = z_n.subtract(dsd.scale(s)).set(entering, 0, s);
-
+        FieldVector<BigFraction> nb_ = b_.subtract(psd.mapMultiply(t));
+        nb_.setEntry(leaving,  t);
+        
+        FieldVector<BigFraction> nc_ = c_.subtract(dsd.mapMultiply(s));
+        nc_.setEntry(entering, s);
+        
         // Step 9: Update basis.
-        Matrix temp = B.getCol(leaving);
-        Matrix nB = B.setCol(leaving, this.N.getCol(entering));
-        Matrix nN = N.setCol(entering, temp);
+        FieldVector<BigFraction> temp = B_.getColumnVector(leaving);
+        FieldMatrix<BigFraction> nB_ = B_.copy();
+        nB_.setColumn(leaving, N_.getColumn(entering));
+        
+        FieldMatrix<BigFraction> nN_ = N_.copy();
+        nN_.setColumnVector(entering, temp);
 
         int[] nBi = Bi.clone();
         int[] nNi = Ni.clone();
         nBi[leaving] = Ni[entering];
         nNi[entering] = Bi[leaving];
-
-        return new LP(nB, nN, N_, b, c, c_, nx_b, nz_n, nBi, nNi, x);
+        
+        return new LP(B, N, b, c, nB_, nN_, nb_, nc_, x, nBi, nNi);
     }
 
 
@@ -398,36 +490,44 @@ public class LP {
     }
 
 
-
+    /* Update the objective function according to the current basis */
     public LP updateObj() {
-        double zdata[] = new double[z_n.rows()];
-        Matrix bin = B.inverse().product(N);
-
+        FieldVector<BigFraction> nc_ = new ArrayFieldVector<BigFraction>(
+                c_.getDimension(), BigFraction.ZERO);
+        FieldMatrix<BigFraction> bin = new FieldLUDecomposition<BigFraction>(B)
+                .getSolver().getInverse().multiply(N);
+        
         for (int i = 0; i < Bi.length; i++) {
             int k = Bi[i];
             if (k < Ni.length) {
                 for (int j = 0; j < Ni.length; j++) {
-                    zdata[j] += c.get(k, 0)*bin.get(i, j);
+                    BigFraction bf = nc_.getEntry(j).add(c.getEntry(k))
+                            .multiply(bin.getEntry(i, j));
+                    nc_.setEntry(j, bf);
                 }
             }
         }
 
         for (int i = 0; i < Ni.length; i++) {
             int k = Ni[i];
-            if (k < Ni.length) zdata[i] += -c.get(i, 0);
+            if (k < Ni.length) {
+                BigFraction bf = nc_.getEntry(i).add(c.getEntry(i).negate());
+                nc_.setEntry(i, bf);
+            }
         }
-
-        Matrix z_n = new Matrix(zdata).transpose();
-        return new LP(B, N, N_, b, c, c_, x_b, z_n, Bi, Ni, x);
+        
+        return new LP (B, N, b, c, B_, N_, b_, nc_, x, Bi, Ni);
     }
 
 
 
-    public double[] point() {
-        double[] point = new double[Ni.length];
+    public BigFraction[] point() {
+        BigFraction[] point = new BigFraction[Ni.length];
+        Arrays.fill(point, BigFraction.ZERO);
+        
         for (int i = 0; i < Bi.length; i++) {
             int j = Bi[i];
-            if (j < Ni.length) point[j] = x_b.get(i, 0);
+            if (j < Ni.length) point[j] = b_.getEntry(i);
         }
         return point;
     }
@@ -456,8 +556,11 @@ public class LP {
     
     
     
-    public Matrix getConstraints() {
-        return N_.augment(b);
+    // TODO: Hopefully find a method in apache commons math that supports
+    //       augmenting matrices.
+    public FieldMatrix<BigFraction> getConstraints() {
+        return LP.addBlock(N, new Array2DRowFieldMatrix<BigFraction>(
+                b.toArray()), RIGHT);
     }
 
 
@@ -514,21 +617,27 @@ public class LP {
      *         A {@code Matrix} of double precision numbers representing
      *         the dictionary of the current Linear Program.
      */
-    public Matrix dictionary() {
-        double[][] data = new double[Bi.length+1][Ni.length+1];
-        for (int i = 0; i < Ni.length; i++) { data[0][i+1] = -z_n.get(i, 0); }
-        for (int i = 0; i < Bi.length; i++) { data[i+1][0] = x_b.get(i, 0); }
+    public FieldMatrix<BigFraction> dictionary() {
+        BigFraction[][] data = new BigFraction[Bi.length+1][Ni.length+1];
+        for (int i = 0; i < Ni.length; i++) {
+            data[0][i+1] = c_.getEntry(i).negate();
+        }
+        for (int i = 0; i < Bi.length; i++) { 
+            data[i+1][0] = b_.getEntry(i);
+        }
 
         data[0][0] = objVal();
 
-        Matrix values = B.inverse().product(N);
+        FieldMatrix<BigFraction> values = new FieldLUDecomposition<BigFraction>(B_)
+                .getSolver().getInverse().multiply(N_);
+        
         for (int i = 0; i < Bi.length; i++) {
             for (int j = 0; j < Ni.length; j++) {
-                data[i+1][j+1] = -values.get(i, j);
+                data[i+1][j+1] = values.getEntry(i, j).negate();
             }
         }
 
-        return new Matrix(data);
+        return new Array2DRowFieldMatrix<BigFraction>(data);
     }
     
     
@@ -546,7 +655,7 @@ public class LP {
      *         A {@code Matrix} of double precision numbers representing
      *         the coefficients for the variables in the constraints.
      */
-    public Matrix getConsCoeffs() {
+    public FieldMatrix<BigFraction> getConsCoeffs() {
         return N_;
     }
     
@@ -565,7 +674,7 @@ public class LP {
      *         A {@code Matrix} of double precision numbers representing
      *         the values in the constraints. 
      */
-    public Matrix getConsValues() {
+    public FieldVector<BigFraction> getConsValues() {
         return b;
     }
     
@@ -576,7 +685,7 @@ public class LP {
      *         A row {@code Matrix} of double precision numbers representing
      *         the coefficients in the objective function.
      */
-    public Matrix getObjFunction() {
+    public FieldVector<BigFraction> getObjFunction() {
         return c;
     }
 }

@@ -1,3 +1,3 @@
-max        - x1 - x2
-subject to   x1 - x2 <= 1
-            -x1 + x2 <= 1
+max        - x1 + 2x2
+subject to   x1 -  x2 <= 1
+            -x1 +  x2 <= 1
