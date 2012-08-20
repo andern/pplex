@@ -47,7 +47,7 @@ public class About extends JDialog implements ActionListener {
         
         /* Adding a label */
         jlbLabel = new JLabel("<html><br>pplex<br>"
-                            + "version 0.2.0<br>"
+                            + "version 0.3.0<br>"
                             + "<br>A pedagogical implementation of the"
                             + " simplex method.<br>"
                             + "<br>"

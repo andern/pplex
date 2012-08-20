@@ -31,7 +31,7 @@ import java.util.LinkedHashMap;
  */
 final class Data {
     static final String PNAME = "pplex";
-    static final String VERSION = "0.2.0";
+    static final String VERSION = "0.3.0";
     static final String COPY = "Copyright(C) 2012, Andreas Halle";
     static final String LINE = String.format("%s %s, %s", PNAME, VERSION, COPY);
     static final String WELCOME =

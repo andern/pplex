@@ -1,4 +1,12 @@
+Mon Aug 20, 2012 - 0.3.0
+==========================
+* NEW FEATURE: Infinite precision (not visualization part).
+               No more rounding errors.
+* BUG FIX: Fixed a bug that caused `pivot` to return
+           invertible matrices in some rare cases.
+
 Tue Jul 31, 2012 - 0.2.0
+===========================
 * NEW FEATURE: A graphical interface for pplex that
                can visualize a linear program in two
                dimensions.

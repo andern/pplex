@@ -1,6 +1,6 @@
 pplex readme
-Last updated:    2012-08-15
-Release version: 0.2.0
+Last updated:    2012-08-20
+Release version: 0.3.0
 ------------------------------------------------------------------------
 
 Table of contents
@@ -23,6 +23,9 @@ pplex is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
+
+pplex uses Apache Commons Math library for handling matrices. It is released
+under the Apache License, Version 2.0. See lib/LICENSE.TXT for more information.
 
 
 
