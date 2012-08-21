@@ -53,7 +53,7 @@ class CLI {
     /* These commands do operations on an LP. */
     private String[] reqProg = new String[] {Data.pivot,
                                              Data.replace,
-                                             Data.update,
+                                             Data.reinstate,
                                              Data.show};
     /* Standard number of decimals when printing double precision numbers. */
     private int stdPrec = 2;
@@ -93,15 +93,15 @@ class CLI {
             return String.format(f, args[0]);
         }
 
-        if      (args[0].equals(Data.help))    { s = parseHelp(args); }
-        else if (args[0].equals(Data.log))     { s = parseLog(args); }
-        else if (args[0].equals(Data.pivot))   { s = parsePivot(args); }
-        else if (args[0].equals(Data.read))    { s = parseRead(args); }
-        else if (args[0].equals(Data.redo))    { s = parseRedo(args); }
-        else if (args[0].equals(Data.replace)) { s = parseReplace(args); }
-        else if (args[0].equals(Data.show))    { s = parseShow(args); }
-        else if (args[0].equals(Data.undo))    { s = parseUndo(args); }
-        else if (args[0].equals(Data.update))  { s = parseUpdate(args); }
+        if      (args[0].equals(Data.help))      { s = parseHelp(args); }
+        else if (args[0].equals(Data.log))       { s = parseLog(args); }
+        else if (args[0].equals(Data.pivot))     { s = parsePivot(args); }
+        else if (args[0].equals(Data.read))      { s = parseRead(args); }
+        else if (args[0].equals(Data.redo))      { s = parseRedo(args); }
+        else if (args[0].equals(Data.replace))   { s = parseReplace(args); }
+        else if (args[0].equals(Data.show))      { s = parseShow(args); }
+        else if (args[0].equals(Data.undo))      { s = parseUndo(args); }
+        else if (args[0].equals(Data.reinstate)) { s = parseReinstate(args); }
 
         else return String.format("Invalid command %s%n", args[0]);
 
@@ -225,7 +225,7 @@ class CLI {
         if (args.length == 1){
             lp = lps.get(p-1).phaseOneObj();
         }
-        else if (args.length == (size +1 )) {
+        else if (args.length == (size + 1)) {
             BigFraction[] coeff = new BigFraction[size];
 
             for (int i = 0; i < size; i++) {
@@ -271,8 +271,8 @@ class CLI {
 
 
 
-    private String parseUpdate(String[] args) {
-        LP lp = lps.get(p-1).updateObj();
+    private String parseReinstate(String[] args) {
+        LP lp = lps.get(p-1).reinstate();
         lps.add(p, lp);
         p++;
         return Output.primal(lp, stdPrec);

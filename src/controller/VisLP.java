@@ -26,7 +26,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Iterator;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.apache.commons.math3.linear.Array2DRowFieldMatrix;
 import org.apache.commons.math3.linear.ArrayFieldVector;
@@ -52,7 +51,7 @@ import model.LP;
  * @see     ccs.Coordinates
  */
 class VisLP {
-    private static HashSet<Point2D> unb;
+    private static ArrayList<Point2D> unb;
     
     /*
      * Input: Unordered list of points that can form a
@@ -260,19 +259,28 @@ class VisLP {
             cs.addLine(line);
         }
         
-        /* Draw all feasible solutions as points */
-        Point2D[] pconv = convex(getFeasibleIntersections(cons));
+        Point2D[] fpoints = getFeasibleIntersections(cons);
         
+        /* If there is no feasible region there is no need to try to color it */
+        if (fpoints.length == 0) return;
+        
+        /* Draw all feasible solutions as points */
+        Point2D[] pconv = convex(fpoints);
         for (Point2D p2d : pconv) {
             CCSPoint ccsp = new CCSPoint(p2d.getX(), p2d.getY());
             if (!unb.contains(p2d)) cs.addPoint(ccsp);
         }
         
-        Iterator<Point2D> iter = unb.iterator();
-        
-        if (iter.hasNext()) {
-            Point2D p1 = iter.next();
-            Point2D p2 = iter.next();
+        /* Color the region depending on whether it is unbounded or not. */
+        if (unb.size() == 0) {
+            cs.addPolygon(new CCSPolygon(pconv, Color.pink, true));
+        } else if (unb.size() == 1) {
+            GradientPaint gp = new GradientPaint(pconv[0], Color.pink,
+                    unb.get(0), cs.getBackground());
+            cs.addPolygon(new CCSPolygon(pconv, gp, true));
+        } else {
+            Point2D p1 = unb.get(0);
+            Point2D p2 = unb.get(1);
             double xavg = (p1.getX() + p2.getX()) / 2.0;
             double yavg = (p1.getY() + p2.getY()) / 2.0;
             
@@ -283,8 +291,6 @@ class VisLP {
                     pavg, cs.getBackground());
 
             cs.addPolygon(new CCSPolygon(pconv, gp, true));
-        } else {
-            cs.addPolygon(new CCSPolygon(pconv, Color.pink, true));
         }
         
         /* Draw the current objective function */
@@ -316,7 +322,7 @@ class VisLP {
                 cons.getColumnVector(cons.getColumnDimension()-1);
         
         HashSet<Point2D> points = new HashSet<Point2D>();
-        unb = new HashSet<Point2D>();
+        unb = new ArrayList<Point2D>();
         
         /* Find all intersections */
         for (int i = 0; i < N.getRowDimension(); i++) {

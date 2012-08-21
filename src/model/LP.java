@@ -319,7 +319,7 @@ public class LP {
         /* Set temporarily max value as ratio of the first divisible pair. */
         BigFraction max = sd.getEntry(index).divide(check.getEntry(index));
         
-        for (int i = index; i < sd.getDimension(); i++) {
+        for (int i = 0; i < sd.getDimension(); i++) {
             BigFraction num = sd.getEntry(i);
             BigFraction denom = check.getEntry(i);
             
@@ -402,7 +402,8 @@ public class LP {
      */
     public LP replaceObj(BigFraction[] coeff) {
         // TODO: Is this the behavior we want?
-        FieldVector<BigFraction> nc_ = new ArrayFieldVector<BigFraction>(coeff);
+        FieldVector<BigFraction> nc_ = new ArrayFieldVector<BigFraction>(coeff)
+                .mapMultiply(BigFraction.MINUS_ONE);
         return new LP(B, N, b, c, B_, N_, b_, nc_, x, Bi, Ni);
     }
 
@@ -488,35 +489,34 @@ public class LP {
         if (dual) return pivot(l, e);
         return pivot(e, l);
     }
-
-
-    /* Update the objective function according to the current basis */
-    public LP updateObj() {
+    
+    
+    
+    public LP reinstate() {
         FieldVector<BigFraction> nc_ = new ArrayFieldVector<BigFraction>(
                 c_.getDimension(), BigFraction.ZERO);
-        FieldMatrix<BigFraction> bin = new FieldLUDecomposition<BigFraction>(B)
-                .getSolver().getInverse().multiply(N);
+        FieldMatrix<BigFraction> bin = new FieldLUDecomposition<BigFraction>(B_)
+                .getSolver().getInverse().multiply(N_);
         
         for (int i = 0; i < Bi.length; i++) {
             int k = Bi[i];
             if (k < Ni.length) {
                 for (int j = 0; j < Ni.length; j++) {
-                    BigFraction bf = nc_.getEntry(j).add(c.getEntry(k))
-                            .multiply(bin.getEntry(i, j));
-                    nc_.setEntry(j, bf);
+                    BigFraction bf = c.getEntry(k).multiply(
+                            bin.getEntry(i, j));
+                    nc_.setEntry(j, nc_.getEntry(j).add(bf));
                 }
             }
         }
-
+        
         for (int i = 0; i < Ni.length; i++) {
             int k = Ni[i];
             if (k < Ni.length) {
-                BigFraction bf = nc_.getEntry(i).add(c.getEntry(i).negate());
-                nc_.setEntry(i, bf);
+                nc_.setEntry(i, nc_.getEntry(i).subtract(c.getEntry(i)));
             }
         }
         
-        return new LP (B, N, b, c, B_, N_, b_, nc_, x, Bi, Ni);
+        return new LP(B, N, b, c, B_, N_, b_, nc_, x,Bi, Ni);
     }
 
 

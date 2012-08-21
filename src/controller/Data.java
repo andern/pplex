@@ -47,16 +47,16 @@ final class Data {
     static final String EHELP = "Type 'help <command>' for further\n"
                               + "information about a specific command.";
 
-    static final String help     = "help";
-    static final String log      = "log";
-    static final String pivot    = "pivot";
-    static final String read     = "read";
-    static final String redo     = "redo";
-    static final String replace  = "replace";
-    static final String show     = "show";
-    static final String undo     = "undo";
-    static final String update   = "update";
-    static final String quit     = "quit";
+    static final String help      = "help";
+    static final String log       = "log";
+    static final String pivot     = "pivot";
+    static final String read      = "read";
+    static final String redo      = "redo";
+    static final String replace   = "replace";
+    static final String show      = "show";
+    static final String undo      = "undo";
+    static final String reinstate = "reinstate";
+    static final String quit      = "quit";
 
     /* Sub commands of show */
     static final String showDual        = "dual";
@@ -71,16 +71,16 @@ final class Data {
     @SuppressWarnings("serial")
     static final HashMap<String, String> SYNTAX = new HashMap<String, String>(){
         {
-            put(help,     "help");
-            put(log,      "log");
-            put(pivot,    "pivot ((dual/primal) <entering index> <leaving index>)");
-            put(read,     "read <filename>");
-            put(redo,     "redo");
-            put(replace,  "replace (coeffs..)");
-            put(show,     "show <subcommand>");
-            put(undo,     "undo");
-            put(update,   "update");
-            put(quit,     "quit or q or exit");
+            put(help,      "help");
+            put(log,       "log");
+            put(pivot,     "pivot ((dual/primal) <entering index> <leaving index>)");
+            put(read,      "read <filename>");
+            put(redo,      "redo");
+            put(replace,   "replace (coeffs..)");
+            put(show,      "show <subcommand>");
+            put(undo,      "undo");
+            put(reinstate, "reinstate");
+            put(quit,      "quit or q or exit");
 
             /* Sub commands of show */
             put(showDual,         "show dual (<precision>)");
@@ -97,16 +97,16 @@ final class Data {
     @SuppressWarnings("serial")
     static final LinkedHashMap<String, String> SHELP = new LinkedHashMap<String, String>() {
         {
-            put(help,     "show this list");
-            put(log,      "show command history");
-            put(pivot,    "run one iteration of the simplex method");
-            put(read,     "read a file of format .lp");
-            put(redo,     "reverse last undo");
-            put(replace,  "replace the current objective function");
-            put(show,     "show various information about the current dictionary");
-            put(undo,     "erase last change");
-            put(update,   "update the current objective function");
-            put(quit,     "quit the program (exit and q do the same)");
+            put(help,      "show this list");
+            put(log,       "show command history");
+            put(pivot,     "run one iteration of the simplex method");
+            put(read,      "read a file of format .lp");
+            put(redo,      "reverse last undo");
+            put(replace,   "replace the current objective function");
+            put(show,      "show various information about the current dictionary");
+            put(undo,      "erase last change");
+            put(reinstate, "reinstate the current objective function");
+            put(quit,      "quit the program (exit and q do the same)");
         }
     };
 
@@ -230,12 +230,12 @@ final class Data {
                   + "\n"
                 );
 
-            put(update,
-                    "update replaces the objective function of the current linear program\n"
+            put(reinstate,
+                    "reinstate replaces the objective function of the current linear program\n"
                   + "with the original objective function fitting the current dictionary.\n"
                   + "\n"
                   + "Syntax:\n"
-                  + Data.SYNTAX.get(update) + "\n"
+                  + Data.SYNTAX.get(reinstate) + "\n"
                   + "\n"
                 );
 
