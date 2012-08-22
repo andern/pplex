@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
 
 <project name="pplex" default="jar">
-  <taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" />
-
   <path id="build.classpath">
     <fileset dir="lib">
       <include name="*.jar"/>
@@ -46,10 +44,6 @@
         <attribute name="Class-path" value="${mf.classpath}"/>
       </manifest>
     </jar>
-  </target>
-  
-  <target name="mac" depends="jar" description="create a runnable app file for Mac OS">
-    <jarbundler dir="." name="pplex" mainclass="controller/Main" jar="pplex.jar" />
   </target>
 </project>
 
