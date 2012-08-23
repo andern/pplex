@@ -1,0 +1,6 @@
+max              3x  +  2y
+subject to       2x  +   y <= 10 
+                  x  +  2y <= 8
+
+
+
