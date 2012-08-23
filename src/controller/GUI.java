@@ -76,6 +76,7 @@ class GUI extends JFrame {
         add(jspSplitPane);
         
         setJMenuBar(initializeMenu());
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         setVisible(true);
         /*  
