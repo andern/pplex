@@ -185,20 +185,13 @@ public class CCSystem extends JPanel {
      * More specifically:
      *  KEY_ALPHA_INTERPOLATION = VALUE_ALPHA_INTERPOLATION_QUALITY
      *  KEY_ANTIALIASING = VALUE_ANTIALIAS_ON
-            rh.put(RenderingHints.KEY_COLOR_RENDERING,
-                   RenderingHints.VALUE_COLOR_RENDER_QUALITY);
-            rh.put(RenderingHints.KEY_DITHERING,
-                   RenderingHints.VALUE_DITHER_ENABLE);
-            rh.put(RenderingHints.KEY_FRACTIONALMETRICS,
-                   RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-            rh.put(RenderingHints.KEY_INTERPOLATION,
-                   RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-            rh.put(RenderingHints.KEY_RENDERING,
-                   RenderingHints.VALUE_RENDER_QUALITY);
-            rh.put(RenderingHints.KEY_STROKE_CONTROL,
-                   RenderingHints.VALUE_STROKE_NORMALIZE);
-            rh.put(RenderingHints.KEY_TEXT_ANTIALIASING,
-                   RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+     *  KEY_COLOR_RENDERING = VALUE_COLOR_RENDER_QUALITY
+     *  KEY_DITHERING = VALUE_DITHER_ENABLE
+     *  KEY_FRACTIONALMETRICS = VALUE_FRACTIONALMETRICS_ON
+     *  KEY_INTERPOLATION = VALUE_INTERPOLATION_BICUBIC
+     *  KEY_RENDERING = VALUE_RENDER_QUALITY
+     *  KEY_STROKE_CONTROL = VALUE_STROKE_NORMALIZE
+     *  KEY_TEXT_ANTIALIASING = VALUE_TEXT_ANTIALIAS_ON.
      * 
      * @param niceGraphics
      *        If true, use nice graphics.
