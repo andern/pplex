@@ -23,7 +23,6 @@ package output;
  * for the {@code LP} object.
  *
  * @author  Andreas Halle
- * @version 0.1
  * @see     model.LP
  */
 final class OLP {

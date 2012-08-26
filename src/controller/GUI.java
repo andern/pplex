@@ -38,9 +38,8 @@ import model.LP;
  * a console and a coordinate system.
  * 
  * @author  Andreas Halle
- * @version 0.1
  * @see     Console
- * @see     Coordinates
+ * @see     ccs.CCSystem
  */
 class GUI extends JFrame {
     private static final long serialVersionUID = 1L;

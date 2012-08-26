@@ -28,6 +28,7 @@ import java.awt.Color;
  *     ax + by = c
  *
  * @author Andreas Halle
+ * @see    ccs.CCSystem
  */
 public class CCSLine {
     protected double a;
@@ -62,7 +63,7 @@ public class CCSLine {
     /**
      * Create a new line from a linear equation:
      *     ax + by = c 
-     * Will hav
+     * A line is painted black by default.
      * 
      * @param a
      *        Coefficient of the x-variable.

@@ -39,32 +39,47 @@ import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
-/*
- * In this class there are two coordinate systems:
+/**
+ * A class representing a visual Cartesian coordinate system.
+ * <p>
+ * The system contains (in)visible x- and y-axes that range from
+ * one double precision number to another.
+ * <p>
+ * The system can contain objects such as lines, points and polygons.
  * 
- * 1. A two-dimensional coordinate system for Java2D
- *    where x lies in the interval [0, window width]
- *    and y lies in the interval [0, window height]
- *    where the units of both x and y are pixels.
- *    
- * 2. An emulated coordinate system where x and y can
- *    lie in any range definable by double precision
- *    numbers.
- * 
- * Throughout this class, Point is used to represent
- * a point in system 1 while Point2D is used to
- * represent a point in system 2.
- * 
- * The method translate(Point) and translate(Point2D)
- * is used to translate between the two systems.
+ * @author Andreas Halle
+ * @see    ccs.CCSLine
+ * @see    ccs.CCSPoint
+ * @see    ccs.CCSPolygon
  */
 public class CCSystem extends JPanel {
+    /*
+     * In this class there are two coordinate systems:
+     * 
+     * 1. A two-dimensional coordinate system for Java2D
+     *    where x lies in the interval [0, window width]
+     *    and y lies in the interval [0, window height]
+     *    where the units of both x and y are pixels.
+     *    
+     * 2. An emulated coordinate system where x and y can
+     *    lie in any range definable by double precision
+     *    numbers.
+     * 
+     * Throughout this class, Point is used to represent
+     * a point in system 1 while Point2D is used to
+     * represent a point in system 2.
+     * 
+     * The method translate(Point) and translate(Point2D)
+     * is used to translate between the two systems.
+     */
     private static final long serialVersionUID = 1L;
     
     private boolean drawXAxis;
     private boolean drawYAxis;
     private boolean drawXUnits;
     private boolean drawYUnits;
+    
+    private boolean niceGraphics;
     
     private ArrayList<Shape> shapes;
     private ArrayList<CCSLine> lines;
@@ -97,6 +112,7 @@ public class CCSystem extends JPanel {
         drawYAxis = false;
         drawXUnits = true;
         drawYUnits = true;
+        niceGraphics = true;
         loX = -10;
         hiX = 10;
         loY = -10;
@@ -160,6 +176,59 @@ public class CCSystem extends JPanel {
         drawXAxis = visible;
         drawYAxis = visible;
     }
+    
+    
+    
+    /**
+     * Turns on nice graphics.
+     * <p>
+     * More specifically:
+     *  KEY_ALPHA_INTERPOLATION = VALUE_ALPHA_INTERPOLATION_QUALITY
+     *  KEY_ANTIALIASING = VALUE_ANTIALIAS_ON
+            rh.put(RenderingHints.KEY_COLOR_RENDERING,
+                   RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+            rh.put(RenderingHints.KEY_DITHERING,
+                   RenderingHints.VALUE_DITHER_ENABLE);
+            rh.put(RenderingHints.KEY_FRACTIONALMETRICS,
+                   RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+            rh.put(RenderingHints.KEY_INTERPOLATION,
+                   RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            rh.put(RenderingHints.KEY_RENDERING,
+                   RenderingHints.VALUE_RENDER_QUALITY);
+            rh.put(RenderingHints.KEY_STROKE_CONTROL,
+                   RenderingHints.VALUE_STROKE_NORMALIZE);
+            rh.put(RenderingHints.KEY_TEXT_ANTIALIASING,
+                   RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+     * 
+     * @param niceGraphics
+     *        If true, use nice graphics.
+     */
+    public void setNiceGraphics(boolean niceGraphics) {
+        this.niceGraphics = niceGraphics;
+    }
+    
+    
+    
+    /**
+     * Moves the entire visible area of the current system. The visible area
+     * will be x and y in [loX, hiX] and [loY, hiY], respectively.
+     * 
+     * @param loX
+     *        Lowest visible value of x. 
+     * @param hiX
+     *        Highest visible value of x.
+     * @param loY
+     *        Lowest visible value of y.
+     * @param hiY
+     *        Highest visible value of y.
+     */
+    public void move(double loX, double hiX, double loY, double hiY) {
+        this.loX = loX;
+        this.hiX = hiX;
+        this.loY = loY;
+        this.hiY = hiY;
+        updatePosition();
+    }
 
 
 
@@ -198,9 +267,12 @@ public class CCSystem extends JPanel {
 
 
 
-    /*
+    /**
      * Draw the axes and unit lines in the best looking
-     * way possible for the given x- and y-ranges.
+     * way possible for the gived x- and y-ranges.
+     * 
+     * @param g2d
+     *        A {@code Graphics2D} object.
      */
     public void drawAxes(Graphics2D g2d) {
         /* Find position for the unit line values. */
@@ -217,16 +289,12 @@ public class CCSystem extends JPanel {
                     xaxis_end.x, xaxis_end.y);
         }
         
-        
-        
         if (drawYAxis) {
             Point yaxis_start = new Point(o.x, 0);
             Point yaxis_end = new Point(o.x, getHeight());
             g2d.drawLine(yaxis_start.x, yaxis_start.y,
                     yaxis_end.x, yaxis_end.y);
         }
-        
-        
         
         if (drawXAxis && drawXUnits) {
             /* Approximate number of pixels needed between each "unit" */
@@ -298,7 +366,7 @@ public class CCSystem extends JPanel {
             int pix = o.y;
             int q = (int) (loY / vbuY.doubleValue());
 
-            /* Draw the units on the x-axis */
+            /* Draw the units on the 7-axis */
             while (pix >= 0) {
                 BigDecimal qbd = new BigDecimal(q++, MC);
                 BigDecimal val = vbuY.multiply(qbd, MC);
@@ -366,6 +434,7 @@ public class CCSystem extends JPanel {
 
 
 
+    /* Find the magnitude we want between each unit line */
     private BigDecimal findScale(double udist) {
         int x = (int)Math.floor(Math.log10(udist));
         /* scale = 10 ^ x */
@@ -380,7 +449,8 @@ public class CCSystem extends JPanel {
 
 
 
-    private void move(double moveX, double moveY) {
+    /* Move the visible area relevant to the current position. */ 
+    private void drag(double moveX, double moveY) {
         loX += moveX;
         hiX += moveX;
         loY += moveY;
@@ -459,6 +529,10 @@ public class CCSystem extends JPanel {
     
     
     
+    /*
+     * Zoom into the visible area relevant to the current
+     * position by keeping the center the same.
+     */
     private void zoom(double zoomX, double zoomY) {
         loX -= zoomX;
         hiX += zoomX;
@@ -469,6 +543,9 @@ public class CCSystem extends JPanel {
     
     
     
+    /**
+     * Remove all objects visible in the current system.
+     */
     public void clear() {
         shapes.clear();
         lines.clear();
@@ -483,56 +560,35 @@ public class CCSystem extends JPanel {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
         
-        // TODO: Might be a bit excessive. Just trying at the moment.
-        RenderingHints rh = new RenderingHints(null);
-        rh.put(RenderingHints.KEY_ALPHA_INTERPOLATION,
-               RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
-        rh.put(RenderingHints.KEY_ANTIALIASING,
-               RenderingHints.VALUE_ANTIALIAS_ON);
-        rh.put(RenderingHints.KEY_COLOR_RENDERING,
-               RenderingHints.VALUE_COLOR_RENDER_QUALITY);
-        rh.put(RenderingHints.KEY_DITHERING,
-               RenderingHints.VALUE_DITHER_ENABLE);
-        rh.put(RenderingHints.KEY_FRACTIONALMETRICS,
-               RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-        rh.put(RenderingHints.KEY_INTERPOLATION,
-               RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-        rh.put(RenderingHints.KEY_RENDERING,
-               RenderingHints.VALUE_RENDER_QUALITY);
-        rh.put(RenderingHints.KEY_STROKE_CONTROL,
-               RenderingHints.VALUE_STROKE_NORMALIZE);
-        rh.put(RenderingHints.KEY_TEXT_ANTIALIASING,
-               RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-
-        
-        g2d.addRenderingHints(rh);
+        if (niceGraphics) {
+            RenderingHints rh = new RenderingHints(null);
+            rh.put(RenderingHints.KEY_ALPHA_INTERPOLATION,
+                   RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+            rh.put(RenderingHints.KEY_ANTIALIASING,
+                   RenderingHints.VALUE_ANTIALIAS_ON);
+            rh.put(RenderingHints.KEY_COLOR_RENDERING,
+                   RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+            rh.put(RenderingHints.KEY_DITHERING,
+                   RenderingHints.VALUE_DITHER_ENABLE);
+            rh.put(RenderingHints.KEY_FRACTIONALMETRICS,
+                   RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+            rh.put(RenderingHints.KEY_INTERPOLATION,
+                   RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            rh.put(RenderingHints.KEY_RENDERING,
+                   RenderingHints.VALUE_RENDER_QUALITY);
+            rh.put(RenderingHints.KEY_STROKE_CONTROL,
+                   RenderingHints.VALUE_STROKE_NORMALIZE);
+            rh.put(RenderingHints.KEY_TEXT_ANTIALIASING,
+                   RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            
+            g2d.addRenderingHints(rh);
+        }
         
         /* Polygons should be drawn before the axes. */
         for (CCSPolygon poly : polygons) drawPolygon(g2d, poly);
         drawAxes(g2d);
         for (CCSLine line : lines) drawLine(g2d, line);
         for (CCSPoint p : points) drawPoint(g2d, p);
-        
-//        drawAxes();
-//        
-//        if (lp != null) {
-//            if (lp.getNoBasic() != 2) {
-//                String s  = "Current LP is not representable";
-//                String s2 = "in two dimensions";
-//                g2d.drawString(s, getWidth()/2-s.length()*2-20, getHeight()/2);
-//                g2d.drawString(s2, getWidth()/2-s2.length()*3, getHeight()/2+20);
-//            } else {
-//                checkLPForBounds();
-//                
-//                drawLP(g2d, lp);
-//                drawAxes(g2d);
-//                
-//                g2d.setColor(Color.RED);
-//                drawObjPoint(g2d, lp);
-//                
-//                drawConstraint(g2d, lp.c.get(0, 0), lp.c.get(1, 0), lp.objVal());
-//            }
-//        }
     }
     
     
@@ -591,7 +647,7 @@ public class CCSystem extends JPanel {
             double moveX = distX / getWidth() * dx;
             double moveY = distY / getHeight() * dy;
             
-            move(moveX, -moveY);
+            drag(moveX, -moveY);
 
             repaint();
             

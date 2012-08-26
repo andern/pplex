@@ -28,6 +28,11 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 
+/**
+ * Class for the about dialog
+ * 
+ * @author Andreas Halle
+ */
 public class About extends JDialog implements ActionListener {
     private static final long serialVersionUID = 1L;
     
@@ -47,7 +52,7 @@ public class About extends JDialog implements ActionListener {
         
         /* Adding a label */
         jlbLabel = new JLabel("<html><br>pplex<br>"
-                            + "version 0.3.0<br>"
+                            + "version " + Data.VERSION + "<br>"
                             + "<br>A pedagogical implementation of the"
                             + " simplex method.<br>"
                             + "<br>"

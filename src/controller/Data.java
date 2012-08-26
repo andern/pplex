@@ -26,12 +26,11 @@ import java.util.LinkedHashMap;
  * command-line interface.
  * 
  * @author  Andreas Halle
- * @version 0.1
  * @see     controller.CLI
  */
 final class Data {
     static final String PNAME = "pplex";
-    static final String VERSION = "0.3.0";
+    static final String VERSION = "0.3.1";
     static final String COPY = "Copyright(C) 2012, Andreas Halle";
     static final String LINE = String.format("%s %s, %s", PNAME, VERSION, COPY);
     static final String WELCOME =
@@ -52,10 +51,10 @@ final class Data {
     static final String pivot     = "pivot";
     static final String read      = "read";
     static final String redo      = "redo";
+    static final String reinstate = "reinstate";
     static final String replace   = "replace";
     static final String show      = "show";
     static final String undo      = "undo";
-    static final String reinstate = "reinstate";
     static final String quit      = "quit";
 
     /* Sub commands of show */
@@ -76,10 +75,10 @@ final class Data {
             put(pivot,     "pivot ((dual/primal) <entering index> <leaving index>)");
             put(read,      "read <filename>");
             put(redo,      "redo");
+            put(reinstate, "reinstate");
             put(replace,   "replace (coeffs..)");
             put(show,      "show <subcommand>");
             put(undo,      "undo");
-            put(reinstate, "reinstate");
             put(quit,      "quit or q or exit");
 
             /* Sub commands of show */
@@ -93,7 +92,11 @@ final class Data {
     };
 
 
-
+    
+    /* 
+     * The short help lines should not be longer than 47 characters. This is to
+     * make every command fit on one line on a 80 character wide terminal.
+     */
     @SuppressWarnings("serial")
     static final LinkedHashMap<String, String> SHELP = new LinkedHashMap<String, String>() {
         {
@@ -103,7 +106,7 @@ final class Data {
             put(read,      "read a file of format .lp");
             put(redo,      "reverse last undo");
             put(replace,   "replace the current objective function");
-            put(show,      "show various information about the current dictionary");
+            put(show,      "show information about the current dictionary");
             put(undo,      "erase last change");
             put(reinstate, "reinstate the current objective function");
             put(quit,      "quit the program (exit and q do the same)");
@@ -127,7 +130,6 @@ final class Data {
                   + "\n"
                   + "Syntax:\n"
                   + Data.SYNTAX.get(log) + "\n"
-                  + "\n"
                 );
 
             put(pivot,
@@ -183,11 +185,21 @@ final class Data {
                   + "\n"
                   + "Syntax:\n"
                   + Data.SYNTAX.get(redo) + "\n"
+                );
+
+            put(reinstate,
+                    "reinstate replaces the objective function of the current linear\n"
+                  + "program with the original objective function fitting the current\n"
+                  + "dictionary.\n"
+                  + "\n"
+                  + "Syntax:\n"
+                  + Data.SYNTAX.get(reinstate) + "\n"
                   + "\n"
                 );
 
             put(replace,
-                    "replace replaces the objective function of the current linear program.\n"
+                    "replace replaces the objective function of\n"
+                  + "the current linear program.\n"
                   + "\n"
                   + "Syntax:\n"
                   + Data.SYNTAX.get(replace) + "\n"
@@ -199,8 +211,8 @@ final class Data {
                   + "\n"
                   + "Examples:\n"
                   + "replace          Replace the coefficients of the decision variables\n"
-                  + "                 with only -1's ready to run phase one of the simplex\n"
-                  + "                 method.\n"
+                  + "                 with only -1's ready to run phase one of the\n"
+                  + "                 simplex method.\n"
                   + "replace 1 2 -3   Replace the coefficients of the decision variables\n"
                   + "                 with 1, 2 and -3, respectively.\n"
                 );
@@ -230,15 +242,6 @@ final class Data {
                   + "\n"
                 );
 
-            put(reinstate,
-                    "reinstate replaces the objective function of the current linear program\n"
-                  + "with the original objective function fitting the current dictionary.\n"
-                  + "\n"
-                  + "Syntax:\n"
-                  + Data.SYNTAX.get(reinstate) + "\n"
-                  + "\n"
-                );
-
             put(quit,
                     "quit the program (exit and q do the same)\n"
                   + "\n"
@@ -262,6 +265,14 @@ final class Data {
                   + "Standard precision is two decimals.\n"
                 );
             
+            put(showFeasibility,
+                    "feasibility shows whether the primal or dual dictionary\n"
+                  + "of the current linear program is feasible or not.\n"
+                  + "\n"
+                  + "Syntax:\n"
+                  + SYNTAX.get(showFeasibility) + "\n"
+                );
+            
             put(showLatex,
                     "latex prints out a dictionary of the current linear\n"
                   + "program in LaTeX format.\n"
@@ -273,6 +284,14 @@ final class Data {
                   + "for each number in the output. A negative number will\n"
                   + "tell the program to calculate precision automatically.\n"
                   + "Standard precision is two decimals.\n"
+                );
+            
+            put(showOptimality,
+                    "optimality shows whether the dictionary of the current\n"
+                  + "linear program is optimal or not.\n"
+                  + "\n"
+                  + "Syntax:\n"
+                  + SYNTAX.get(showOptimality) + "\n"
                 );
 
             put(showPrimal,

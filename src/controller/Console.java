@@ -36,9 +36,8 @@ import controller.GUI;
  * relaying messages from/to the command line interface.
  * 
  * @author  Andreas Halle
- * @version 0.1
  * @see     CLI
- * @see     Coordinates
+ * @see     ccs.CCSystem
  * @see     GUI
  */
 class Console extends JPanel {
@@ -82,7 +81,7 @@ class Console extends JPanel {
         jtfInput.addKeyListener(new InputListener());
         
         cliHistory = new ArrayList<String>();
-        cliHistory.add("");
+//        cliHistory.add("");
         p = 0;
     }
     
@@ -114,23 +113,36 @@ class Console extends JPanel {
                 break;
                 
             case KeyEvent.VK_UP:
+                if (cliHistory.size() == 0) break;
                 if (p > 0) p--;
                 jtfInput.setText(cliHistory.get(p));
                 break;
                 
             case KeyEvent.VK_DOWN:
-                if(p < cliHistory.size()-1) p++;
-                jtfInput.setText(cliHistory.get(p));
+                if (cliHistory.size() == 0) break;
+                if (p == cliHistory.size()-1) {
+                    p = cliHistory.size();
+                    jtfInput.setText("");
+                } else if(p < cliHistory.size()-1) {
+                    jtfInput.setText(cliHistory.get(++p));
+                }
                 break;
                 
             case KeyEvent.VK_PAGE_UP:
-                p = cliHistory.size() == 1 ? 0 : 1;
+                if (cliHistory.size() == 0) break;
+                p = 0;
                 jtfInput.setText(cliHistory.get(p));
                 break;
                 
             case KeyEvent.VK_PAGE_DOWN:
-                p = cliHistory.size()-1;
-                jtfInput.setText(cliHistory.get(p));
+                if (cliHistory.size() == 0) break;
+                if (p == cliHistory.size()-1) {
+                    p = cliHistory.size();
+                    jtfInput.setText("");
+                } else {
+                    p = cliHistory.size()-1;
+                    jtfInput.setText(cliHistory.get(p));
+                }
                 break;
             }
         }

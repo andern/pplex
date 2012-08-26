@@ -28,6 +28,7 @@ import java.awt.geom.Point2D;
  * coordinates in a Cartesian coordinate system.
  *
  * @author Andreas Halle
+ * @see    ccs.CCSystem
  */
 public class CCSPolygon {
     protected double[] xpoints;

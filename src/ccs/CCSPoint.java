@@ -20,17 +20,14 @@ package ccs;
 
 import java.awt.Color;
 
-import javax.swing.JPanel;
-
 /**
  * {@code CCSPoint} represent a point in a
  * Cartesian coordinate system.
  * 
  * @author Andreas Halle
+ * @see    ccs.CCSystem
  */
-public class CCSPoint extends JPanel {
-    private static final long serialVersionUID = 1L;
-
+public class CCSPoint {
     protected double x;
     protected double y;
     protected Color color;

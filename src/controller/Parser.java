@@ -77,6 +77,8 @@ class Parser {
         int constraints = -1; // Take the objective function into account.
         while (s.hasNextLine()) {
             String line = s.nextLine();
+            
+            if (line.trim().equals("")) continue;
 
             /* 
              * TODO: Beware, will now accept invalid
@@ -133,9 +135,15 @@ class Parser {
         int row = 0;
         while (s.hasNextLine()) {
             String line = s.nextLine();
+            String[] split = line.split("<=");
+            if (line.trim().equals("")) continue;
+            if (split.length != 2) {
+                String e = "Unsupported format in file " + f;
+                throw new IllegalArgumentException(e);
+            }
             m = p.matcher(line);
             bdata[row]
-                    = new BigFraction(Double.parseDouble(line.split("<=")[1]));
+                    = new BigFraction(Double.parseDouble(split[1]));
 
             while (m.find()) {
                 String var = m.group(3);

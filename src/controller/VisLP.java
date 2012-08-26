@@ -46,12 +46,13 @@ import model.LP;
  * the {@code Coordinate} class.
  * 
  * @author  Andreas Halle
- * @version 0.1
  * @see     model.LP
  * @see     ccs.Coordinates
  */
 class VisLP {
     private static ArrayList<Point2D> unb;
+    protected static boolean readScope = true;
+    protected static boolean feasScope = true;
     
     /*
      * Input: Unordered list of points that can form a
@@ -137,8 +138,7 @@ class VisLP {
         ArrayList<Point2D> upper = new ArrayList<Point2D>();
         ArrayList<Point2D> lower = new ArrayList<Point2D>();
         
-        upper.add(x_min);
-//        lower.add(x_max); 
+        upper.add(x_min); 
         
         /* Find the slope of the line L connecting x_min and x_max */
         double mx = x_max.getX() - x_min.getX();
@@ -176,18 +176,22 @@ class VisLP {
      * and y >= 0 (-y <= 0) unless more bounding constraints
      * on the x and y-values already exists.
      * 
+     * It also always adds a line with a negative slope with
+     * a <<high enough>> positive x- and y-intercept needed
+     * to color unbounded feasible regions.
+     * 
      * @param  cons
      *         A constraints-matrix
      * @return
      *         A constraints matrix guaranteed to have lower bounds.
      */
-     static FieldMatrix<BigFraction> checkForBounds(
-                                                FieldMatrix<BigFraction> cons) {
+    static FieldMatrix<BigFraction> checkForBounds(
+            FieldMatrix<BigFraction> cons) {
         boolean lowerx = false;
         boolean lowery = false;
-        
+
         BigFraction valsum = BigFraction.ZERO;
-        
+
         /* Does lower bounds already exist? */
         for (int i = 0; i < cons.getRowDimension(); i++) {
             BigFraction x = cons.getEntry(i, 0);
@@ -199,18 +203,18 @@ class VisLP {
                     && y.compareTo(BigFraction.ZERO) < 0) {
                 lowery = true;
             }
-            
+
             valsum = valsum.add(cons.getEntry(i, 2).abs());
         }
-        
+
         FieldMatrix<BigFraction> ncons = cons.copy();
-        
+
         BigFraction[] cxdata = new BigFraction[] {BigFraction.MINUS_ONE,
-                                                  BigFraction.ZERO,
-                                                  BigFraction.ZERO};
+                BigFraction.ZERO,
+                BigFraction.ZERO};
         BigFraction[] cydata = new BigFraction[] {BigFraction.ZERO,
-                                                  BigFraction.MINUS_ONE,
-                                                  BigFraction.ZERO};
+                BigFraction.MINUS_ONE,
+                BigFraction.ZERO};
         /* Add lower bounds if they do not exist */
         if (!lowerx) {
             FieldMatrix<BigFraction> c =
@@ -222,25 +226,33 @@ class VisLP {
                     new Array2DRowFieldMatrix<BigFraction>(cydata).transpose();
             ncons = LP.addBlock(ncons, c, LP.UNDER);
         }
-        
+
         valsum = valsum.add(BigFraction.TWO).multiply(valsum);
         BigFraction[] uc = new BigFraction[] {BigFraction.ONE,
-                                              BigFraction.ONE,
-                                              valsum};
-        
+                BigFraction.ONE,
+                valsum};
+
         FieldMatrix<BigFraction> c = new Array2DRowFieldMatrix<BigFraction>(uc)
                 .transpose();
         ncons = LP.addBlock(ncons, c, LP.UNDER);
-        
+
         return ncons;
     }
     
     
-    
-    /* Draw an LP's constraints and color its feasible region. */
+    /**
+     * Draw the linear constraints of an {@code LP} and color
+     * it's feasible region in a given {@code CCSystem}.
+     * 
+     * @param cs
+     *        a {@code CCSystem}.
+     * @param lp
+     *        a {@code LP}.
+     */
     static void drawLP(CCSystem cs, LP lp) {
         cs.clear();
         
+        /* Don't draw the LP if it is not in two variables */
         if (lp == null || lp.getNoBasic() != 2) {
             cs.setVisibleAxes(false);
             return;
@@ -260,6 +272,20 @@ class VisLP {
         }
         
         Point2D[] fpoints = getFeasibleIntersections(cons);
+        
+        /* 
+         * Move the center of the coordinate system
+         * to the center of the feasible region.
+         */
+        if (readScope) {
+            scopeArea(cs, fpoints, true);
+            readScope = false;
+        }
+        if (feasScope && lp.feasible(false)) {
+            scopeArea(cs, fpoints, false);
+            feasScope = false;
+        }
+        
         
         /* If there is no feasible region there is no need to try to color it */
         if (fpoints.length == 0) return;
@@ -364,7 +390,40 @@ class VisLP {
     }
     
     
+    /*
+     * Find the lowest and highest x and y values among all the
+     * given points. Set the are to be displayed in the cartesian
+     * coordinate system to these values with a 10% padding.
+     */
+    private static void scopeArea(CCSystem cs,Point2D[] points, boolean origo) {
+        // No feasible points. Don't do anything.
+        if (points.length == 0) return;
+        if (points.length == 1) origo = true;
+        
+        double loX = origo ? 0 : Double.MAX_VALUE;
+        double hiX = Double.MIN_VALUE;
+        double loY = origo? 0 : Double.MAX_VALUE;
+        double hiY = Double.MIN_VALUE;
+        
+        for (Point2D p : points) {
+            double x = p.getX();
+            double y = p.getY();
+            if (x < loX) loX = x;
+            if (x > hiX) hiX = x;
+            if (y < loY) loY = y;
+            if (y > hiY) hiY = y;
+        }
+        
+        if (loX == hiX) hiX = loX + 0.001;
+        if (loY == hiY) hiY = loY + 0.001;
+        double distX = hiX - loX;
+        double distY = hiY - loY;
+        cs.move(loX-distX*0.1, hiX+distX*0.1, loY-distY*0.1, hiY+distY*0.1);
+    }
     
+    
+    
+    /* Return whether a point is feasible according to the given constraints. */
     private static boolean feasible(Point2D p2d, FieldMatrix<BigFraction> N,
                                     FieldVector<BigFraction> b) {
         double x = p2d.getX();

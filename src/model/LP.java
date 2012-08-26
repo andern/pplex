@@ -31,8 +31,6 @@ import org.apache.commons.math3.linear.FieldVector;
  * An {@code Object} representing a linear program (LP).
  *
  * @author  Andreas Halle
- * @version 0.2
- * @param <E>
  * @see     controller.Parser
  */
 public class LP {

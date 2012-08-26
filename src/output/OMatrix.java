@@ -27,7 +27,6 @@ import org.apache.commons.math3.linear.FieldMatrix;
  * for the {@code Matrix} object.
  *
  * @author  Andreas Halle
- * @version 0.1
  * @see     model.Matrix
  */
 final class OMatrix {

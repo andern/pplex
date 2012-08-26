@@ -28,7 +28,6 @@ import model.LP;
  * output by the command-line interface.
  *  
  * @author  Andreas Halle
- * @version 0.1
  * @see     controller.CLI
  */
 public final class Output {

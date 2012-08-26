@@ -35,7 +35,6 @@ import model.LP;
  * interface (CLI) for pplex.
  * 
  * @author  Andreas Halle
- * @version 0.1
  */
 class CLI {
     /* Save history for each linear program. */
@@ -55,18 +54,26 @@ class CLI {
                                              Data.replace,
                                              Data.reinstate,
                                              Data.show};
+    
     /* Standard number of decimals when printing double precision numbers. */
     private int stdPrec = 2;
 
 
 
-    LP getCurrentProgram() {
+    /**
+     * 
+     * @return
+     *         The current linear program. Returns null if no current linear
+     *         program exists.
+     */
+    protected LP getCurrentProgram() {
         if (p == 0) return null;
         return lps.get(p-1);
     }
     
     
     
+    /* Return whether a command needs a current linear program to function. */
     private boolean requireProgram(String cmd) {
         for (String s : reqProg)
             if (cmd.equals(s))
@@ -76,6 +83,14 @@ class CLI {
 
 
 
+    /**
+     * Parse a command and return it's output as a {@code String}.
+     * 
+     * @param  cmd
+     *         a command to parse.
+     * @return 
+     *         the output of the command.
+     */
     String parseCmd(String cmd) {
         if (cmd.equals("q") || cmd.equals("exit") || cmd.equals("quit"))
             System.exit(0);
@@ -88,9 +103,9 @@ class CLI {
 
         /* Valid command for the current state? */
         if (p == 0 && requireProgram(args[0])) {
-            String f = "Cannot execute command '%s' without a"
-                + " a current linear program.%n";
-            return String.format(f, args[0]);
+            String f = "Cannot execute command '%s' without a current linear "
+                    +  "program. See '%s %s'.%n";
+            return String.format(f, args[0], Data.help, Data.read);
         }
 
         if      (args[0].equals(Data.help))      { s = parseHelp(args); }
@@ -103,7 +118,8 @@ class CLI {
         else if (args[0].equals(Data.undo))      { s = parseUndo(args); }
         else if (args[0].equals(Data.reinstate)) { s = parseReinstate(args); }
 
-        else return String.format("Invalid command %s%n", args[0]);
+        else return String.format("Invalid command %s. See '%s'.%n",
+                                  args[0], Data.help);
 
         /* Only log valid commands. */
         log.add(cmd);
@@ -116,7 +132,6 @@ class CLI {
         StringBuffer sb = new StringBuffer();
 
         if (args.length == 1) {
-//            sb.append("\n");
             Set<String> set = Data.SHELP.keySet();
             for (String s : set) {
                 sb.append(String.format("%-20s %s%n", s, Data.SHELP.get(s)));
@@ -193,10 +208,14 @@ class CLI {
                 lps.add(p, Parser.parse(file));
                 p++;
                 redo = 0;
+                // TODO: Fix this in another way?
+                VisLP.readScope = true;
+                VisLP.feasScope = true;
                 return "Read " + file + " OK.\n";
-            }
-            catch (FileNotFoundException e) {
+            } catch (FileNotFoundException e) {
                 return "File " + file + " not found.\n";
+            } catch (IllegalArgumentException e) {
+                return "Read not OK. " + e.getLocalizedMessage();
             }
         }
         else {
@@ -267,7 +286,7 @@ class CLI {
         p--;
         redo++;
         return "";
-    }
+    }       
 
 
 
@@ -323,11 +342,12 @@ class CLI {
 
         String f = String.format("%%.%df", prec);
         for (int i = 0; i < point.length-1; i++) {
-            sb.append(String.format((f + ", "), point[i]));
+            sb.append(String.format((f + ", "), point[i].doubleValue()));
         }
-        sb.append(String.format(f + ")", point[point.length-1]));
+        sb.append(String.format(f + ")", point[point.length-1].doubleValue()));
 
-        return String.format(f + " at point %s%n", val, sb.toString());
+        return String.format(f + " at point %s%n",
+                             val.doubleValue(), sb.toString());
     }
 
 
