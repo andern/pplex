@@ -309,6 +309,12 @@ class VisLP {
             Point2D p2 = unb.get(1);
             double xavg = (p1.getX() + p2.getX()) / 2.0;
             double yavg = (p1.getY() + p2.getY()) / 2.0;
+            /* 
+             * Move the end point of the gradient further away from the
+             * polygon edge to make the end of the gradient look less sudden.
+             */
+            xavg *= 0.9;
+            yavg *= 0.9;
             
             Point2D pavg = new Point2D.Double(xavg, yavg);
             
