@@ -107,6 +107,7 @@ class Parser {
         }
         BigFraction[] bdata = new BigFraction[constraints];
         BigFraction[] cdata = new BigFraction[x.size()];
+        Arrays.fill(cdata, BigFraction.ZERO);
 
         s = new Scanner(f);
 
