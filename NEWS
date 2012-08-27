@@ -1,3 +1,17 @@
+Mon Aug 27, 2012 - 0.3.1
+==========================
+* NEW FEATURE: The center of the coordinate system is automatically
+               set to the center of the feasible region.
+* BUG FIX: Fixed a bug that caused files with empty lines to become
+           unreadable by pplex.
+* BUG FIX: Fixed a bug that caused files with objective coefficients
+           implicitly stated to be zero to be unreadable by pplex.
+* BUG FIX: pplex is no longer running in the background after it
+           is closed by clicking the x. (Thanks to takoi).
+* MISC: The 'update' function has been renamed to 'reinstate'.
+* MISC: The gradient effect on unbounded feasible regions
+        should now look a bit better.
+
 Mon Aug 20, 2012 - 0.3.0
 ==========================
 * NEW FEATURE: Infinite precision (not visualization part).
