@@ -1,0 +1,6 @@
+max               x  + 10y
+subject to       2x  +   y <= 6 
+                  x  +  2y <= 6
+                  x  +   y <= 4
+
+
