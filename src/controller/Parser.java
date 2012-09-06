@@ -33,7 +33,7 @@ import model.LP;
 
 class Parser {
     final static String dvarreg =
-        "\\s*([\\+\\-])?\\s*(\\d+(?:\\.\\d+)?)?\\s*([a-z]+\\d*)";
+        "\\s*([\\+\\-])?\\s*(\\d+(?:\\.\\d+)?)?\\s*([a-z_]+\\d*)";
     final static String objreg =
         String.format("^(?:maximize|max)(?:%s)+", dvarreg);
     final static String conreg =
