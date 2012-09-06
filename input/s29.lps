@@ -1,0 +1,4 @@
+max                         -z
+subject to       -x1 +  x2  -z  <= -1
+                 -x1 - 2x2  -z  <= -2
+                        x2  -z  <=  1 

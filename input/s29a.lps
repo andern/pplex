@@ -1,0 +1,5 @@
+max              -ow2 -  ow1
+subject to       -ow2 +  ow1 <= 1
+                 -ow2 - 2ow1 <= 4
+                  ow2 -  ow1 <= 2
+

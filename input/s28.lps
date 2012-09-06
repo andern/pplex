@@ -1,0 +1,6 @@
+max              3x  +  ow1
+subject to       -x  -  ow1   <= 1
+                 2x  +  ow1   <= 1
+
+
+
