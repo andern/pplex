@@ -299,6 +299,8 @@ public class CCSystem extends JPanel {
             /* Exact value between each unit */
             double udistX = distX / unitsX;
             
+            if (Double.isInfinite(udistX)) return;
+            
             /* 
              * The exact value rounded to a value that can be written with
              * very few decimals.
@@ -312,7 +314,7 @@ public class CCSystem extends JPanel {
             /* Find coefficient for vbuX for the first visible unit */
             int q = (int) (loX / vbuX.doubleValue());
             /* Draw the units on the x-axis */
-            while (pix <= getWidth()) {
+            while (pix <= getWidth() && pix >= 0) {
                 /*
                  * Simply using double here introduces rounding errors
                  * when rval reaches the order of 10^23 or higher or
@@ -354,13 +356,14 @@ public class CCSystem extends JPanel {
             int pbuy = 65;
             int unitsY = getHeight() / pbuy;
             double udistY = distY / unitsY;
+            if (Double.isInfinite(udistY)) return;
             BigDecimal vbuY = findScale(udistY);
 
             int pix = o.y;
             int q = (int) (loY / vbuY.doubleValue());
 
             /* Draw the units on the 7-axis */
-            while (pix >= 0) {
+            while (pix >= 0 && pix <= getHeight()) {
                 BigDecimal qbd = new BigDecimal(q++, MC);
                 BigDecimal val = vbuY.multiply(qbd, MC);
 
