@@ -314,7 +314,7 @@ public class CCSystem extends JPanel {
             /* Find coefficient for vbuX for the first visible unit */
             int q = (int) (loX / vbuX.doubleValue());
             /* Draw the units on the x-axis */
-            while (pix <= getWidth() && pix >= 0) {
+            while (pix <= getWidth()) {
                 /*
                  * Simply using double here introduces rounding errors
                  * when rval reaches the order of 10^23 or higher or
@@ -362,8 +362,8 @@ public class CCSystem extends JPanel {
             int pix = o.y;
             int q = (int) (loY / vbuY.doubleValue());
 
-            /* Draw the units on the 7-axis */
-            while (pix >= 0 && pix <= getHeight()) {
+            /* Draw the units on the y-axis */
+            while (pix >= 0) {
                 BigDecimal qbd = new BigDecimal(q++, MC);
                 BigDecimal val = vbuY.multiply(qbd, MC);
 

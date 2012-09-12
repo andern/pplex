@@ -313,9 +313,14 @@ public class LP {
         }
         String e = "Program is unbounded.";
         if (unbounded) throw new RuntimeException(e);
-
-        /* Set temporarily max value as ratio of the first divisible pair. */
-        BigFraction max = sd.getEntry(index).divide(check.getEntry(index));
+        
+        BigFraction max;
+        if (index == -1) { // All boundaries are 0. (All values of check are 0).
+            max = BigFraction.ZERO; // Set temporary max to zero.
+        } else {
+            /* Set temporarily max value as ratio of the first divisible pair. */
+            max = sd.getEntry(index).divide(check.getEntry(index));
+        }
         
         for (int i = 0; i < sd.getDimension(); i++) {
             BigFraction num = sd.getEntry(i);
