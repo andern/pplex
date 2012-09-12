@@ -1,15 +1,19 @@
-Compiling pplex requires 'apache ant'.
+Compiling pplex requires:
+* Java Development Kit
+* Apache Ant
+
+To compile pplex you first need to download the source code of pplex. This
+can be done from the website (see 2.0) or by cloning the repository.
+
+To clone the repository you need git installed on your system. Cloning
+the repository is done by typing the following in a terminal:
+  `git clone git@github.com:andern/pplex.git`
 
 To only compile the sources of pplex, run
-    `ant compile`
+  `ant compile`
+in the pplex directory.
 
 To compile the sources of pplex and build a runnable jar, run
-    `ant jar`
-    or simply
-    `ant`
-
-To run the newly built jar, run
-    `java -jar pplex.jar`
-
-To run pplex in console-mode, run
-    `java -jar pplex.jar -nogui`
+  `ant jar`
+  or simply
+  `ant`

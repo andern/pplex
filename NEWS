@@ -1,3 +1,14 @@
+Wed Sep 12, 2012 - 0.3.2
+==========================
+* BUG FIX: Fixed a bug that caused resizing the window to zero
+           heigth/width to produce an error.
+* BUG FIX: Fixed a bug in the pivoting algorithm that caused it
+           to fail when all values on the right hand side
+           were 0.
+* BUG FIX: Fixed a bug that caused the unit lines in the first
+           quadrant not to be drawn.
+* MISC: Variables can have names with underscores now.
+
 Mon Aug 27, 2012 - 0.3.1
 ==========================
 * NEW FEATURE: The center of the coordinate system is automatically

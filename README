@@ -1,6 +1,6 @@
 pplex readme
-Last updated:    2012-08-27
-Release version: 0.3.1
+Last updated:    2012-09-12
+Release version: 0.3.2
 ------------------------------------------------------------------------
 
 Table of contents
@@ -31,7 +31,7 @@ under the Apache License, Version 2.0. See lib/LICENSE.TXT for more information.
 
 2.0) Contacting
 ---- ----------
-The pplex homepage is http://github.com/andern/lpped
+The pplex homepage is http://andern.github.com/pplex
 
 
 2.1) Reporting Bugs
@@ -71,10 +71,23 @@ Compiling pplex requires:
 * Java Development Kit
 * Apache Ant
 
+To compile pplex you first need to download the source code of pplex. This
+can be done from the website (see 2.0) or by cloning the repository.
+
+To clone the repository you need git installed on your system. Cloning
+the repository is done by typing the following in a terminal:
+  `git clone git@github.com:andern/pplex.git`
+
 To only compile the sources of pplex, run
   `ant compile`
+in the pplex directory.
 
 To compile the sources of pplex and build a runnable jar, run
   `ant jar`
   or simply
   `ant`
+
+
+5.0) Documentation
+---- -------------
+Documentation on how to use pplex can be found in doc/teaching_simplex.pdf
