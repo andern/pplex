@@ -96,16 +96,16 @@ class GUI extends JFrame {
         final JMenuBar jmbMenu = new JMenuBar();
         
         final JMenu jmFile = new JMenu("File");
-        final JMenu jmWindow = new JMenu("Window");
+        final JMenu jmExports = new JMenu("Exports");
         final JMenu jmHelp = new JMenu("Help");
         
         jmFile.setMnemonic(KeyEvent.VK_F);
-        jmWindow.setMnemonic(KeyEvent.VK_W);
+        jmExports.setMnemonic(KeyEvent.VK_E);
         jmHelp.setMnemonic(KeyEvent.VK_H);
         
         jmiExit = new JMenuItem("Exit");
         jmiAbout = new JMenuItem("About");
-        jmiScreenshot = new JMenuItem("Screenshot");
+        jmiScreenshot = new JMenuItem("Image");
         
         jmiExit.setAccelerator(KeyStroke.getKeyStroke(
                                      KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK));
@@ -115,12 +115,12 @@ class GUI extends JFrame {
                 KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK));
         
         jmbMenu.add(jmFile);
-        jmbMenu.add(jmWindow);
+        jmbMenu.add(jmExports);
         jmbMenu.add(jmHelp);
         
         jmFile.add(jmiExit);
         
-        jmWindow.add(jmiScreenshot);
+        jmExports.add(jmiScreenshot);
         
         jmHelp.add(jmiAbout);
         
