@@ -131,10 +131,11 @@ public class CCSystem extends JPanel {
         this.addMouseWheelListener(new mouseScrollListener());
         
         /* 
-         * Setting a color. This is actually setting the default Swing color.
-         * It seems like there is a "bug" that caused this panel to return
-         * Color.White as it's background color (even though it's not white)
-         * unless i explicitly set this color.
+         * Set the background color of this panel to wool white. Wool white
+         * is actually the default color in Swing components. The reason for
+         * doing this is that the panel returns white as its background color
+         * even though its wool white. Setting wool white explicitly solves
+         * this issue.
          */
         setBackground(new Color(232, 232, 232, 255));
     }
