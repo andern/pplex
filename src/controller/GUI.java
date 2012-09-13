@@ -21,7 +21,6 @@ package controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -45,7 +44,7 @@ class GUI extends JFrame {
     private static final long serialVersionUID = 1L;
     
     private JSplitPane jspSplitPane;
-    private JMenuItem jmiExit, jmiAbout;
+    private JMenuItem jmiExit, jmiAbout, jmiScreenshot;
     
     private CCSystem ccs;
     private CLI cli;
@@ -97,28 +96,37 @@ class GUI extends JFrame {
         final JMenuBar jmbMenu = new JMenuBar();
         
         final JMenu jmFile = new JMenu("File");
+        final JMenu jmWindow = new JMenu("Window");
         final JMenu jmHelp = new JMenu("Help");
         
         jmFile.setMnemonic(KeyEvent.VK_F);
+        jmWindow.setMnemonic(KeyEvent.VK_W);
         jmHelp.setMnemonic(KeyEvent.VK_H);
         
         jmiExit = new JMenuItem("Exit");
         jmiAbout = new JMenuItem("About");
+        jmiScreenshot = new JMenuItem("Screenshot");
         
         jmiExit.setAccelerator(KeyStroke.getKeyStroke(
                                      KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK));
         jmiAbout.setAccelerator(KeyStroke.getKeyStroke(
                                      KeyEvent.VK_H, KeyEvent.CTRL_DOWN_MASK));
+        jmiScreenshot.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK));
         
         jmbMenu.add(jmFile);
+        jmbMenu.add(jmWindow);
         jmbMenu.add(jmHelp);
         
         jmFile.add(jmiExit);
+        
+        jmWindow.add(jmiScreenshot);
         
         jmHelp.add(jmiAbout);
         
         jmiExit.addActionListener(new exitListener());
         jmiAbout.addActionListener(new aboutListener());
+        jmiScreenshot.addActionListener(new screenshotListener());
         
         return jmbMenu;
     }
@@ -149,6 +157,17 @@ class GUI extends JFrame {
             About about = new About();
             about.setLocationRelativeTo(GUI.this);
             about.setVisible(true);
+        }
+    }
+    
+    
+    
+    /* ActionListener for taking screenshot. */
+    private class screenshotListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+        	Screenshot screenshot = new Screenshot(ccs);
+            screenshot.setLocationRelativeTo(GUI.this);
+            screenshot.setVisible(true);
         }
     }
 }
