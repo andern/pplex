@@ -33,7 +33,9 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
@@ -246,10 +248,16 @@ public class Screenshot extends JDialog implements ActionListener {
         }
         // OK Button
         else if(e.getSource().equals(jbnOK)) {
-            screenshot(jtfFilePath.getText(), 
-                    Integer.parseInt(jtfWidth.getText()),
-                    Integer.parseInt(jtfHeight.getText()));
-            this.dispose();
+            try {
+                screenshot(jtfFilePath.getText(), 
+                        Integer.parseInt(jtfWidth.getText()),
+                        Integer.parseInt(jtfHeight.getText()));
+                this.dispose();
+            } catch (Exception ex) {
+                String msg = "Error: width/height should only contain numbers.";
+                JOptionPane.showMessageDialog(new JFrame(), msg, "Error: Width/Height",
+                        JOptionPane.ERROR_MESSAGE);
+            }
         }
         // Browser Button
         else if(e.getSource().equals(jbnBrowse)) {
@@ -290,6 +298,7 @@ public class Screenshot extends JDialog implements ActionListener {
         int orgWidth = ccs.getWidth();
         int orgHeight = ccs.getHeight();
 
+        
         ccs.setSize(width, height);
 
         // Make image of CCSystem
