@@ -18,7 +18,6 @@
  */
 package controller;
 
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -78,7 +77,7 @@ public class Screenshot extends JDialog implements ActionListener {
         public int getHeight() { return height; }
 
         public String toString() {
-            if(name == "Default")
+            if(name.equals("Default"))
                 return name+" (window)";
             return name+" ("+width+"x"+height+")";
         }
@@ -94,7 +93,6 @@ public class Screenshot extends JDialog implements ActionListener {
     public Screenshot(CCSystem ccs) {
         this.ccs = ccs;
         setTitle("Export image");
-        setPreferredSize(new Dimension(500, 200));
         setResizable(false);
         setLocationRelativeTo(null);
 
@@ -102,21 +100,21 @@ public class Screenshot extends JDialog implements ActionListener {
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
-        /******************
-         * Resolution box *
-         ******************/
+        /*
+         * Resolution box
+         */
         JPanel jpRes = new JPanel();
         jpRes.setBorder(new TitledBorder("Resolution"));
         jpRes.setLayout(new GridBagLayout());
 
-        // Resolution label
+        /* Resolution label */
         gbc.insets = new Insets(0, 5, 5, 5);
         gbc.anchor = GridBagConstraints.LINE_END;
         gbc.gridx = 0;
         gbc.gridy = 0;
         jpRes.add(new JLabel("Resolution:"), gbc);
 
-        // Resolution ComboBox
+        /* Resolution ComboBox */
         jcResolutionList = new JComboBox(ResolutionType.values());
         jcResolutionList.addActionListener(this);
         gbc.anchor = GridBagConstraints.LINE_START;
@@ -125,33 +123,33 @@ public class Screenshot extends JDialog implements ActionListener {
         gbc.weightx = 1;
         jpRes.add(jcResolutionList, gbc);
 
-        // Width label
+        /* Width label */
         gbc.anchor = GridBagConstraints.LINE_END;
         gbc.gridx = 0;
         gbc.gridy = 1;
         jpRes.add(new JLabel("Width:"), gbc);
 
-        // Width field
+        /* Width field */
         jtfWidth = new JTextField(4);
         gbc.anchor = GridBagConstraints.LINE_START;
         gbc.gridx = 1;
         gbc.gridy = 1;
         jpRes.add(jtfWidth, gbc);
 
-        // Height label
+        /* Height label */
         gbc.anchor = GridBagConstraints.LINE_END;
         gbc.gridx = 0;
         gbc.gridy = 2;
         jpRes.add(new JLabel("Height:"), gbc);
 
-        // Height field
+        /* Height field */
         jtfHeight = new JTextField(4);
         gbc.anchor = GridBagConstraints.LINE_START;
         gbc.gridx = 1;
         gbc.gridy = 2;
         jpRes.add(jtfHeight, gbc);
 
-        // Add resolution box
+        /* Add resolution box */
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1;
         gbc.weighty = 0.3;
@@ -160,17 +158,17 @@ public class Screenshot extends JDialog implements ActionListener {
         gbc.gridwidth = 2;
         add(jpRes, gbc);
 
-        // Reset back to default
+        /* Reset back to default */
         gbc.gridwidth = 1;
 
-        /******************
-         * Directory box  *
-         ******************/
+        /*
+         * Directory box 
+         */
         JPanel jpDir = new JPanel();
         jpDir.setBorder(new TitledBorder("Directory"));
         jpDir.setLayout(new GridBagLayout());
 
-        // File path label
+        /* File path label */
         jlbFilePath = new JLabel("File path:");
         gbc.anchor = GridBagConstraints.LINE_END;
         gbc.gridx = 0;
@@ -178,15 +176,14 @@ public class Screenshot extends JDialog implements ActionListener {
         gbc.weightx = 0.1;
         jpDir.add(jlbFilePath, gbc);
 
-        // File path Field
-        jtfFilePath = new JTextField(128);
+        /* File path Field */
+        jtfFilePath = new JTextField(25);
         gbc.anchor = GridBagConstraints.LINE_START;
         gbc.gridx = 1;
         gbc.gridy = 0;
-        gbc.weightx = 1;
         jpDir.add(jtfFilePath, gbc);
 
-        // Browse button
+        /* Browse button */
         jbnBrowse = new JButton("Browse");
         jbnBrowse.addActionListener(this);
         gbc.gridx = 2;
@@ -194,7 +191,7 @@ public class Screenshot extends JDialog implements ActionListener {
         gbc.weightx = 0.1;
         jpDir.add(jbnBrowse, gbc);       
 
-        // Add directory box
+        /* Add directory box */
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridwidth = 2;
         gbc.weightx = 0.5;
@@ -203,13 +200,13 @@ public class Screenshot extends JDialog implements ActionListener {
         gbc.gridy = 1;
         add(jpDir, gbc);
 
-        // Reset back to default
+        /* Reset back to default */
         gbc.gridwidth = 1;
 
-        /******************
-         * Buttons        *
-         ******************/
-        // Ok button
+        /*
+         * Buttons
+         */
+        /* Ok button */
         jbnOK = new JButton("OK");
         jbnOK.addActionListener(this);
         gbc.insets = new Insets(10, 300, 5, 5);
@@ -218,7 +215,7 @@ public class Screenshot extends JDialog implements ActionListener {
         gbc.weightx = 0.5;
         add(jbnOK, gbc);
 
-        // Cancel button
+        /* Cancel button */
         jbnCancel = new JButton("Cancel");
         jbnCancel.addActionListener(this);
         gbc.insets = new Insets(10, 0, 5, 5);
@@ -229,7 +226,7 @@ public class Screenshot extends JDialog implements ActionListener {
 
         pack();
 
-        // Set default values to fields
+        /* Set default values to fields */
         jtfFilePath.setText("screenshot.png");
         jtfWidth.setText(Integer.toString(ccs.getWidth()));
         jtfHeight.setText(Integer.toString(ccs.getHeight()));
@@ -242,11 +239,11 @@ public class Screenshot extends JDialog implements ActionListener {
         if (e.getID() != ActionEvent.ACTION_PERFORMED)
             return;
 
-        // Cancel Button
+        /* Cancel Button */
         if (e.getSource().equals(jbnCancel)) {
             this.dispose();      	
         }
-        // OK Button
+        /* OK Button */
         else if(e.getSource().equals(jbnOK)) {
             try {
                 screenshot(jtfFilePath.getText(), 
@@ -259,7 +256,7 @@ public class Screenshot extends JDialog implements ActionListener {
                         JOptionPane.ERROR_MESSAGE);
             }
         }
-        // Browser Button
+        /* Browser Button */
         else if(e.getSource().equals(jbnBrowse)) {
             JFileChooser jfc = new JFileChooser();
             jfc.setSelectedFile(new File("screenshot.png"));
@@ -270,10 +267,10 @@ public class Screenshot extends JDialog implements ActionListener {
                 jtfFilePath.setText(path.getAbsolutePath());
             }
         }
-        // Resolution ComboBox
+        /* Resolution ComboBox */
         else if(e.getSource().equals(jcResolutionList)) {
             rt = (ResolutionType) jcResolutionList.getSelectedItem();
-            if(rt.equals(rt.DEFAULT)) {
+            if(rt.equals(ResolutionType.DEFAULT)) {
                 jtfWidth.setText(Integer.toString(ccs.getWidth()));
                 jtfHeight.setText(Integer.toString(ccs.getHeight()));
             } else {
@@ -294,21 +291,21 @@ public class Screenshot extends JDialog implements ActionListener {
      * @param height the height of the image to be saved.
      */
     public void screenshot(String filePath, int width, int height) {
-        // Need this to change the window size back.
+        /* Need this to change the window size back. */
         int orgWidth = ccs.getWidth();
         int orgHeight = ccs.getHeight();
 
         
         ccs.setSize(width, height);
 
-        // Make image of CCSystem
+        /* Make image of CCSystem */
         BufferedImage img = new BufferedImage(ccs.getWidth(), 
                 ccs.getHeight(), 
                 BufferedImage.TYPE_INT_ARGB);
         Graphics gx = img.getGraphics();
         ccs.paint(gx);
 
-        // Save image
+        /* Save image */
         try {
             String filename;
             if(!filePath.toLowerCase().endsWith(".png"))
@@ -321,7 +318,7 @@ public class Screenshot extends JDialog implements ActionListener {
 
         }
 
-        // Change back to original window size.
+        /* Change back to original window size. */
         ccs.setSize(orgWidth, orgHeight);
     }
 }
