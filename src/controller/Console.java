@@ -19,9 +19,13 @@
 package controller;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
@@ -36,6 +40,7 @@ import controller.GUI;
  * relaying messages from/to the command line interface.
  * 
  * @author  Andreas Halle
+ * @author  Thomas Le
  * @see     CLI
  * @see     ccs.CCSystem
  * @see     GUI
@@ -46,6 +51,7 @@ class Console extends JPanel {
     private JScrollPane jspConsoleScroll;
     private JTextArea jtaConsole;
     private JTextField jtfInput;
+    private Font consoleFont;
     
     /* Keep a history of commands sent to the console */
     private ArrayList<String> cliHistory;
@@ -70,6 +76,9 @@ class Console extends JPanel {
         jtaConsole.setCaretPosition(Data.FWELCOME.length()+1);
         jtaConsole.setFont(new Font("Monospaced",Font.PLAIN,12));
         jtaConsole.setBackground(super.getBackground());
+        
+        // Sets global value for font.
+        consoleFont = jtaConsole.getFont();
 
         jspConsoleScroll = new JScrollPane(jtaConsole);
         add(jspConsoleScroll, BorderLayout.CENTER);
@@ -79,6 +88,7 @@ class Console extends JPanel {
         add(jtfInput, BorderLayout.PAGE_END);
         
         jtfInput.addKeyListener(new InputListener());
+        jtaConsole.addMouseWheelListener(new mouseWheelListener());
         
         cliHistory = new ArrayList<String>();
 //        cliHistory.add("");
@@ -149,4 +159,68 @@ class Console extends JPanel {
         public void keyReleased(KeyEvent e) {}
         public void keyTyped(KeyEvent e) {}
     }
+    
+    
+    
+    /**
+     * Decrease the font size of output console.
+     */
+    protected void decreaseFont() {
+        float size = consoleFont.getSize() - 1.0f;
+        consoleFont = consoleFont.deriveFont(size);
+        updateFont();
+    }
+
+
+
+    /**
+     * Set the default font-size.
+     */
+    protected void defaultFont() {
+        float size = 12f;
+        consoleFont = consoleFont.deriveFont(size);
+        updateFont();
+    }
+
+
+
+    /**
+     * Increase the font size of output console.
+     */
+    protected void increaseFont() {
+        float size = consoleFont.getSize() + 1.0f;
+        consoleFont = consoleFont.deriveFont(size);
+        updateFont();
+    }
+    
+
+    
+    /*
+     * Update the font-size on console output and input field.
+     */
+    private void updateFont() {
+        jtaConsole.setFont(consoleFont);
+        jtfInput.setFont(consoleFont);
+        FontMetrics fm = jtfInput.getFontMetrics(consoleFont);
+        jtfInput.setSize(new Dimension(jtfInput.getWidth(), fm.getHeight()));
+
+        /* Repaints the console to prevent window size issues */
+        getTopLevelAncestor().repaint();
+    }
+    
+    
+    
+    /* MouseWheelListener for the console. Implements Ctrl+Wheel zoom. */
+    class mouseWheelListener implements MouseWheelListener {
+        @Override
+        public void mouseWheelMoved(MouseWheelEvent e) {
+            if(e.isControlDown()) {
+                int units = e.getUnitsToScroll();
+                
+                if(units < 0) increaseFont();
+                else decreaseFont();
+            }
+        }
+    }
+    
 }

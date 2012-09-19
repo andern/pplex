@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Thomas Le
+ * Copyright (C) 2012 Andreas Halle
  *
  * This file is part of pplex.
  *
@@ -92,7 +92,7 @@ public class Screenshot extends JDialog implements ActionListener {
      */
     public Screenshot(CCSystem ccs) {
         this.ccs = ccs;
-        setTitle("Export image");
+        setTitle("Export image as PNG");
         setResizable(false);
         setLocationRelativeTo(null);
 

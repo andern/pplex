@@ -21,6 +21,7 @@ package controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -45,6 +46,7 @@ class GUI extends JFrame {
     
     private JSplitPane jspSplitPane;
     private JMenuItem jmiExit, jmiAbout, jmiScreenshot;
+    private JMenuItem jmiZoomIn, jmiZoomOut, jmiNormalSize;
     
     private CCSystem ccs;
     private CLI cli;
@@ -96,37 +98,56 @@ class GUI extends JFrame {
         final JMenuBar jmbMenu = new JMenuBar();
         
         final JMenu jmFile = new JMenu("File");
-        final JMenu jmExports = new JMenu("Exports");
+        final JMenu jmExports = new JMenu("Export as");
+        final JMenu jmView = new JMenu("View");
         final JMenu jmHelp = new JMenu("Help");
         
         jmFile.setMnemonic(KeyEvent.VK_F);
         jmExports.setMnemonic(KeyEvent.VK_E);
+        jmView.setMnemonic(KeyEvent.VK_V);
         jmHelp.setMnemonic(KeyEvent.VK_H);
         
         jmiExit = new JMenuItem("Exit");
         jmiAbout = new JMenuItem("About");
-        jmiScreenshot = new JMenuItem("Image");
+        jmiScreenshot = new JMenuItem("PNG");
+        jmiZoomIn = new JMenuItem("Zoom In");
+        jmiZoomOut = new JMenuItem("Zoom Out");
+        jmiNormalSize = new JMenuItem("Normal Size");
         
         jmiExit.setAccelerator(KeyStroke.getKeyStroke(
                                      KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK));
         jmiAbout.setAccelerator(KeyStroke.getKeyStroke(
                                      KeyEvent.VK_H, KeyEvent.CTRL_DOWN_MASK));
         jmiScreenshot.setAccelerator(KeyStroke.getKeyStroke(
-                KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK));
+                                    KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK));
+        jmiZoomIn.setAccelerator(KeyStroke.getKeyStroke(
+                                     KeyEvent.VK_PLUS, KeyEvent.CTRL_DOWN_MASK));
+        jmiZoomOut.setAccelerator(KeyStroke.getKeyStroke(
+                                     KeyEvent.VK_MINUS, KeyEvent.CTRL_DOWN_MASK));
+        jmiNormalSize.setAccelerator(KeyStroke.getKeyStroke(
+                                     KeyEvent.VK_0, KeyEvent.CTRL_DOWN_MASK));
         
         jmbMenu.add(jmFile);
-        jmbMenu.add(jmExports);
+        jmbMenu.add(jmView);
         jmbMenu.add(jmHelp);
         
+        jmFile.add(jmExports);
         jmFile.add(jmiExit);
         
         jmExports.add(jmiScreenshot);
+        
+        jmView.add(jmiZoomIn);
+        jmView.add(jmiZoomOut);
+        jmView.add(jmiNormalSize);
         
         jmHelp.add(jmiAbout);
         
         jmiExit.addActionListener(new exitListener());
         jmiAbout.addActionListener(new aboutListener());
         jmiScreenshot.addActionListener(new screenshotListener());
+        jmiZoomIn.addActionListener(new viewZoomInListener());
+        jmiZoomOut.addActionListener(new viewZoomOutListener());
+        jmiNormalSize.addActionListener(new viewNormalSizeListener());
         
         return jmbMenu;
     }
@@ -162,10 +183,37 @@ class GUI extends JFrame {
     
     
     
+    /* ActionListener for increase font size. */
+    private class viewZoomInListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            console.increaseFont();
+        }
+    }
+    
+    
+    
+    
+    /* ActionListener for decrease font size. */
+    private class viewZoomOutListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            console.decreaseFont();
+        }
+    }
+    
+    
+    
+    /* ActionListener for setting default font size. */
+    private class viewNormalSizeListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            console.defaultFont();
+        }
+    }
+    
+    
     /* ActionListener for taking screenshot. */
     private class screenshotListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-        	Screenshot screenshot = new Screenshot(ccs);
+            Screenshot screenshot = new Screenshot(ccs);
             screenshot.setLocationRelativeTo(GUI.this);
             screenshot.setVisible(true);
         }
