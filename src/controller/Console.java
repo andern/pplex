@@ -81,6 +81,7 @@ class Console extends JPanel {
         consoleFont = jtaConsole.getFont();
 
         jspConsoleScroll = new JScrollPane(jtaConsole);
+        jspConsoleScroll.addMouseWheelListener(new mouseWheelListener());
         add(jspConsoleScroll, BorderLayout.CENTER);
         
         jtfInput = new JTextField();
@@ -88,7 +89,7 @@ class Console extends JPanel {
         add(jtfInput, BorderLayout.PAGE_END);
         
         jtfInput.addKeyListener(new InputListener());
-        jtaConsole.addMouseWheelListener(new mouseWheelListener());
+        
         
         cliHistory = new ArrayList<String>();
 //        cliHistory.add("");
@@ -167,8 +168,11 @@ class Console extends JPanel {
      */
     protected void decreaseFont() {
         float size = consoleFont.getSize() - 1.0f;
-        consoleFont = consoleFont.deriveFont(size);
-        updateFont();
+        if (size >= 7) {
+            size--;
+            consoleFont = consoleFont.deriveFont(size);
+            updateFont();
+        }
     }
 
 
@@ -188,9 +192,12 @@ class Console extends JPanel {
      * Increase the font size of output console.
      */
     protected void increaseFont() {
-        float size = consoleFont.getSize() + 1.0f;
-        consoleFont = consoleFont.deriveFont(size);
-        updateFont();
+        float size = consoleFont.getSize();
+        if (size <= 100) {
+            size++;
+            consoleFont = consoleFont.deriveFont(size);
+            updateFont();
+        }
     }
     
 
@@ -219,7 +226,7 @@ class Console extends JPanel {
                 
                 if(units < 0) increaseFont();
                 else decreaseFont();
-            }
+            } 
         }
     }
     

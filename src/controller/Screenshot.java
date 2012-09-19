@@ -241,7 +241,7 @@ public class Screenshot extends JDialog implements ActionListener {
 
         /* Cancel Button */
         if (e.getSource().equals(jbnCancel)) {
-            this.dispose();      	
+            this.dispose();
         }
         /* OK Button */
         else if(e.getSource().equals(jbnOK)) {
