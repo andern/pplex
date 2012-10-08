@@ -57,6 +57,23 @@ class CLI {
     
     /* Standard number of decimals when printing double precision numbers. */
     private int stdPrec = 2;
+    
+    
+    
+    /**
+     * Add a {@code LP} to the CLI. The LP is set as the current
+     * linear program.
+     * 
+     * @param lp
+     *        a linear program.
+     */
+    protected void addLp(LP lp) {
+        lps.add(p++, lp);
+        redo = 0;
+        // TODO: Fix this in another way?
+        VisLP.readScope = true;
+        VisLP.feasScope = true;
+    }
 
 
 
@@ -205,12 +222,8 @@ class CLI {
             File file = new File(args[1]);
 
             try {
-                lps.add(p, Parser.parse(file));
-                p++;
-                redo = 0;
-                // TODO: Fix this in another way?
-                VisLP.readScope = true;
-                VisLP.feasScope = true;
+                LP lp = Parser.parse(file);
+                addLp(lp);
                 return "Read " + file + " OK.\n";
             } catch (FileNotFoundException e) {
                 return "File " + file + " not found.\n";

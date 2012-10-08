@@ -62,11 +62,23 @@ class Parser {
                 || varLow.equals("to")
                 || varLow.equals("s.t."));
     }
-
-
-
+    
+    
+    
     static LP parse(File f) throws FileNotFoundException {
+        StringBuilder sb = new StringBuilder();
         Scanner s = new Scanner(f);
+        while (s.hasNext()) {
+            sb.append(s.nextLine());
+            sb.append("\n");
+        }
+        s.close();
+        return parse(sb.toString());
+    }
+    
+    
+    static LP parse(String str) {
+        Scanner s = new Scanner(str);
         Pattern p = Pattern.compile(dvarreg);
 
         HashMap<String, Integer> x = new HashMap<String, Integer>();
@@ -74,7 +86,7 @@ class Parser {
         int xcol = 0;
 
         /* Get input size and names of the decision variables. */
-        int constraints = -1; // Take the objective function into account.
+        int constraints = -1; // Take the objective function into account.)
         while (s.hasNextLine()) {
             String line = s.nextLine();
             
@@ -109,7 +121,8 @@ class Parser {
         BigFraction[] cdata = new BigFraction[x.size()];
         Arrays.fill(cdata, BigFraction.ZERO);
 
-        s = new Scanner(f);
+        s.close();
+        s = new Scanner(str);
 
         String obj = s.nextLine();
         Matcher m = p.matcher(obj);
@@ -139,7 +152,7 @@ class Parser {
             String[] split = line.split("<=");
             if (line.trim().equals("")) continue;
             if (split.length != 2) {
-                String e = "Unsupported format in file " + f;
+                String e = "Unsupported format in source.";
                 throw new IllegalArgumentException(e);
             }
             m = p.matcher(line);

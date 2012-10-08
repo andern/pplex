@@ -23,6 +23,7 @@
 
   <target name="clobber" depends="clean" description="remove all artifact files">
     <delete file="pplex.jar"/>
+    <delete file="pplex-applet.jar"/>
     <delete dir="pplex.app"/>
   </target>
 
@@ -45,5 +46,16 @@
       </manifest>
     </jar>
   </target>
-</project>
 
+  <target name="applet" depends="compile" description="create an applet version of pplex as a Jar file">
+    <jar destfile="pplex-applet.jar" filesetmanifest="skip">
+      <zipgroupfileset dir="lib" includes="*.jar"/>
+      <!--      <zipfileset dir="input" includes="*.lps" prefix="controller/input/"/> -->
+      <fileset dir="bin" includes="**/*.class"/>
+      <manifest>
+        <attribute name="Main-class" value="controller/Applet"/>
+        <attribute name="Class-path" value="${mf.classpath}"/>
+      </manifest>
+    </jar>
+  </target>
+</project>

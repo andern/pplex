@@ -98,6 +98,12 @@ class Console extends JPanel {
     
     
     
+    protected void putText(String s) {
+        jtaConsole.append(s);
+    }
+    
+    
+    
     /* KeyListener for the console. Implements history-browsing. */
     // TODO: WISHLIST: Tab-completion of commands and files.
     private class InputListener implements KeyListener {
