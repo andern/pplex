@@ -1,0 +1,2 @@
+max x1 + x2
+subject to x1 + x2 <= 1
