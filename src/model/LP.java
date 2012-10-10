@@ -559,6 +559,12 @@ public class LP {
     
     
     
+    public FieldVector<BigFraction> getBasis() {
+        return b_;
+    }
+    
+    
+    
     // TODO: Hopefully find a method in apache commons math that supports
     //       augmenting matrices.
     public FieldMatrix<BigFraction> getConstraints() {

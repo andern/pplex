@@ -263,11 +263,21 @@ class VisLP {
         FieldMatrix<BigFraction> cons = lp.getConstraints();
         cons = checkForBounds(cons);
         
+        FieldVector<BigFraction> b = lp.getBasis();
+        
         /* Draw all constraints as lines, except hidden bounded constraint */
         for (int i = 0; i < cons.getRowDimension()-1; i++) {
+            Color color = Color.gray;
+            
+            /* Color degenerate lines differently. */
+            if (i < lp.getNoNonBasic()
+             && b.getEntry(i).equals(BigFraction.ZERO)) {
+                color = Color.orange;
+            }
+            
             line = new CCSLine(cons.getEntry(i, 0).doubleValue(),
                                cons.getEntry(i, 1).doubleValue(),
-                               cons.getEntry(i, 2).doubleValue(), Color.gray);
+                               cons.getEntry(i, 2).doubleValue(), color);
             cs.addLine(line);
         }
         
