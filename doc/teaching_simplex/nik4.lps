@@ -1,3 +1,0 @@
-max            2x + y
-subject to      x - y <= -1
-                x + y <=  2
