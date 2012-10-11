@@ -200,12 +200,16 @@ class CLI {
                 int e = Integer.parseInt(args[argc - 2]) - 1;
                 int l = Integer.parseInt(args[argc - 1]) - 1;
 
-                int eSize = lps.get(p-1).getNoBasic();
-                int lSize = lps.get(p-1).getNoNonBasic();
-
-                if (e < 0 || l < 0 || e > eSize || l > lSize)
-                    return "Invalid index";
-
+                int eSize = lps.get(p-1).getNoNonBasic();
+                int lSize = lps.get(p-1).getNoBasic();
+                
+                if (e < 0 || l < 0) 
+                    return "Pivot index must be positive.";
+                if (dual && (e >= lSize || l >= eSize)) 
+                    return "Invalid dual index";
+                if (!dual && (e >= eSize || l >= lSize))
+                    return "Invalid primal index";
+                
                 return pivot(e, l, dual);
             }
             catch (NumberFormatException err) {
@@ -252,7 +256,7 @@ class CLI {
         String syntax = Data.SYNTAX.get(Data.replace);
 
         LP lp;
-        int size = lps.get(p-1).getNoBasic();
+        int size = lps.get(p-1).getNoNonBasic();
 
         if (args.length == 1){
             lp = lps.get(p-1).phaseOneObj();

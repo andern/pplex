@@ -538,13 +538,13 @@ public class LP {
 
 
     public int getNoNonBasic() {
-        return Bi.length;
+        return Ni.length;
     }
 
 
 
     public int getNoBasic() {
-        return Ni.length;
+        return Bi.length;
     }
 
 

@@ -253,7 +253,7 @@ class VisLP {
         cs.clear();
         
         /* Don't draw the LP if it is not in two variables */
-        if (lp == null || lp.getNoBasic() != 2) {
+        if (lp == null || lp.getNoNonBasic() != 2) {
             cs.setVisibleAxes(false);
             return;
         }
@@ -270,7 +270,7 @@ class VisLP {
             Color color = Color.gray;
             
             /* Color degenerate lines differently. */
-            if (i < lp.getNoNonBasic()
+            if (i < lp.getNoBasic()
              && b.getEntry(i).equals(BigFraction.ZERO)) {
                 color = Color.orange;
             }
