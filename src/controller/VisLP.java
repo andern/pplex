@@ -264,15 +264,19 @@ class VisLP {
         cons = checkForBounds(cons);
         
         FieldVector<BigFraction> b = lp.getBasis();
+        int[] Bi = lp.getBasicIndices();
         
         /* Draw all constraints as lines, except hidden bounded constraint */
         for (int i = 0; i < cons.getRowDimension()-1; i++) {
             Color color = Color.gray;
             
-            /* Color degenerate lines differently. */
-            if (i < lp.getNoBasic()
-             && b.getEntry(i).equals(BigFraction.ZERO)) {
-                color = Color.orange;
+            /* Color degenerate lines differently */
+            if (i < lp.getNoBasic()) {
+                int xnum = Bi[i];
+                if (xnum >= lp.getNoBasic()
+                 && b.getEntry(i).equals(BigFraction.ZERO)) {
+                    color = Color.orange;
+                }
             }
             
             line = new CCSLine(cons.getEntry(i, 0).doubleValue(),

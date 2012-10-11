@@ -546,6 +546,18 @@ public class LP {
     public int getNoBasic() {
         return Bi.length;
     }
+    
+    
+    
+    public int[] getNonBasicIndices() {
+        return Ni;
+    }
+    
+    
+    
+    public int[] getBasicIndices() {
+        return Bi;
+    }
 
 
 
