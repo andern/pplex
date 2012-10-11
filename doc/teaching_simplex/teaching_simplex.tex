@@ -1,5 +1,5 @@
-\documentclass[ukenglish]{nik}
-\usepackage{mathptm}
+\documentclass[ukenglish,a4]{article}
+%\usepackage{mathptm}
 \usepackage{hyperref}
 \usepackage{amsfonts,amsmath,amssymb,amstext}
 \usepackage{latexsym}
@@ -73,9 +73,13 @@ and that it is free software.
 \end{abstract}
 
 \section{Introduction and Motivation}\label{sec:intro}
-REMARK FOR 4OR READERS? %MB
-In an optimization problem, the objective is to decide on how to utilize given resources such that they maximize some ``profit'' (or minimize some ``cost''), while satisfying a set of additional constraints on the resources.
-This is commonly modelled by associating the possible decisions with variables, such that the profit and the constraints can be formulated as functions of these variables. 
+
+In an optimization problem\footnote{Readers familiar with the simplex method can skip this 
+introduction and fast forward to the motivation halfway page~\pageref{motivation}.}, 
+the objective is to decide on how to utilize given resources such that they maximize some ``profit''
+(or minimize some ``cost''), while satisfying a set of additional constraints on the resources.
+This is commonly modelled by associating the possible decisions with variables, such that the profit 
+and the constraints can be formulated as functions of these variables. 
 If the profit function, the so-called \emph{objective (function)}, is linear and the constraints can be formulated as linear (in)equalities, then the optimization problem has a \emph{linear programming (LP)} formulation. A specific instance of an LP formulation is called a \emph{linear program}.
 A linear program is solved by identifying those values for the variables that maximize the objective while satisfying all constraints.
 Linear programs occur frequently in economics, management, and engineering.
@@ -260,6 +264,7 @@ and that the corresponding fraction $\frac{1}{19}$ in the (previous) final dicti
 The mistake may have gone unnoticed, since it didn't spoil the answer, the maximum stays
 $4$ at $x=y=2$. However, the mistake may have confused a student working through the details at a later moment.
 
+\label{motivation}
 What do we conclude from the above example? It is certainly useful to demonstrate some
 linear algebra calculations explicitly. Nevertheless, linear algebra should be a prerequisite for a course
 in linear programming. The details of linear algebra should not distract from the important
@@ -479,31 +484,29 @@ pplex> pivot 1 2
 
 \subsection{Degeneracy and Cycling}\label{sec:cycling}
 If the constant of a pivot is zero, pivoting does not improve the value of the basic solution (\emph{degenerated pivot}; geometrically, one stays at the same vertex of the polyhedron). Degenerated pivots occur commonly during execution of the simplex method. Usually, they are unproblematic, because one of the subsequent pivots improves
-the objective. Here comes an example:
+the objective. Here is an example:
 \begin{alltt}
 \input{deg.lps}
 \end{alltt}
-We note that the lines corresponding to each of the constraints intersect in the point $(2,2)$.
-Consider the following sequence of pivots:
+The lines corresponding to these constraints intersect in the point $(2,2)$.
+After \texttt{pivot 1 1} and \texttt{pivot 2 3} we continue as follows:
 \begin{alltt}
 \input{deg.txt}
 \end{alltt}
-Observe that the third pivot above is degenerated and that the objective does not improve.
-In the geometrical interpretation, we are in $(2,2)$ after two pivots. This point is obtained
-as the intersection of the two lines $w_1 = w_3 = 0$. after the third pivot, we are still
-in $(2,2)$, now obtained as the intersection of the two lines $w_2 = w_3 = 0$.
-The essential difference between the two situations lies, of course, in their dictionaries.
-In order to get a visible change in the graphical illustration, the line corresponding
-to a \emph{basic variable being zero} is always depicted in COLOR. %MB
+\texttt{pivot 1 2} is degenerated and the objective does not improve.
+In the geometric interpretation, we stay in $(2,2)$. Before the degenerated pivot,
+this point is the intersection of the two lines $w_1 = w_3 = 0$. After the degenerated pivot
+this same point  is the intersection of the two lines $w_2 = w_3 = 0$.
+The essential difference in the two dictionaries is visualized by depicting
+lines corresponding to a \emph{basic variable being zero} in COLOR. %MB
 
-In the above example, using a degenerated pivot could easily be avoided.
-Degeneracy would not have occcured if we would have started increasing the
-variable $y$, having the largest coefficient. Also, taking as second
-textt{pivot 2 2} instead of textt{pivot 2 3} would have avoided degeneracy
-(the dictionary would be degenerated, but the pivots would not).
-In the classroom, the moment has come to address the general issues
-around degeneracy and cycling. 
-The classical example \cite{Chvatal,Vanderbei} of the (rare) possibility of 
+In the above example, a degenerated pivot can easily be avoided:
+Degeneracy does not occcur if we start by increasing the
+variable $y$, which has the largest coefficient. Also, \texttt{pivot 2 2} 
+instead of \texttt{pivot 2 3} avoids degeneracy
+(not in the dictionary, though).
+In class, one can now address degeneracy and cycling in general. 
+The standard example \cite{Chvatal,Vanderbei} of the (rare) possibility of 
 cycling with the largest-coefficient-rule can be demonstrated 
 effortlessly using \url{pplex/input/cycling.lps}.
 
@@ -564,15 +567,17 @@ w2 = 19.000 + 3.500w1 - 9.500y
 \end{alltt}
 Increasing the precision to three decimals by the command \texttt{show primal 3} eliminates the rounding error in this example.
 
-\section{Pedagogical Remarks and Conclusion}\label{sec:pedagogy}
-RECALL: The benefits of such a tool are four-fold: no precious class-room time is wasted
+\section{Classroom Experience and Conclusion}\label{sec:pedagogy}
+The benefits of \url{pplex} are four-fold: no precious class-room time is wasted
 on elementary calculations, no calculation errors distract attention,
 the demonstration of larger, more interesting examples becomes feasible, and 
 understanding of the simplex method is enhanced by showing the geometric interpretation of two-dimensional problems along executing the simplex method.
-
 There is also a danger associated with the use of such tools in teaching: 
 one should make sure that the students really understand the elementary
-calculations the tool is performing. 
+calculations the tool is performing.
+
+So far we have only experience with using \url{pplex} in one course with 11 students
+...
 
 
 \bibliographystyle{abbrv}
@@ -622,7 +627,7 @@ region and highlights the vertex with the incumbent basic solution (see Figure~\
 
 An interesting extension is the case of \emph{unbound} variables, that is, variables that may take
 negative values. The standard solution is to substitute $u = x-y$ for an unbound variable $u$,
-where $x$ and $y$ are two new, non-negative variables. In the geometrical interpretation however, one would
+where $x$ and $y$ are two new, non-negative variables. In the geometric interpretation however, one would
 prefer to see $u$ and stay in two dimensions.
 
 Once this has been accomplished, we plan to implement a graphical

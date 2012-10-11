@@ -69,6 +69,7 @@ public class Applet extends JApplet {
         map.put("optimal_edge", "max -2x + 4y\n"
                      + "subject to   -2x +  y <= 2\n"
                      +               "-x + 2y <= 7\n"
+                     +                "x -  y <= 0\n"
                      +                "x      <= 3");
 
         map.put("unbounded", "max         x  +   y\n"                
