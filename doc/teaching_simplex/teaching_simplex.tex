@@ -65,13 +65,15 @@ Therefore, it is taught to a wide range of students with varying background in m
 We present the software \url{pplex} for supporting
 the classroom presentation of the simplex method.
 Distinctive features of our tool are: 
-portability, 
-simple command line interface, 
+simple command line interface,
+visualization (two variables), 
 file input in standard LP format,
-geometric interpretation (two variables), and that it is free software.
+portability, 
+and that it is free software.
 \end{abstract}
 
 \section{Introduction and Motivation}\label{sec:intro}
+REMARK FOR 4OR READERS? %MB
 In an optimization problem, the objective is to decide on how to utilize given resources such that they maximize some ``profit'' (or minimize some ``cost''), while satisfying a set of additional constraints on the resources.
 This is commonly modelled by associating the possible decisions with variables, such that the profit and the constraints can be formulated as functions of these variables. 
 If the profit function, the so-called \emph{objective (function)}, is linear and the constraints can be formulated as linear (in)equalities, then the optimization problem has a \emph{linear programming (LP)} formulation. A specific instance of an LP formulation is called a \emph{linear program}.
@@ -277,22 +279,21 @@ The benefits of such a tool are four-fold: no precious class-room time is wasted
 on elementary calculations, no calculation errors distract attention,
 the demonstration of larger, more interesting examples becomes feasible, and 
 understanding of the simplex method is enhanced by showing the geometric interpretation of two-dimensional problems along executing the simplex method.
-There is also a danger associated with the use of such tools in teaching: 
-one should make sure that the students really understand the elementary
-calculations the tool is performing. The idea of having a tool
+The idea of having a tool
 for experimenting with the simplex method is, of course, not new. 
 See, for example, \cite{SimplexPivotTool, AdvancedPivotTool}.
 However, tools tend to gradually go out-of-date on newer platforms
 than those used to develop them. Distinctive features of our tool are: 
-portability, 
-simple command line interface, 
+simple command line interface,
+geometric interpretation (so far for two variables),  
 file input in standard LP format,
-geometric interpretation (so far for two variables), and it is free software as defined by \cite{freesw}.
+portability, 
+and it is free software as defined by \cite{freesw}.
 
 This paper is organized as follows.
 In Section~\ref{sec:pplex} we introduce 
 our tool \url{pplex}, applied to several examples in Section~\ref{sec:examples}.
-We conclude by discussing ongoing work in Section~\ref{sec:future}.
+We conclude in Section~\ref{sec:pedagogy}.
 
 \section{A tool for teaching the Simplex method}\label{sec:pplex}
 Our contribution \url{pplex}~\cite{pplex},
@@ -369,7 +370,8 @@ degeneracy, cycling and unboundedness.
 
 \subsection{Duality}
 
-Giving an introduction into LP duality theory is beyond the scope of this work. We therefore assume knowledge of duality theory throughout this section.
+Giving an introduction into LP duality theory is beyond the scope of this paper. 
+Therefore we assume knowledge of duality theory throughout this section.
 
 In Sections \ref{sec:intro} and \ref{sec:pplex}, we studied an example of an initially feasible dictionary.
 What if the initial dictionary is not feasible, that is, if the origin is not a
@@ -477,15 +479,33 @@ pplex> pivot 1 2
 
 \subsection{Degeneracy and Cycling}\label{sec:cycling}
 If the constant of a pivot is zero, pivoting does not improve the value of the basic solution (\emph{degenerated pivot}; geometrically, one stays at the same vertex of the polyhedron). Degenerated pivots occur commonly during execution of the simplex method. Usually, they are unproblematic, because one of the subsequent pivots improves
-the objective. However, students need to be made aware that there is the very rare possibility of \emph{cycling},
-which is demonstrated effortlessly by the following example \cite{Chvatal,Vanderbei}:
+the objective. Here comes an example:
 \begin{alltt}
-\input{nik5.txt}
+\input{deg.lps}
 \end{alltt}
-With this last dictionary we are back at the beginning, 
-albeit displayed with permuted columns. Note that each pivot has been
-chosen picking the non-basic variable with the largest coefficient in the objective.
+We note that the lines corresponding to each of the constraints intersect in the point $(2,2)$.
+Consider the following sequence of pivots:
+\begin{alltt}
+\input{deg.txt}
+\end{alltt}
+Observe that the third pivot above is degenerated and that the objective does not improve.
+In the geometrical interpretation, we are in $(2,2)$ after two pivots. This point is obtained
+as the intersection of the two lines $w_1 = w_3 = 0$. after the third pivot, we are still
+in $(2,2)$, now obtained as the intersection of the two lines $w_2 = w_3 = 0$.
+The essential difference between the two situations lies, of course, in their dictionaries.
+In order to get a visible change in the graphical illustration, the line corresponding
+to a \emph{basic variable being zero} is always depicted in COLOR. %MB
 
+In the above example, using a degenerated pivot could easily be avoided.
+Degeneracy would not have occcured if we would have started increasing the
+variable $y$, having the largest coefficient. Also, taking as second
+textt{pivot 2 2} instead of textt{pivot 2 3} would have avoided degeneracy
+(the dictionary would be degenerated, but the pivots would not).
+In the classroom, the moment has come to address the general issues
+around degeneracy and cycling. 
+The classical example \cite{Chvatal,Vanderbei} of the (rare) possibility of 
+cycling with the largest-coefficient-rule can be demonstrated 
+effortlessly using \url{pplex/input/cycling.lps}.
 
 \subsection{Unboundedness}\label{sec:unbounded}
 If the polyhedron defined by the constraints is 
@@ -544,22 +564,16 @@ w2 = 19.000 + 3.500w1 - 9.500y
 \end{alltt}
 Increasing the precision to three decimals by the command \texttt{show primal 3} eliminates the rounding error in this example.
 
-\section{Work in Progress}\label{sec:future}
- 
-We are currently finishing a graphical interface illustrating \url{pplex} working on programs with two variables. 
-The graphical illustration shows the feasible
-region and highlights the vertex with the incumbent basic solution (see Figure~\ref{fig:ex_gui}).
+\section{Pedagogical Remarks and Conclusion}\label{sec:pedagogy}
+RECALL: The benefits of such a tool are four-fold: no precious class-room time is wasted
+on elementary calculations, no calculation errors distract attention,
+the demonstration of larger, more interesting examples becomes feasible, and 
+understanding of the simplex method is enhanced by showing the geometric interpretation of two-dimensional problems along executing the simplex method.
 
-An interesting extension is the case of \emph{unbound} variables, that is, variables that may take
-negative values. The standard solution is to substitute $u = x-y$ for an unbound variable $u$,
-where $x$ and $y$ are two new, non-negative variables. In the geometrical interpretation however, one would
-prefer to see $u$ and stay in two dimensions.
+There is also a danger associated with the use of such tools in teaching: 
+one should make sure that the students really understand the elementary
+calculations the tool is performing. 
 
-Once this has been accomplished, we plan to implement a graphical
-illustration for linear programs in three variables.
-
-We will make an effort to keep \url{pplex} up to date and will support 
-future standard formats for LP programs upon request.
 
 \bibliographystyle{abbrv}
 \begin{thebibliography}{99}
@@ -599,3 +613,20 @@ W.H.~Freeman and Company, 1983.
 \end{figure}
 
 \end{document}
+
+\section{Work in Progress}\label{sec:future}
+ 
+We are currently finishing a graphical interface illustrating \url{pplex} working on programs with two variables. 
+The graphical illustration shows the feasible
+region and highlights the vertex with the incumbent basic solution (see Figure~\ref{fig:ex_gui}).
+
+An interesting extension is the case of \emph{unbound} variables, that is, variables that may take
+negative values. The standard solution is to substitute $u = x-y$ for an unbound variable $u$,
+where $x$ and $y$ are two new, non-negative variables. In the geometrical interpretation however, one would
+prefer to see $u$ and stay in two dimensions.
+
+Once this has been accomplished, we plan to implement a graphical
+illustration for linear programs in three variables.
+
+We will make an effort to keep \url{pplex} up to date and will support 
+future standard formats for LP programs upon request.

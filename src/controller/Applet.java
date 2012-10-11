@@ -90,33 +90,21 @@ public class Applet extends JApplet {
                        + "subject to      0.5x1 - 5.5x2 - 2.5x3 +  9x4 <= 0\n"
                        +                 "0.5x1 - 1.5x2 - 0.5x3 +   x4 <= 0\n"
                        +                    "x1                        <= 1\n");
-                
-        map.put("vdb_exc_5.6", "max         - x1 - 2x2\n"
-                   + "subject to - 2x1 + 7x2 <=  6\n"
-                   +            "- 3x1 +  x2 <= -1\n"
-                   +              "9x1 - 4x2 <=  6\n"
-                   +               "x1 -  x2 <=  1\n"
-                   +              "7x1 - 3x2 <=  6\n"
-                   +            "- 5x1 + 2x2 <= -3");
-        
-        map.put("vdb_p27", "max                     -z\n"
-                     + "subject to        x  -  y   -z <= -1\n"
-                     +                   "x  +  y   -z <=  2");
-        
-        map.put("infeasible_z=0", "max               -z\n"
-                      + "subject to        x  -  y   -z <= -3\n"
-                      +                   "x  +  y   -z <=  2\n");
-        
-        map.put("vdb_p28", "max          3x  +  ow1\n"
-                     + "subject to       -x  -  ow1   <= 1\n"
-                     +                  "2x  +  ow1   <= 1");
 
-        map.put("vdb_p29_I", "max                   -z\n"
+        map.put("phase_I_feasible_z=0", "max                     -z\n"
+                     +                   "subject to   x  -  y   -z <= -1\n"
+                     +                                "x  +  y   -z <=  2");
+        
+        map.put("phase_I_feasible_z>0", "max               -z\n"
+                      +              "subject to  x  -  y   -z <= -3\n"
+                      +                          "x  +  y   -z <=  2\n");
+        
+        map.put("vdb_p20_phase_I", "max                   -z\n"
                      + "subject to       -x1 +  x2  -z  <= -1\n"
                      +                  "-x1 - 2x2  -z  <= -2\n"
                      +                         "x2  -z  <=  1"); 
         
-        map.put("vdb_p29_II", "max        -ow2 -  ow1\n"
+        map.put("vdb_p20_phase_II", "max        -ow2 -  ow1\n"
                       + "subject to       -ow2 +  ow1 <= 1\n"
                       +                  "-ow2 - 2ow1 <= 4\n"
                       +                   "ow2 -  ow1 <= 2");
@@ -148,7 +136,15 @@ public class Applet extends JApplet {
                        + "subject to      - 2x1  -  x2 <=  4\n" 
                        +                 "- 2x1  + 4x2 <= -8\n" 
                        +                 "-  x1  + 3x2 <= -7");
-        
+                
+        map.put("vdb_exc5.6", "max         - x1 - 2x2\n"
+                   + "subject to - 2x1 + 7x2 <=  6\n"
+                   +            "- 3x1 +  x2 <= -1\n"
+                   +              "9x1 - 4x2 <=  6\n"
+                   +               "x1 -  x2 <=  1\n"
+                   +              "7x1 - 3x2 <=  6\n"
+                   +            "- 5x1 + 2x2 <= -3");
+           
 
     	return map;
     }
