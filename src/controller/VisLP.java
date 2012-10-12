@@ -273,7 +273,7 @@ class VisLP {
             /* Color degenerate lines differently */
             if (i < lp.getNoBasic()) {
                 int xnum = Bi[i];
-                if (xnum >= lp.getNoBasic()
+                if (xnum >= lp.getNoNonBasic()
                  && b.getEntry(i).equals(BigFraction.ZERO)) {
                     color = Color.orange;
                 }
