@@ -36,10 +36,9 @@ final class Data {
     static final String WELCOME =
         String.format("Welcome to %s. Type 'help' for a list of commands.", PNAME);
     static final String LICENSE = String.format(
-            ("%s is free software; you can redistribute it and/or modify\n"
-           + "it under the terms of the GNU General Public License as published by\n"
-           + "the Free Software Foundation, either version 3 of the License, or\n"
-           + "(at your option) any later version."), PNAME);
+            ("%s is free software; you can redistribute it and/or\n"
+           + "modify it under the terms of the GPL as published by\n"
+           + "the Free Software Foundation (version >=3)."), PNAME);
 
     static final String FWELCOME = String.format("%s\n\n%s\n\n%s", LINE, LICENSE, WELCOME);
 
