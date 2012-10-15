@@ -264,16 +264,24 @@ class VisLP {
         cons = checkForBounds(cons);
         
         FieldVector<BigFraction> b = lp.getBasis();
+        int[] Bi = lp.getBasicIndices();
+        
+        boolean[] degLines = new boolean[lp.getNoBasic()];
+        
+        /* Find degenerate lines */
+        for (int i = 0; i < Bi.length; i++) {
+            if (Bi[i] >= lp.getNoNonBasic()
+                    && b.getEntry(i).equals(BigFraction.ZERO)) {
+                degLines[Bi[i]-lp.getNoNonBasic()] = true;
+            }
+        }
         
         /* Draw all constraints as lines, except hidden bounded constraint */
         for (int i = 0; i < cons.getRowDimension()-1; i++) {
             Color color = Color.gray;
             
-            /* Color degenerate lines differently. */
-            if (i < lp.getNoBasic()
-             && b.getEntry(i).equals(BigFraction.ZERO)) {
-                color = Color.orange;
-            }
+            /* Color degenerate lines differently */
+            if (i < lp.getNoBasic() && degLines[i]) color = Color.orange;
             
             line = new CCSLine(cons.getEntry(i, 0).doubleValue(),
                                cons.getEntry(i, 1).doubleValue(),

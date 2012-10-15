@@ -1,0 +1,5 @@
+max        -2x + 4y
+subject to -2x +  y <= 2
+            -x + 2y <= 7
+             x -  y <= 0
+             x      <= 3
