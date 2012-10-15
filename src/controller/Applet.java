@@ -114,6 +114,10 @@ public class Applet extends JApplet {
                       +                       "-ow2 - 2ow1 <= 4\n"
                       +                        "ow2 -  ow1 <= 2");
         
+        map.put("dual_phase_I", "max            2x + y\n"
+                      +      "subject to         x - y <= -1\n"
+                      +                        " x + y <= 2");
+        
         map.put("vanderbei_exc2.8", "max   3x  +  2y\n"
                        + "subject to        x  -  2y <= 1\n" 
                        +                   "x  -   y <= 2\n"
