@@ -281,7 +281,7 @@ class VisLP {
             Color color = Color.gray;
             
             /* Color degenerate lines differently */
-            if (i < lp.getNoBasic() && degLines[i]) color = Color.orange;
+            if (i < lp.getNoBasic() && degLines[i]) color = Color.green;
             
             line = new CCSLine(cons.getEntry(i, 0).doubleValue(),
                                cons.getEntry(i, 1).doubleValue(),
