@@ -1,6 +1,6 @@
 pplex readme
-Last updated:    2012-09-12
-Release version: 0.3.2
+Last updated:    2012-10-15
+Release version: 0.4.0
 ------------------------------------------------------------------------
 
 Table of contents
@@ -11,6 +11,8 @@ Table of contents
 3.0) Installing pplex
 * 3.1 Running pplex
 4.0) Compiling pplex
+* 4.1 Applet
+5.0) Documentation
 
 
 
@@ -44,6 +46,10 @@ that the bug has not already been submitted to the tracker on GitHub.
 
 3.0) Installing pplex
 ---- ----------------
+If you want to try pplex before installing it, you can try it as an applet by
+visiting http://www.ii.uib.no/~bezem/pplex/. It has most of the functionality
+of pplex (but you cannot read your own files.)
+
 Running pplex requires Java Runtime Environment installed on your computer.
 
 1. Download the newest version of pplex from
@@ -63,6 +69,7 @@ pplex starts in visual mode by default. This is only relevant for linear
 programs with two variables. pplex can easily be run without a graphical
 interface in a terminal window by passing the '-nogui' argument like this:
   `java -jar pplex.jar -nogui`
+
 
 
 4.0) Compiling pplex
@@ -86,6 +93,17 @@ To compile the sources of pplex and build a runnable jar, run
   `ant jar`
   or simply
   `ant`
+
+
+4.1) Applet
+---- ------
+pplex can be compiled as an applet by running
+  `ant applet`
+in the pplex directory.
+
+See applet.html in the pplex directory for an example
+on how to deploy the applet on your own website.
+
 
 
 5.0) Documentation
