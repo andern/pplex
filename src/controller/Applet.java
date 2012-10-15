@@ -61,10 +61,14 @@ public class Applet extends JApplet {
     private static Map<String, String> createExamples() {
         Map<String, String> map = new LinkedHashMap<String, String>();
 
-        map.put("easy_example", "max       x  + 2y\n"
+        map.put("easy_example", "max     x  + 2y\n"
                      + "subject to      - 2x  +  y <= 2\n" 
                      +                  "- x  + 2y <= 7\n"
                      +                    "x       <= 3");
+
+        map.put("simple_example", "max     x  +   y\n"
+                     + "subject to        2x  +   y <= 6\n" 
+                     +                  " 7x  + 13y <= 40\n");
 
         map.put("optimal_edge", "max -2x + 4y\n"
                      + "subject to   -2x +  y <= 2\n"
@@ -96,21 +100,21 @@ public class Applet extends JApplet {
                      +                   "subject to   x  -  y   -z <= -1\n"
                      +                                "x  +  y   -z <=  2");
         
-        map.put("phase_I_feasible_z>0", "max               -z\n"
+        map.put("phase_I_feasible_z>0", "max                -z\n"
                       +              "subject to  x  -  y   -z <= -3\n"
                       +                          "x  +  y   -z <=  2\n");
         
-        map.put("vdb_p20_phase_I", "max                   -z\n"
+        map.put("vanderbei_p20_phase_I", "max       -z\n"
                      + "subject to       -x1 +  x2  -z  <= -1\n"
                      +                  "-x1 - 2x2  -z  <= -2\n"
                      +                         "x2  -z  <=  1"); 
         
-        map.put("vdb_p20_phase_II", "max        -ow2 -  ow1\n"
-                      + "subject to       -ow2 +  ow1 <= 1\n"
-                      +                  "-ow2 - 2ow1 <= 4\n"
-                      +                   "ow2 -  ow1 <= 2");
+        map.put("vanderbei_p20_phase_II", "max -ow2 -  ow1\n"
+                      +      "subject to       -ow2 +  ow1 <= 1\n"
+                      +                       "-ow2 - 2ow1 <= 4\n"
+                      +                        "ow2 -  ow1 <= 2");
         
-        map.put("vdb_exc2.8", "max         3x  +  2y\n"
+        map.put("vanderbei_exc2.8", "max   3x  +  2y\n"
                        + "subject to        x  -  2y <= 1\n" 
                        +                   "x  -   y <= 2\n"
                        +                  "2x  -   y <= 6\n"
@@ -120,31 +124,31 @@ public class Applet extends JApplet {
                        +                   "x  +  2y <= 21\n"
                        +                          "y <= 10");
         
-        map.put("vdb_p39", "max             x1  +  2x2  +  3x3\n"
+        map.put("vanderbei_p39", "max       x1  +  2x2  +  3x3\n"
                        + "subject to        x1          +  2x3 <= 3\n" 
                        +                           "x2  +  2x3 <= 2");
         
-        map.put("vdb_p40", "max             x1  +  2x2  +  3x3\n"
+        map.put("vanderbei_p40", "max       x1  +  2x2  +  3x3\n"
                        + "subject to        x1          +  2x3 <= 2\n" 
                        +                           "x2  +  2x3 <= 2");
         
-        map.put("vdb_p49", "max          -50b1  -  5b2 - 0.5b3  + 100x1  +  10x2  +  x3\n"
+        map.put("vanderbei_p49", "max    -50b1  -  5b2 - 0.5b3  + 100x1  +  10x2  +  x3\n"
                        + "subject to       -b1  +                    x1                 <= 0\n" 
                        +                "-10b1  -   b2          +  20x1  +    x2        <= 0\n"
                        +               "-100b1  - 10b2  -   b3  + 200x1  +  20x2   + x3 <= 0");
         
-        map.put("vdb_p71", "max             -x1  + 4x2\n"
+        map.put("vanderbei_p71", "max       -x1  + 4x2\n"
                        + "subject to      - 2x1  -  x2 <=  4\n" 
                        +                 "- 2x1  + 4x2 <= -8\n" 
                        +                 "-  x1  + 3x2 <= -7");
                 
-        map.put("vdb_exc5.6", "max         - x1 - 2x2\n"
-                   + "subject to - 2x1 + 7x2 <=  6\n"
-                   +            "- 3x1 +  x2 <= -1\n"
-                   +              "9x1 - 4x2 <=  6\n"
-                   +               "x1 -  x2 <=  1\n"
-                   +              "7x1 - 3x2 <=  6\n"
-                   +            "- 5x1 + 2x2 <= -3");
+        map.put("vanderbei_exc5.6", "max - x1 - 2x2\n"
+                   +        "subject to - 2x1 + 7x2 <=  6\n"
+                   +                   "- 3x1 +  x2 <= -1\n"
+                   +                     "9x1 - 4x2 <=  6\n"
+                   +                      "x1 -  x2 <=  1\n"
+                   +                     "7x1 - 3x2 <=  6\n"
+                   +                   "- 5x1 + 2x2 <= -3");
            
 
     	return map;
