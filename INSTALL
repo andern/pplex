@@ -17,3 +17,14 @@ To compile the sources of pplex and build a runnable jar, run
   `ant jar`
   or simply
   `ant`
+
+
+
+APPLET
+------
+pplex can be compiled as an applet by running
+  `ant applet`
+in the pplex directory.
+
+See applet.html in the pplex directory for an example
+on how to deploy the applet on your own website.
