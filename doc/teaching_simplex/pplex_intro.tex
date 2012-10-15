@@ -47,7 +47,7 @@
 
 \begin{document}
 
-\title{\url{pplex} - A Tool for Teaching the Simplex Method}
+\title{An introduction to \texttt{pplex} and the Simplex Method}
 
 \author{
 Joanna Bauer\thanks{University of Bergen, Department of Informatics, P.O.Box 7803, N-5020 Bergen, Norway}
@@ -62,14 +62,14 @@ Andreas Halle$^*$}
 Linear programs occur frequently in various important disciplines, such as economics, management, and engineering.
 The simplex method is the best known and most widely used method to solve linear programs.
 Therefore, it is taught to a wide range of students with varying background in mathematics.
-We present the software \url{pplex} for supporting
+We present the software \texttt{pplex} for supporting
 the classroom presentation of the simplex method.
 Distinctive features of our tool are: 
 simple command line interface,
 visualization (two variables), 
 file input in standard LP format,
 portability, 
-and that it is free software.
+and last but not least that it is free software.
 \end{abstract}
 
 \section{Introduction and Motivation}\label{sec:intro}
@@ -297,23 +297,23 @@ and it is free software as defined by \cite{freesw}.
 
 This paper is organized as follows.
 In Section~\ref{sec:pplex} we introduce 
-our tool \url{pplex}, applied to several examples in Section~\ref{sec:examples}.
+our tool \texttt{pplex}, applied to several examples in Section~\ref{sec:examples}.
 We conclude in Section~\ref{sec:pedagogy}.
 
 \section{A tool for teaching the Simplex method}\label{sec:pplex}
-Our contribution \url{pplex}~\cite{pplex},
+Our contribution \texttt{pplex}~\cite{pplex},
 a \emph{pedagogical implementation of the Simplex method},
 is free software distributed under the GNU General Public License \cite{GNUGPL}.
 It runs under Java 6 and Java 7 and is portable to any supportive platform.
 
-We start by demonstrating \url{pplex} on the example from the introduction.
+We start by demonstrating \texttt{pplex} on the example from the introduction.
 The input file for our example reads:
 \begin{alltt}
 \input{nik2.lps}
 \end{alltt}
 Note that the inequalities $x,y \geq 0$ are implicitly assumed, and omitted in both the input file and the generated dictionaries.
 
-The program \url{pplex} launches with the prompt \verb|pplex>|.
+The program \texttt{pplex} launches with the prompt \verb|pplex>|.
 We read the above input file, which is confirmed OK:
 \begin{verbatim}
 pplex> read input/nik2.lps
@@ -328,7 +328,7 @@ w2 = 40.00 - 7.00x - 13.00y
 \end{alltt}
 Numbers are by default displayed with two decimals precision, whereas
 calculations are performed in double precision arithmetic.
-We can now let \url{pplex} execute a pivot by specifying
+We can now let \texttt{pplex} execute a pivot by specifying
 the variable by its \emph{column} (here $1$ for $x$ and $2$ for $y$)
 and the linear equation by its \emph{row}. 
 Here comes the command and the resulting dictionary:
@@ -439,7 +439,7 @@ we modify the linear program into one which \emph{is} dually feasible, by substi
 By solving the modified dual program we find a feasible solution of the original primal
 program. In the second phase, we solve the original primal program starting from the 
 feasible solution found in the first phase.
-The two phases are demonstrated in \url{pplex} by the following example:
+The two phases are demonstrated in \texttt{pplex} by the following example:
 \begin{alltt}
 pplex> show primal
  \(\zeta\) =        + 2.00x + y
@@ -558,7 +558,7 @@ w2 = 19.00 + 3.50w1 - 9.50y
 \end{alltt}
 The optimal solution is not longer (2,2), but (3,0). 
 Note the rounding error in the coefficients of $w_1$ and $y$ in the objective.
-Pedagogically, an ideal occasion to introduce another feature of \url{pplex}: 
+Pedagogically, an ideal occasion to introduce another feature of \texttt{pplex}: 
 \begin{alltt}
 pplex> show primal 3
  \(\zeta\) =  6.030 - 1.005w1 - 0.005y
@@ -568,16 +568,22 @@ w2 = 19.000 + 3.500w1 - 9.500y
 Increasing the precision to three decimals by the command \texttt{show primal 3} eliminates the rounding error in this example.
 
 \section{Classroom Experience and Conclusion}\label{sec:pedagogy}
-The benefits of \url{pplex} are four-fold: no precious class-room time is wasted
-on elementary calculations, no calculation errors distract attention,
+The benefits of \texttt{pplex} are four-fold: 
+no precious class-room time is wasted on elementary calculations, 
+no calculation errors distract attention,
 the demonstration of larger, more interesting examples becomes feasible, and 
-understanding of the simplex method is enhanced by showing the geometric interpretation of two-dimensional problems along executing the simplex method.
+understanding of the simplex method is enhanced by showing the geometric interpretation of 
+two-dimensional problems along executing the simplex method.
+
 There is also a danger associated with the use of such tools in teaching: 
 one should make sure that the students really understand the elementary
 calculations the tool is performing.
 
-So far we have only experience with using \url{pplex} in one course with 11 students
-...
+So far we have only experience with using \texttt{pplex} in one course with 11 students.
+The benefits mentioned above have indeed materialized and the quality of the lectures has improved.
+Students  actively use \texttt{pplex} in experimenting with different pivots and
+in verifying calculations. Their appreciation of the mathematics behind
+linear programming seems to have increased.
 
 
 \bibliographystyle{abbrv}
@@ -621,7 +627,7 @@ W.H.~Freeman and Company, 1983.
 
 \section{Work in Progress}\label{sec:future}
  
-We are currently finishing a graphical interface illustrating \url{pplex} working on programs with two variables. 
+We are currently finishing a graphical interface illustrating \texttt{pplex} working on programs with two variables. 
 The graphical illustration shows the feasible
 region and highlights the vertex with the incumbent basic solution (see Figure~\ref{fig:ex_gui}).
 
@@ -633,5 +639,5 @@ prefer to see $u$ and stay in two dimensions.
 Once this has been accomplished, we plan to implement a graphical
 illustration for linear programs in three variables.
 
-We will make an effort to keep \url{pplex} up to date and will support 
+We will make an effort to keep \texttt{pplex} up to date and will support 
 future standard formats for LP programs upon request.
