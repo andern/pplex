@@ -258,8 +258,9 @@ class VisLP {
             return;
         }
         cs.setVisibleAxes(true);
+        cs.setXAxisColor(Color.black);
+        cs.setYAxisColor(Color.black);
         
-        CCSLine line;
         FieldMatrix<BigFraction> cons = lp.getConstraints();
         cons = checkForBounds(cons);
         
@@ -268,16 +269,20 @@ class VisLP {
         
         boolean[] degLines = new boolean[lp.getNoBasic()];
         
-        /* Find degenerate lines */
+        /* Find degenerate lines and color axes if they are degenerate */
         for (int i = 0; i < Bi.length; i++) {
-            if (Bi[i] >= lp.getNoNonBasic()
-                    && b.getEntry(i).equals(BigFraction.ZERO)) {
-                degLines[Bi[i]-lp.getNoNonBasic()] = true;
+            if (b.getEntry(i).equals(BigFraction.ZERO)) {
+                if (Bi[i] >= lp.getNoNonBasic()) {
+                    degLines[Bi[i]-lp.getNoNonBasic()] = true;
+                }
+                else if (Bi[i] == 0) cs.setXAxisColor(Color.green);
+                else if (Bi[i] == 1) cs.setYAxisColor(Color.green);
             }
         }
         
+        CCSLine line;
         /* Draw all constraints as lines, except hidden bounded constraint */
-        for (int i = 0; i < cons.getRowDimension()-1; i++) {
+        for (int i = 0; i < lp.getNoBasic(); i++) {
             Color color = Color.gray;
             
             /* Color degenerate lines differently */

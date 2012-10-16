@@ -96,6 +96,9 @@ public class CCSystem extends JPanel {
     private double distX;
     private double distY;
     
+    private Color xcolor;
+    private Color ycolor;
+    
     private Point2D.Double origo;
     
     /* Use this precision for BigDecimal */
@@ -117,6 +120,9 @@ public class CCSystem extends JPanel {
         hiX = 10;
         loY = -10;
         hiY = 10;
+        
+        xcolor = Color.black;
+        ycolor = Color.black;
         
         shapes = new ArrayList<Shape>();
         lines = new ArrayList<CCSLine>();
@@ -211,6 +217,18 @@ public class CCSystem extends JPanel {
     
     
     
+    public void setXAxisColor(Color color) {
+        xcolor = color;
+    }
+    
+    
+    
+    public void setYAxisColor(Color color) {
+        ycolor = color;
+    }
+    
+    
+    
     /**
      * Moves the entire visible area of the current system. The visible area
      * will be x and y in [loX, hiX] and [loY, hiY], respectively.
@@ -276,15 +294,16 @@ public class CCSystem extends JPanel {
      * @param g2d
      *        A {@code Graphics2D} object.
      */
-    public void drawAxes(Graphics2D g2d) {
+    public void drawAxes(Graphics2D g2d, Color xcolor, Color ycolor) {
         /* Find position for the unit line values. */
         boolean ywest = (loX >= 0) ? false : true;
         boolean xsouth = (loY >= 0) ? false : true;
         
         Point o = translate(origo);
         
-        g2d.setColor(Color.black);
+        
         if (drawXAxis) {
+            g2d.setColor(xcolor);
             Point xaxis_start = new Point(0, o.y);
             Point xaxis_end = new Point(getWidth(), o.y);
             g2d.drawLine(xaxis_start.x, xaxis_start.y,
@@ -292,12 +311,14 @@ public class CCSystem extends JPanel {
         }
         
         if (drawYAxis) {
+            g2d.setColor(ycolor);
             Point yaxis_start = new Point(o.x, 0);
             Point yaxis_end = new Point(o.x, getHeight());
             g2d.drawLine(yaxis_start.x, yaxis_start.y,
                     yaxis_end.x, yaxis_end.y);
         }
         
+        g2d.setColor(Color.black);
         if (drawXAxis && drawXUnits) {
             /* Approximate number of pixels needed between each "unit" */
             int pbux = 65;
@@ -591,7 +612,7 @@ public class CCSystem extends JPanel {
         
         /* Polygons should be drawn before the axes. */
         for (CCSPolygon poly : polygons) drawPolygon(g2d, poly);
-        drawAxes(g2d);
+        drawAxes(g2d, xcolor, ycolor);
         for (CCSLine line : lines) drawLine(g2d, line);
         for (CCSPoint p : points) drawPoint(g2d, p);
     }
