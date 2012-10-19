@@ -409,7 +409,7 @@ class CLI {
         }
         
         try {
-            return Output.primal(lps.get(p-1), prec);
+            return Output.primal(lps.get(p-1), Math.max(0,Math.min(15,prec)));
         } catch (IllegalArgumentException e) {
             return e.getLocalizedMessage();
         }
@@ -428,7 +428,7 @@ class CLI {
         }
         
         try {
-            return Output.dual(lps.get(p-1), prec);
+            return Output.dual(lps.get(p-1), Math.max(0,Math.min(15,prec)));
         } catch (IllegalArgumentException e) {
             return e.getLocalizedMessage();
         }

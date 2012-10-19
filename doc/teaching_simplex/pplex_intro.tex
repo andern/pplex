@@ -64,7 +64,7 @@ The simplex method is the best known and most widely used method to solve linear
 Therefore, it is taught to a wide range of students with varying background in mathematics.
 We present the software \texttt{pplex} for supporting
 the classroom presentation of the simplex method.
-Distinctive features of our tool are: 
+Distinctive features of our tool include: 
 simple command line interface,
 visualization (two variables), 
 file input in standard LP format,
@@ -289,22 +289,26 @@ for experimenting with the simplex method is, of course, not new.
 See, for example, \cite{SimplexPivotTool, AdvancedPivotTool}.
 However, tools tend to gradually go out-of-date on newer platforms
 than those used to develop them. Distinctive features of our tool are: 
+geometric interpretation (so far for two variables),
 simple command line interface,
-geometric interpretation (so far for two variables),  
+infinite-precision rational arithmetic  
 file input in standard LP format,
 portability, 
 and it is free software as defined by \cite{freesw}.
 
-This paper is organized as follows.
-In Section~\ref{sec:pplex} we introduce 
-our tool \texttt{pplex}, applied to several examples in Section~\ref{sec:examples}.
-We conclude in Section~\ref{sec:pedagogy}.
+%This paper is organized as follows.
+%In Section~\ref{sec:pplex} we introduce 
+%our tool \texttt{pplex}, applied to several examples in Section~\ref{sec:examples}.
+%We conclude in Section~\ref{sec:pedagogy}.
 
-\section{A tool for teaching the Simplex method}\label{sec:pplex}
-Our contribution \texttt{pplex}~\cite{pplex},
-a \emph{pedagogical implementation of the Simplex method},
+\section{A Tool for Teaching the Simplex Method}\label{sec:pplex}
+Our tool \texttt{pplex}~\cite{pplex},
+a \emph{pedagogical implementation of the simplex method},
 is free software distributed under the GNU General Public License \cite{GNUGPL}.
 It runs under Java 6 and Java 7 and is portable to any supportive platform.
+One can try the \texttt{pplex}-applet and its graphical interface
+online at \url{http://www.ii.uib.no/~bezem/pplex}.
+For testing your own examples, download \texttt{pplex} at \url{https://github.com/andern/pplex/}.
 
 We start by demonstrating \texttt{pplex} on the example from the introduction.
 The input file for our example reads:
@@ -327,7 +331,7 @@ w1 =  6.00 - 2.00x -      y
 w2 = 40.00 - 7.00x - 13.00y
 \end{alltt}
 Numbers are by default displayed with two decimals precision, whereas
-calculations are performed in double precision arithmetic.
+calculations are performed with infinite-precision rationals (BigFraction \cite{BigFraction}).
 We can now let \texttt{pplex} execute a pivot by specifying
 the variable by its \emph{column} (here $1$ for $x$ and $2$ for $y$)
 and the linear equation by its \emph{row}. 
@@ -365,9 +369,6 @@ pplex> pivot 1 1
  x = 2.00 - 0.68w1 + 0.05w2
  y = 2.00 + 0.37w1 - 0.11w2
 \end{alltt}
-The lecturer may use the opportunity to call the students' attention to an important implementation issue: Numerically, exactly the same result is obtained by two different pivot sequences. Is that due to, or despite of the implementation using double precision arithmetic?
-In general, it is impossible to answer which of the two is the case. Higher precision means smaller rounding errors,
-but at the same time, smaller errors become visible. 
 
 \section{Examples of Using \texttt{pplex}}\label{sec:examples}
 In this section we present examples using duality and examples illustrating
@@ -498,7 +499,7 @@ In the geometric interpretation, we stay in $(2,2)$. Before the degenerated pivo
 this point is the intersection of the two lines $w_1 = w_3 = 0$. After the degenerated pivot
 this same point  is the intersection of the two lines $w_2 = w_3 = 0$.
 The essential difference in the two dictionaries is visualized by depicting
-lines corresponding to a \emph{basic variable being zero} in COLOR. %MB
+lines corresponding to a \emph{basic variable being zero} in green. %MB
 
 In the above example, a degenerated pivot can easily be avoided:
 Degeneracy does not occcur if we start by increasing the
@@ -567,28 +568,12 @@ w2 = 19.000 + 3.500w1 - 9.500y
 \end{alltt}
 Increasing the precision to three decimals by the command \texttt{show primal 3} eliminates the rounding error in this example.
 
-\section{Classroom Experience and Conclusion}\label{sec:pedagogy}
-The benefits of \texttt{pplex} are four-fold: 
-no precious class-room time is wasted on elementary calculations, 
-no calculation errors distract attention,
-the demonstration of larger, more interesting examples becomes feasible, and 
-understanding of the simplex method is enhanced by showing the geometric interpretation of 
-two-dimensional problems along executing the simplex method.
-
-There is also a danger associated with the use of such tools in teaching: 
-one should make sure that the students really understand the elementary
-calculations the tool is performing.
-
-So far we have only experience with using \texttt{pplex} in one course with 11 students.
-The benefits mentioned above have indeed materialized and the quality of the lectures has improved.
-Students  actively use \texttt{pplex} in experimenting with different pivots and
-in verifying calculations. Their appreciation of the mathematics behind
-linear programming seems to have increased.
-
-
 \bibliographystyle{abbrv}
 \begin{thebibliography}{99}
-\bibitem{CiSaE2000} Computing in Science and Engineering, volume 2, no. 1, 2000.
+\bibitem{CiSaE2000} J.C.~Nash, 
+The (Dantzig) simplex method for linear programming,
+\emph{Computing in Science and Engineering} 2(1):29--31, 2000.
+Foreword by J.~Dongarra and F.~Sullivan, ibidem, p.~22--23.
 
 \bibitem{Vanderbei} R.J.~Vanderbei, 
 \emph{Linear Programming, Foundations and Extensions},
@@ -599,7 +584,7 @@ linear programming seems to have increased.
 W.H.~Freeman and Company, 1983.
 
 \bibitem{pplex}
-\url{https://github.com/andern/lpped/}
+\url{https://github.com/andern/pplex/}
 
 \bibitem{GNUGPL}
 \url{http://www.gnu.org/licenses/}
@@ -613,31 +598,13 @@ W.H.~Freeman and Company, 1983.
 \bibitem{AdvancedPivotTool}
 \url{http://campuscgi.princeton.edu/~rvdb/JAVA/pivot/advanced.html}
 
-\end{thebibliography}
+\bibitem{BigFraction}
+\url{http://org.apache.commons.math3.fraction.BigFraction}
 
-\begin{figure}[htpb]
-	\begin{center}
-		\includegraphics[width=\textwidth]{ex_gui.jpg}
-	\end{center}
-	\caption{Example of the Graphical User Interface}
-	\label{fig:ex_gui}
-\end{figure}
+\end{thebibliography}
 
 \end{document}
 
 \section{Work in Progress}\label{sec:future}
  
-We are currently finishing a graphical interface illustrating \texttt{pplex} working on programs with two variables. 
-The graphical illustration shows the feasible
-region and highlights the vertex with the incumbent basic solution (see Figure~\ref{fig:ex_gui}).
 
-An interesting extension is the case of \emph{unbound} variables, that is, variables that may take
-negative values. The standard solution is to substitute $u = x-y$ for an unbound variable $u$,
-where $x$ and $y$ are two new, non-negative variables. In the geometric interpretation however, one would
-prefer to see $u$ and stay in two dimensions.
-
-Once this has been accomplished, we plan to implement a graphical
-illustration for linear programs in three variables.
-
-We will make an effort to keep \texttt{pplex} up to date and will support 
-future standard formats for LP programs upon request.
