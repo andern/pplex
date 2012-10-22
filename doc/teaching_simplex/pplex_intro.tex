@@ -102,11 +102,11 @@ introducing the simplex method by a simple example:
 \]
 where the variables $x$ and $y$ range over the real numbers. We write $x,y \geq 0$ to indicate that both $x$ and $y$ are required to be non-negative.
 
-A \emph{feasible} point is an assignment of real numbers to the variables 
+A \emph{feasible} point or is an assignment of real numbers to the variables 
 such that all constraints are satisfied. 
 The inequality constraints correspond to halfspaces (here halfplanes), and the constraints of a program 
 define the \emph{polyhedron} containing the feasible points.
-In the example above there exist feasible points,
+The example above has feasible points,
 since the polyhedron given by the four inequalities contains,
 among other points, the origin  (see Figure~\ref{fig:ex1}). 
 
@@ -155,13 +155,13 @@ Every basic solution corresponds to a dictionary with the non-basic variables on
 enforcing the variables on the left (the \emph{basic} variables) to equal the constants in the equations. 
 If one of the constants is negative, then the corresponding basic solution is not feasible. 
 (Geometrically, a non-feasible basic solution lies outside of the polyhedron with respect to 
-the inequality corresponding to the variable that is assigned a negative value.)
+the half-space corresponding to the variable that is assigned a negative value.)
 We  call a dictionary \emph{(in)feasible} if the corresponding basic solution is (not) feasible.
 
 In the example above, we start in the origin $x=y=0$ and get
 value $0$ for the objective $\zeta = x + y$.
 Clearly, there is room for improvement here, since in fact
-the value $0$ is the \emph{minimal} value of the objective
+the value $0$ is the {minimal} value of the objective
 under the given constraints. How can we improve on this
 value? The answer is simple: increase $x$ or $y$ or both.
 The simplex method chooses one non-basic variable and
@@ -171,14 +171,14 @@ Let's try to increase $x$ keeping $y=0$. How much can $x$ increase?
 We see that $0 \leq u = 6 -2x-y$ allows us to increase $x$ to $3$,
 and that the other linear equation allows an even larger increase. Since both
 $u\geq 0$ and $v\geq 0$ must be respected, we increase $x$ to $3$,
-thereby getting $u=0$ as a consequence. Moreover, the objective $x+y$ evaluates to 3.
+thereby forcing $u=0$. Moreover, the objective $x+y$ now evaluates to 3.
 
 With its value increased to $3$, variable $x$ does not qualify as a non-basic variable anymore.
 Fortunately, the variable $u$ has become zero. Interchanging the roles of
 $x$ and $u$ as non-basic and basic variable, respectively, restores 
-the invariant of the dictionary form. The limiting equation $u = 6 -2x-y$ makes it
-possible to express $x$ in $u$ and $y$ such that $x$ can be eliminated from the
-right-hand side of the dictionary form. The equation $u = 6 -2x-y$ is
+the dictionary form. The limiting equation $u = 6 -2x-y$ enables
+expressing $x$ in $u$ and $y$ such that $x$ can be eliminated from the
+right-hand side of the dictionary. The equation $u = 6 -2x-y$ is
 called the \emph{pivot} and interchanging the roles of
 a basic and a non-basic variable is called \emph{pivoting}.
 In the dictionary, pivoting is done by standard row operations in linear algebra. 
@@ -225,15 +225,16 @@ The good news is that we have found the maximum, as all coefficients in the obje
 are negative. The maximum value $4$
 of the objective is attained in the point $x=y=2$. These values are 
 integers by the design of the example, and can also be obtained graphically.
-Obtaining the last dictionary algebraically is a painful (but useful) exercise.
+Obtaining the last dictionary algebraically is a dull (but useful) exercise.
 
 An interested student may now ask the question: 
 Can't we start with $y$ instead of with $x$?
-This very good question deserves a detailed answer.
-The lecturer (our hero) starts boldly calculating on the blackboard.
+This very good question deserves a detailed answer, so
+the lecturer restarts calculating.
 Clearly, $0\leq v = 40 - 7x -13y$ allows us to increase $y$ to $\frac{40}{13}$,
 and the other linear equation allows an even larger increase. Hence we pivot and get,
 again by standard row operations, the new dictionary:
+
 \begin{minipage}{.63\textwidth}
 \[    
     \begin{array}{lcrcrcrcr}
@@ -284,12 +285,13 @@ The benefits of such a tool are four-fold: no precious class-room time is wasted
 on elementary calculations, no calculation errors distract attention,
 the demonstration of larger, more interesting examples becomes feasible, and 
 understanding of the simplex method is enhanced by showing the geometric interpretation of two-dimensional problems along executing the simplex method.
+
 The idea of having a tool
 for experimenting with the simplex method is, of course, not new. 
 See, for example, \cite{SimplexPivotTool, AdvancedPivotTool}.
-However, tools tend to gradually go out-of-date on newer platforms
+However, tools tend to gradually go out-of-date on platforms newer
 than those used to develop them. Distinctive features of our tool are: 
-geometric interpretation (so far for two variables),
+geometric interpretation (for two variables),
 simple command line interface,
 infinite-precision rational arithmetic  
 file input in standard LP format,
@@ -313,15 +315,15 @@ For testing your own examples, download \texttt{pplex} at \url{https://github.co
 We start by demonstrating \texttt{pplex} on the example from the introduction.
 The input file for our example reads:
 \begin{alltt}
-\input{nik2.lps}
+\input{simple_example.lps}
 \end{alltt}
 Note that the inequalities $x,y \geq 0$ are implicitly assumed, and omitted in both the input file and the generated dictionaries.
 
 The program \texttt{pplex} launches with the prompt \verb|pplex>|.
 We read the above input file, which is confirmed OK:
 \begin{verbatim}
-pplex> read input/nik2.lps
-Read input/nik2.lps OK.
+pplex> read input/simple_example.lps
+Read input/simple_example.lps OK.
 \end{verbatim}
 To show the initial dictionary of this program one writes after the prompt:
 \begin{alltt}
@@ -334,8 +336,7 @@ Numbers are by default displayed with two decimals precision, whereas
 calculations are performed with infinite-precision rationals (BigFraction \cite{BigFraction}).
 We can now let \texttt{pplex} execute a pivot by specifying
 the variable by its \emph{column} (here $1$ for $x$ and $2$ for $y$)
-and the linear equation by its \emph{row}. 
-Here comes the command and the resulting dictionary:
+and the linear equation by its \emph{row} (not counting the objective): 
 \begin{alltt}
 pplex> pivot 1 1
  \(\zeta\) =  3.00 - 0.50w1 + 0.50y
@@ -376,16 +377,14 @@ degeneracy, cycling and unboundedness.
 
 \subsection{Duality}
 
-Giving an introduction into LP duality theory is beyond the scope of this paper. 
-Therefore we assume knowledge of duality theory throughout this section.
-
+We assume knowledge of duality theory throughout this section.
 In Sections \ref{sec:intro} and \ref{sec:pplex}, we studied an example of an initially feasible dictionary.
 What if the initial dictionary is not feasible, that is, if the origin is not a
 feasible solution? Here is an example:
 
 \begin{minipage}{.45\textwidth}
 \begin{alltt}
-\input{nik8.lps}
+\input{dual_feasible.lps}
 \end{alltt}
 \end{minipage}
 \begin{minipage}{.45\textwidth}
@@ -400,8 +399,8 @@ Clearly, the maximum $-\frac{8}{3}$ is to be found in the point $(0,\frac{1}{3})
 However, we cannot proceed as in the previous section since the
 initial dictionary is not feasible:
 \begin{alltt}
-pplex> read input/nik8.lps
-Read input/nik8.lps OK.
+pplex> read input/dual_feasible.lps
+Read input/dual_feasible.lps OK.
 
 pplex> show primal
  \(\zeta\) =        - 7.00x - 8.00y
@@ -485,20 +484,21 @@ pplex> pivot 1 2
 
 \subsection{Degeneracy and Cycling}\label{sec:cycling}
 If the constant of a pivot is zero, pivoting does not improve the value of the basic solution (\emph{degenerated pivot}; geometrically, one stays at the same vertex of the polyhedron). Degenerated pivots occur commonly during execution of the simplex method. Usually, they are unproblematic, because one of the subsequent pivots improves
-the objective. Here is an example:
+the objective. Here is an example (\url{pplex/input/degeneracy_1.lps}):
 \begin{alltt}
-\input{deg.lps}
+\input{degeneracy_1.lps}
 \end{alltt}
 The lines corresponding to these constraints intersect in the point $(2,2)$.
 After \texttt{pivot 1 1} and \texttt{pivot 2 3} we continue as follows:
 \begin{alltt}
-\input{deg.txt}
+\input{degeneracy.txt}
 \end{alltt}
 \texttt{pivot 1 2} is degenerated and the objective does not improve.
 In the geometric interpretation, we stay in $(2,2)$. Before the degenerated pivot,
 this point is the intersection of the two lines $w_1 = w_3 = 0$. After the degenerated pivot
 this same point  is the intersection of the two lines $w_2 = w_3 = 0$.
-The essential difference in the two dictionaries is visualized by depicting
+The essential difference in the two dictionaries is visualized (in the
+graphical mode) by depicting
 lines corresponding to a \emph{basic variable being zero} in green. %MB
 
 In the above example, a degenerated pivot can easily be avoided:
@@ -519,7 +519,7 @@ since the objective can take arbitrarily large values:
 \vspace{.2cm}
 \begin{minipage}{.55\textwidth}
 \begin{alltt}
-\input{nik6.txt}
+\input{unbounded.txt}
 \end{alltt}
 \end{minipage}
 \begin{minipage}{.45\textwidth}
@@ -544,8 +544,8 @@ Students can use \texttt{pplex} to experiment with the optimal dictionary.
 Consider for example the following variation of our first example,
 where the objective and the first inequality are almost parallel:
 \begin{alltt}
-pplex> read input/nik9.lps
-Read input/nik9.lps OK.
+pplex> read input/sensitivity.lps
+Read input/sensitivity.lps OK.
 
 pplex> show        
  \(\zeta\) =       + 2.01x +      y
