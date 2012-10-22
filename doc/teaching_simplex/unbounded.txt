@@ -1,5 +1,5 @@
-pplex> read input/nik6.lps
-Read input/nik6.lps OK.
+pplex> read input/unbounded.lps
+Read input/unbounded.lps OK.
 
 pplex> show primal
  \(\zeta\) =       + x +     y
