@@ -184,7 +184,6 @@ a basic and a non-basic variable is called \emph{pivoting}.
 In the dictionary, pivoting is done by standard row operations in linear algebra. 
 The incumbent dictionary becomes:
 
-	\begin{minipage}{.45\textwidth}
 \[    
     \begin{array}{lcrcrcrcr}
       \zeta&=& 3 &-& 0.5 u &+& 0.5 y & &  \\\hline
@@ -193,10 +192,10 @@ The incumbent dictionary becomes:
 
     \end{array}
 \]
-\end{minipage}
-	\begin{minipage}{.45\textwidth}
+\vspace{.2cm}
+\begin{center}
 				\includegraphics{ex2.jpg}
-\end{minipage}
+\end{center}
 \vspace{.2cm}
 
 The next step
@@ -217,6 +216,7 @@ The incumbent dictionary becomes:
 \]
 \end{minipage}
 	\begin{minipage}{.45\textwidth}
+	\vspace{.2cm}
 				\includegraphics{ex3.jpg}
 \end{minipage}
 \vspace{.2cm}
@@ -235,7 +235,7 @@ Clearly, $0\leq v = 40 - 7x -13y$ allows us to increase $y$ to $\frac{40}{13}$,
 and the other linear equation allows an even larger increase. Hence we pivot and get,
 again by standard row operations, the new dictionary:
 
-\begin{minipage}{.63\textwidth}
+\begin{minipage}{.50\textwidth}
 \[    
     \begin{array}{lcrcrcrcr}
       \zeta&=& \frac{40}{13} &+& \frac{6}{13} x &-& \frac{1}{13} v &\vphantom{\frac{|}{|}} &  \\\hline
@@ -382,18 +382,15 @@ In Sections \ref{sec:intro} and \ref{sec:pplex}, we studied an example of an ini
 What if the initial dictionary is not feasible, that is, if the origin is not a
 feasible solution? Here is an example:
 
-\begin{minipage}{.45\textwidth}
 \begin{alltt}
 \input{dual_feasible.lps}
 \end{alltt}
-\end{minipage}
-\begin{minipage}{.45\textwidth}
+\vspace{.2cm}
 	\includegraphics{ex_dual.jpg}
-\end{minipage}
 \vspace{.2cm}
 
 The feasible region of this program is the
-triangle with points $(0,\frac{1}{3}),(0,1.8),(1,1)$
+triangle with points $(0,\frac{1}{3})$, $(0,1.8)$, $(1,1)$
 in the $x,y$-plane, on which we maximize the objective $-7x-8y$.
 Clearly, the maximum $-\frac{8}{3}$ is to be found in the point $(0,\frac{1}{3})$.
 However, we cannot proceed as in the previous section since the
@@ -517,7 +514,7 @@ If the polyhedron defined by the constraints is
 since the objective can take arbitrarily large values:
 
 \vspace{.2cm}
-\begin{minipage}{.55\textwidth}
+\begin{minipage}{.45\textwidth}
 \begin{alltt}
 \input{unbounded.txt}
 \end{alltt}
@@ -525,11 +522,12 @@ since the objective can take arbitrarily large values:
 \begin{minipage}{.45\textwidth}
 	\includegraphics{ex_unbound.jpg}
 \end{minipage}
+
 This dictionary is feasible and all coefficients of $y$ are non-negative. 
 This means that $y$ can increase unboundedly, 
 yielding arbitrarily high values for the objective.
-The command \verb|pivot|, which can pick a suitable pivot itself,
-discovers this:
+The command \verb|pivot|, which picks a suitable pivot,
+reports this:
 \begin{alltt}
 pplex> pivot
 Program is unbounded.
