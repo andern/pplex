@@ -17,7 +17,6 @@ under the Apache License, Version 2.0. See lib/LICENSE.TXT for more information.
 Documentation on how to use pplex can be found [here](https://raw.github.com/andern/pplex/master/doc/pplex_intro.pdf).
 
 ## Reporting Bugs
----- --------------
 GitHub's issue tracker is used for tracking bugs of pplex. Before submitting a
 bug you should make sure that you are running the latest version of pplex, and
 that the bug has not already been submitted to the tracker on GitHub.
@@ -62,7 +61,6 @@ To compile the sources of pplex and build a runnable jar, run
   `ant`
 
 ## Applet
----- ------
 pplex can be compiled as an applet by running
   `ant applet`
 in the pplex directory.
