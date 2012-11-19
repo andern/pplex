@@ -431,7 +431,7 @@ public class CCSystem extends JPanel {
             p2d1 = new Point2D.Double(l.c*mul, loY);
             p2d2 = new Point2D.Double(l.c*mul, hiY);
         } else if (l.a == 0.0) {
-            int mul = (l.a  < 0) ? -1 : 1;
+            int mul = (l.b  < 0) ? -1 : 1;
             p2d1 = new Point2D.Double(loX, l.c*mul);
             p2d2 = new Point2D.Double(hiX, l.c*mul);
         } else {
