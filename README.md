@@ -23,7 +23,7 @@ that the bug has not already been submitted to the tracker on GitHub.
 
 # Installing pplex
 If you want to try pplex before installing it, you can try it as an applet by
-visiting http://www.ii.uib.no/~bezem/pplex/. It has most of the functionality
+visiting http://pplex.ii.uib.no. It has most of the functionality
 of pplex (but you cannot read your own files.)
 
 Running pplex requires Java Runtime Environment installed on your computer.
