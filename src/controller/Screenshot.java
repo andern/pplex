@@ -39,14 +39,14 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
-import ccs.CCSystem;
+import cartesian.coordinate.CCSystem;
 
 
 /**
  * This class takes screenshot of the class {@code ccs.CCSystem}.
  *
  * @author  Thomas Le
- * @see     ccs.CCSystem
+ * @see     cartesian.coordinate.CCSystem
  */
 public class Screenshot extends JDialog implements ActionListener {
     private static final long serialVersionUID = 1L;

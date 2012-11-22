@@ -18,6 +18,7 @@
  */
 package controller;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.geom.Point2D;
@@ -33,10 +34,10 @@ import org.apache.commons.math3.linear.FieldLUDecomposition;
 import org.apache.commons.math3.linear.FieldMatrix;
 import org.apache.commons.math3.linear.FieldVector;
 
-import ccs.CCSLine;
-import ccs.CCSPoint;
-import ccs.CCSPolygon;
-import ccs.CCSystem;
+import cartesian.coordinate.CCLine;
+import cartesian.coordinate.CCPoint;
+import cartesian.coordinate.CCPolygon;
+import cartesian.coordinate.CCSystem;
 
 import model.LP;
 
@@ -53,6 +54,8 @@ class VisLP {
     private static ArrayList<Point2D> unb;
     protected static boolean readScope = true;
     protected static boolean feasScope = true;
+    
+    
     
     /*
      * Input: Unordered list of points that can form a
@@ -254,12 +257,14 @@ class VisLP {
         
         /* Don't draw the LP if it is not in two variables */
         if (lp == null || lp.getNoNonBasic() != 2) {
-            cs.setVisibleAxes(false);
+            cs.setAxesVisible(false);
+            cs.setGridVisible(false);
             return;
         }
-        cs.setVisibleAxes(true);
-        cs.setXAxisColor(Color.black);
-        cs.setYAxisColor(Color.black);
+        cs.setAxesVisible(true);
+        cs.setGridVisible(true);
+        cs.setAxisXPaint(Color.black);
+        cs.setAxisYPaint(Color.black);
         
         FieldMatrix<BigFraction> cons = lp.getConstraints();
         cons = checkForBounds(cons);
@@ -275,12 +280,12 @@ class VisLP {
                 if (Bi[i] >= lp.getNoNonBasic()) {
                     degLines[Bi[i]-lp.getNoNonBasic()] = true;
                 }
-                else if (Bi[i] == 0) cs.setXAxisColor(Color.green);
-                else if (Bi[i] == 1) cs.setYAxisColor(Color.green);
+                else if (Bi[i] == 0) cs.setAxisXPaint(Color.green);
+                else if (Bi[i] == 1) cs.setAxisYPaint(Color.green);
             }
         }
         
-        CCSLine line;
+        CCLine line;
         /* Draw all constraints as lines, except hidden bounded constraint */
         for (int i = 0; i < lp.getNoBasic(); i++) {
             Color color = Color.gray;
@@ -288,10 +293,10 @@ class VisLP {
             /* Color degenerate lines differently */
             if (i < lp.getNoBasic() && degLines[i]) color = Color.green;
             
-            line = new CCSLine(cons.getEntry(i, 0).doubleValue(),
-                               cons.getEntry(i, 1).doubleValue(),
-                               cons.getEntry(i, 2).doubleValue(), color);
-            cs.addLine(line);
+            line = new CCLine(cons.getEntry(i, 0).doubleValue(),
+                              cons.getEntry(i, 1).doubleValue(),
+                              cons.getEntry(i, 2).doubleValue(), color);
+            cs.add(line);
         }
         
         Point2D[] fpoints = getFeasibleIntersections(cons);
@@ -316,17 +321,17 @@ class VisLP {
         /* Draw all feasible solutions as points */
         Point2D[] pconv = convex(fpoints);
         for (Point2D p2d : pconv) {
-            CCSPoint ccsp = new CCSPoint(p2d.getX(), p2d.getY());
-            if (!unb.contains(p2d)) cs.addPoint(ccsp);
+            CCPoint ccp = new CCPoint(p2d.getX(), p2d.getY());
+            if (!unb.contains(p2d)) cs.add(ccp);
         }
         
         /* Color the region depending on whether it is unbounded or not. */
         if (unb.size() == 0) {
-            cs.addPolygon(new CCSPolygon(pconv, Color.pink, true));
+            cs.add(new CCPolygon(pconv, null, Color.pink, null));
         } else if (unb.size() == 1) {
             GradientPaint gp = new GradientPaint(pconv[0], Color.pink,
                     unb.get(0), cs.getBackground());
-            cs.addPolygon(new CCSPolygon(pconv, gp, true));
+            cs.add(new CCPolygon(pconv, null, gp, null));
         } else {
             Point2D p1 = unb.get(0);
             Point2D p2 = unb.get(1);
@@ -345,20 +350,20 @@ class VisLP {
             GradientPaint gp = new GradientPaint(pconv[0], Color.pink,
                     pavg, cs.getBackground());
 
-            cs.addPolygon(new CCSPolygon(pconv, gp, true));
+            cs.add(new CCPolygon(pconv, null, gp, null));
         }
         
         /* Draw the current objective function */
         FieldVector<BigFraction> obj = lp.getObjFunction();
-        line = new CCSLine(obj.getEntry(0).doubleValue(),
+        line = new CCLine(obj.getEntry(0).doubleValue(),
                            obj.getEntry(1).doubleValue(),
                            lp.objVal().doubleValue(), Color.red);
-        cs.addLine(line);
+        cs.add(line);
         
         /* Draw the current basic solution as a point. */
         BigFraction[] point = lp.point();
-        cs.addPoint(new CCSPoint(point[0].doubleValue(),
-                                 point[1].doubleValue(), Color.red, true));
+        cs.add(new CCPoint(point[0].doubleValue(), point[1].doubleValue(),
+                Color.red, new BasicStroke(1f)));
     }
     
     

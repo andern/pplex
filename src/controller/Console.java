@@ -42,7 +42,7 @@ import controller.GUI;
  * @author  Andreas Halle
  * @author  Thomas Le
  * @see     CLI
- * @see     ccs.CCSystem
+ * @see     cartesian.coordinate.CCSystem
  * @see     GUI
  */
 class Console extends JPanel {

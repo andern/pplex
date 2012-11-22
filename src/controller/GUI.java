@@ -29,7 +29,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 
-import ccs.CCSystem;
+import cartesian.coordinate.CCSystem;
 
 import model.LP;
 
@@ -39,7 +39,7 @@ import model.LP;
  * 
  * @author  Andreas Halle
  * @see     Console
- * @see     ccs.CCSystem
+ * @see     cartesian.coordinate.CCSystem
  */
 class GUI extends JFrame {
     private static final long serialVersionUID = 1L;
@@ -64,6 +64,8 @@ class GUI extends JFrame {
         setTitle("pplex");
         
         ccs = new CCSystem();
+        ccs.setAxesVisible(false);
+        ccs.setGridVisible(false);
         cli = new CLI();
         console = new Console(cli);
         

@@ -1,21 +1,17 @@
 <?xml version="1.0"?>
-
 <project name="pplex" default="jar">
-  <path id="build.classpath">
-    <fileset dir="lib">
-      <include name="*.jar"/>
-    </fileset>
-  </path>
-
-  <pathconvert property="mf.classpath" pathsep=" ">
-    <path refid="build.classpath"/>
-    <mapper>
-      <chainedmapper>
-        <flattenmapper/>
-        <globmapper from="*.jar" to="lib/*.jar"/>
-      </chainedmapper>
-    </mapper>
-  </pathconvert>
+  <taskdef resource="proguard/ant/task.properties" classpath="lib/proguard.jar" />
+  <!--
+  <proguard>
+    -libraryjars "${java.home}/lib/rt.jar"
+    -injars     pplex.jar
+    -outjars    pplex_opt.jar
+    -keep class controller.Main { public static void main(java.lang.String[]); }
+    -dontwarn
+    -dontoptimize 
+    -dontobfuscate
+  </proguard>
+  -->
 
   <target name="clean" description="remove intermediate files">
     <delete dir="bin"/>
@@ -24,7 +20,6 @@
   <target name="clobber" depends="clean" description="remove all artifact files">
     <delete file="pplex.jar"/>
     <delete file="pplex-applet.jar"/>
-    <delete dir="pplex.app"/>
   </target>
 
   <target name="compile" description="compile the Java source code to class files">
@@ -32,30 +27,44 @@
     <javac includeantruntime="false" srcdir="src" destdir="bin">
       <classpath>
         <pathelement location="lib/commons-math3-3.0.jar"/>
+        <pathelement location="lib/jcoolib.jar"/>
       </classpath>
     </javac>
   </target>
 
   <target name="jar" depends="compile" description="create a Jar file for the application">
-    <jar destfile="pplex.jar" filesetmanifest="skip">
-      <zipgroupfileset dir="lib" includes="*.jar"/>
+    <jar destfile="bin/pplex-unopt.jar" filesetmanifest="skip">
+      <zipgroupfileset dir="lib" includes="commons-math3-3.0.jar"/>
+      <zipgroupfileset dir="lib" includes="jcoolib.jar"/>
       <fileset dir="bin" includes="**/*.class"/>
       <manifest>
         <attribute name="Main-class" value="controller/Main"/>
-        <attribute name="Class-path" value="${mf.classpath}"/>
       </manifest>
     </jar>
+    <proguard>
+      -libraryjars "${java.home}/lib/rt.jar"
+      -injars     bin/pplex-unopt.jar
+      -outjars    pplex.jar
+      -keep class controller.Main { public static void main(java.lang.String[]); }
+      -dontobfuscate
+    </proguard>
   </target>
 
   <target name="applet" depends="compile" description="create an applet version of pplex as a Jar file">
-    <jar destfile="pplex-applet.jar" filesetmanifest="skip">
-      <zipgroupfileset dir="lib" includes="*.jar"/>
-      <!--      <zipfileset dir="input" includes="*.lps" prefix="controller/input/"/> -->
+    <jar destfile="bin/pplex-applet-unopt.jar" filesetmanifest="skip">
+      <zipgroupfileset dir="lib" includes="commons-math3-3.0.jar"/>
+      <zipgroupfileset dir="lib" includes="jcoolib.jar"/>
       <fileset dir="bin" includes="**/*.class"/>
       <manifest>
         <attribute name="Main-class" value="controller/Applet"/>
-        <attribute name="Class-path" value="${mf.classpath}"/>
       </manifest>
     </jar>
+    <proguard>
+      -libraryjars "${java.home}/lib/rt.jar"
+      -injars     bin/pplex-applet-unopt.jar
+      -outjars    pplex-applet.jar
+      -keep class controller.Applet { public static void main(java.lang.String[]); }
+      -dontobfuscate
+    </proguard>
   </target>
 </project>
