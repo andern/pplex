@@ -1,17 +1,6 @@
 <?xml version="1.0"?>
 <project name="pplex" default="jar">
   <taskdef resource="proguard/ant/task.properties" classpath="lib/proguard.jar" />
-  <!--
-  <proguard>
-    -libraryjars "${java.home}/lib/rt.jar"
-    -injars     pplex.jar
-    -outjars    pplex_opt.jar
-    -keep class controller.Main { public static void main(java.lang.String[]); }
-    -dontwarn
-    -dontoptimize 
-    -dontobfuscate
-  </proguard>
-  -->
 
   <target name="clean" description="remove intermediate files">
     <delete dir="bin"/>
