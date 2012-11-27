@@ -31,6 +31,14 @@ import javax.swing.JMenuItem;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 
+import org.antlr.runtime.ANTLRStringStream;
+import org.antlr.runtime.CharStream;
+import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.TokenStream;
+
+import parser.LpFileFormatLexer;
+import parser.LpFileFormatParser;
+
 import cartesian.coordinate.CCSystem;
 
 import model.LP;
@@ -234,7 +242,17 @@ public class Applet extends JApplet {
         final Map<String, LP> lpExamples = new LinkedHashMap<String, LP>();
         
         for (String s : examples.keySet()) {
-            lpExamples.put(s, Parser.parse(examples.get(s)));
+        	CharStream stream;
+            try {
+            	stream = new ANTLRStringStream(examples.get(s));
+
+            	LpFileFormatLexer lexer = new LpFileFormatLexer(stream);
+            	TokenStream tokenStream = new CommonTokenStream(lexer);
+            	LpFileFormatParser parser = new LpFileFormatParser(tokenStream);
+                lpExamples.put(s, parser.lpfromfile());
+            } catch (Exception e) {
+            	System.out.println(e.getLocalizedMessage());
+            }
         }
         
         /* Add examples as menu items */

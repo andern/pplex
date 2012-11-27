@@ -19,14 +19,20 @@
 package controller;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Set;
+
+import org.antlr.runtime.ANTLRFileStream;
+import org.antlr.runtime.CharStream;
+import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.TokenStream;
 import org.apache.commons.math3.exception.MathArithmeticException;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import output.Output;
+import parser.LpFileFormatLexer;
+import parser.LpFileFormatParser;
 
 import model.LP;
 
@@ -218,27 +224,61 @@ class CLI {
         }
         return Data.SYNTAX.get(Data.pivot);
     }
-
-
-
+    
+    
+    
     private String parseRead(String[] args) {
         if (args.length == 2) {
-            File file = new File(args[1]);
-
+            CharStream stream;
             try {
-                LP lp = Parser.parse(file);
-                addLp(lp);
-                return "Read " + file + " OK.\n";
-            } catch (FileNotFoundException e) {
-                return "File " + file + " not found.\n";
-            } catch (IllegalArgumentException e) {
-                return "Read not OK. " + e.getLocalizedMessage();
+            	stream = new ANTLRFileStream(args[1]);
+
+            	LpFileFormatLexer lexer = new LpFileFormatLexer(stream);
+            	TokenStream tokenStream = new CommonTokenStream(lexer);
+            	LpFileFormatParser parser = new LpFileFormatParser(tokenStream);
+
+            	LP lp = parser.lpfromfile();
+            	addLp(lp);
+            	return "Read " + args[1] + " OK.\n";
+            } catch (Exception e2) {
+            	return "Read not OK. " + e2.getLocalizedMessage() + "\n";
             }
-        }
-        else {
+        } else {
             return Data.SYNTAX.get(Data.read);
         }
     }
+
+
+
+//    private String parseRead(String[] args) {
+//        if (args.length == 2) {
+//            File file = new File(args[1]);
+//
+//            try {
+//                LP lp = Parser.parse(file);
+//                addLp(lp);
+//                return "Read " + file + " OK.\n";
+//            } catch (Exception e1) {
+//            	CharStream stream;
+//    			try {
+//    				stream = new ANTLRFileStream(args[1]);
+//    				
+//    	    		LpFileFormatLexer lexer = new LpFileFormatLexer(stream);
+//    	    		TokenStream tokenStream = new CommonTokenStream(lexer);
+//    	    		LpFileFormatParser parser = new LpFileFormatParser(tokenStream);
+//    	    		
+//    	    		LP lp = parser.lpfromfile();
+//    	    		addLp(lp);
+//    	    		return "Read " + args[1] + " OK.\n";
+//    			} catch (Exception e2) {
+//    				return "Read not OK. " + e2.getLocalizedMessage() + "\n";
+//    			}
+//            }
+//        }
+//        else {
+//            return Data.SYNTAX.get(Data.read);
+//        }
+//    }
 
 
 

@@ -2,58 +2,105 @@
 <project name="pplex" default="jar">
   <taskdef resource="proguard/ant/task.properties" classpath="lib/proguard.jar" />
 
+  <target name="antlr">
+      <java classpath="lib/antlr-3.4-complete-no-antlrv2.jar" classname="org.antlr.Tool" fork="true" failonerror="true">
+      <arg value="-verbose"/>
+      <arg value="-make"/>
+      <arg value="-o"/>
+      <arg path="src/parser/"/>
+      <arg path="src/parser/LpFileFormat.g"/>
+    </java>
+  </target>
+
   <target name="clean" description="remove intermediate files">
     <delete dir="bin"/>
+    <delete dir="src/parser/output"/> <!-- For some reason, ANTLR _sometimes_ creates this dir. -->
   </target>
 
   <target name="clobber" depends="clean" description="remove all artifact files">
     <delete file="pplex.jar"/>
     <delete file="pplex-applet.jar"/>
+    <delete file="src/parser/LpFileFormatLexer.java"/>
+    <delete file="src/parser/LpFileFormatParser.java"/>
+    <delete file="src/parser/LpFileFormat.tokens"/>
   </target>
 
-  <target name="compile" description="compile the Java source code to class files">
+  <target name="compile" depends="antlr" description="compile the Java source code to class files">
     <mkdir dir="bin"/>
     <javac includeantruntime="false" srcdir="src" destdir="bin">
       <classpath>
         <pathelement location="lib/commons-math3-3.0.jar"/>
         <pathelement location="lib/jcoolib.jar"/>
+        <pathelement location="lib/antlr-runtime-3.1.3.jar"/>
       </classpath>
     </javac>
   </target>
 
-  <target name="jar" depends="compile" description="create a Jar file for the application">
+  <target name="jarunopt" depends="compile" description="create an unoptimized Jar file for the application">
     <jar destfile="bin/pplex-unopt.jar" filesetmanifest="skip">
-      <zipgroupfileset dir="lib" includes="commons-math3-3.0.jar"/>
       <zipgroupfileset dir="lib" includes="jcoolib.jar"/>
+      <zipgroupfileset dir="lib" includes="commons-math3-3.0.jar"/>
+      <zipgroupfileset dir="lib" includes="antlr-runtime-3.1.3.jar"/>
       <fileset dir="bin" includes="**/*.class"/>
       <manifest>
         <attribute name="Main-class" value="controller/Main"/>
       </manifest>
     </jar>
+  </target>
+
+  <target name="jar" depends="jarunopt" description="create a Jar file for the application">
     <proguard>
       -libraryjars "${java.home}/lib/rt.jar"
       -injars     bin/pplex-unopt.jar
       -outjars    pplex.jar
       -keep class controller.Main { public static void main(java.lang.String[]); }
       -dontobfuscate
+      -dontwarn org.antlr.runtime.tree.DOTTreeGenerator
     </proguard>
   </target>
 
-  <target name="applet" depends="compile" description="create an applet version of pplex as a Jar file">
+  <target name="mac" depends="jarunopt" description="create a Jar file for the application">
+    <proguard>
+      -libraryjars "${java.home}/../Classes/classes.jar"
+      -injars     bin/pplex-unopt.jar
+      -outjars    pplex.jar
+      -keep class controller.Main { public static void main(java.lang.String[]); }
+      -dontobfuscate
+      -dontwarn org.antlr.runtime.tree.DOTTreeGenerator
+    </proguard>
+  </target>
+
+  <target name="appletunopt" depends="compile" description="create an unoptimized applet version of pplex as a Jar file">
     <jar destfile="bin/pplex-applet-unopt.jar" filesetmanifest="skip">
       <zipgroupfileset dir="lib" includes="commons-math3-3.0.jar"/>
       <zipgroupfileset dir="lib" includes="jcoolib.jar"/>
+      <zipgroupfileset dir="lib" includes="antlr-runtime-3.1.3.jar"/>
       <fileset dir="bin" includes="**/*.class"/>
       <manifest>
         <attribute name="Main-class" value="controller/Applet"/>
       </manifest>
     </jar>
+</target>
+
+  <target name="applet" depends="appletunopt" description="create a Jar file for the application">
     <proguard>
       -libraryjars "${java.home}/lib/rt.jar"
       -injars     bin/pplex-applet-unopt.jar
       -outjars    pplex-applet.jar
       -keep class controller.Applet { public static void main(java.lang.String[]); }
       -dontobfuscate
+      -dontwarn org.antlr.runtime.tree.DOTTreeGenerator
+    </proguard>
+  </target>
+
+  <target name="macapplet" depends="appletunopt" description="create a Jar file for the application">
+    <proguard>
+      -libraryjars "${java.home}/../Classes/classes.jar"
+      -injars     bin/pplex-applet-unopt.jar
+      -outjars    pplex-applet.jar
+      -keep class controller.Applet { public static void main(java.lang.String[]); }
+      -dontobfuscate
+      -dontwarn org.antlr.runtime.tree.DOTTreeGenerator
     </proguard>
   </target>
 </project>
