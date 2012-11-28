@@ -15,14 +15,14 @@
   <target name="clean" description="remove intermediate files">
     <delete dir="bin"/>
     <delete dir="src/parser/output"/> <!-- For some reason, ANTLR _sometimes_ creates this dir. -->
+    <delete file="src/parser/LpFileFormatLexer.java"/>
+    <delete file="src/parser/LpFileFormatParser.java"/>
+    <delete file="src/parser/LpFileFormat.tokens"/>
   </target>
 
   <target name="clobber" depends="clean" description="remove all artifact files">
     <delete file="pplex.jar"/>
     <delete file="pplex-applet.jar"/>
-    <delete file="src/parser/LpFileFormatLexer.java"/>
-    <delete file="src/parser/LpFileFormatParser.java"/>
-    <delete file="src/parser/LpFileFormat.tokens"/>
   </target>
 
   <target name="compile" depends="antlr" description="compile the Java source code to class files">
