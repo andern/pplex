@@ -62,7 +62,7 @@ public class Shell {
     private int redo = 0;
     
     /* Use this output format for numbers */
-    private Format format = Format.DECIMAL2;
+    private Format format = Format.FRACTION;
     
     @SuppressWarnings("serial")
     private final Set<Cmd> REQ_LP = new HashSet<Cmd>() {
@@ -81,7 +81,6 @@ public class Shell {
                     add(Cmd.SHOWFEAS);
                     add(Cmd.SHOWOPT);
                     add(Cmd.SHOWPRIMAL);
-                    add(Cmd.SHOWSOL);
                 }
             });
         }
@@ -171,8 +170,8 @@ public class Shell {
     public String parse(String str) {
         try {
             return parse(parseStr(str));
-        } catch (Exception e) {
-            return "";
+        } catch (IllegalArgumentException e) {
+            return e.getLocalizedMessage();
         }
     }
     
@@ -189,9 +188,10 @@ public class Shell {
         case CONDITIONS: return Data.CONDITIONS;
         case EXIT:
         case Q:
-        case QUIT: System.exit(0);
-        case READ:       return parseRead(msg);
+        case QUIT:       System.exit(0);
+        case FORMAT:     return parseFormat(msg);
         case HELP:       return parseHelp(msg);
+        case READ:       return parseRead(msg);
         case SHOW:       return parseShow(msg);
         case WARRANTY:   return Data.WARRANTY;
         default:         return "";
@@ -201,7 +201,8 @@ public class Shell {
     
     
     private String generateCommandList() {
-        Cmd list[] = new Cmd[] {Cmd.HELP, Cmd.READ, Cmd.SHOW, Cmd.QUIT};
+        Cmd list[] = new Cmd[] {Cmd.FORMAT, Cmd.HELP, Cmd.READ, Cmd.SHOW,
+                                Cmd.QUIT};
         
         StringBuffer sb = new StringBuffer();
         int i = 0;
@@ -223,18 +224,25 @@ public class Shell {
         String lhelp = Data.LHELP.get(cmd);
         if (lhelp == null) return " " + Data.SHELP.get(cmd);
         
-        String[] words = lhelp.split(" ");
         StringBuffer sb = new StringBuffer();
-        int len = 1;
-        for (String s : words) {
-            len += s.length() + 1;
-            if (len > lim) {
-                len = s.length() + 1;
-                sb.append(System.getProperty("line.separator"));
-            }
+        
+            String[] lines = lhelp.split(System.getProperty("line.separator"));
+            for (int i = 0; i < lines.length; i++) {
+//                sb.append(" ");
+                int len = 1;
+                String[] words = lines[i].split(" ");
+                for (String s : words) {
+                    len += s.length() + 1;
+                    if (len > lim) {
+                        len = s.length() + 1;
+                        sb.append(System.getProperty("line.separator"));
+                    }
 
-            sb.append(" ");
-            sb.append(s);
+                    sb.append(" ");
+                    sb.append(s);
+                }
+                if (i < lines.length-1)
+                    sb.append(System.getProperty("line.separator"));
         }
         return sb.toString();
     }
@@ -253,7 +261,7 @@ public class Shell {
         sb.append("\nSUB COMMANDS\n");
         int i = 0;
         for (Cmd c : subCmds) {
-            sb.append(String.format(" %-20s %s", c, Data.SHELP.get(c)));
+            sb.append(String.format(" %-19s %s", c, Data.SHELP.get(c)));
             if (++i < subCmds.size()) sb.append("\n");
         }
         
@@ -274,9 +282,13 @@ public class Shell {
     private String parseHelp(ShellMsg msg) {
         if (!msg.hasArg()) return generateCommandList();
         
+        
         ShellMsg helpMsg = toShellMsg(msg.arg);
         if (helpMsg == null) 
             return String.format("help: Unknown command '%s'", msg.arg);
+        
+        /* Some exceptional commands */
+        if (helpMsg.cmd == Cmd.FORMAT) return prettyFormat();
         
         Cmd cmd = (helpMsg.isSubCmd()) ? helpMsg.subcmd : helpMsg.cmd;
         
@@ -287,6 +299,22 @@ public class Shell {
         sb.append(getSubCmdList(cmd));
         sb.append(getExampleHelp(cmd));
         return sb.toString();
+    }
+    
+    
+    
+    private String prettyFormat() {
+        String endl = System.getProperty("line.separator");
+        String pretty = getUsage(Cmd.FORMAT) + endl;
+        pretty += getLongHelp(Cmd.FORMAT, 67) + endl;
+        pretty += "AVAILABLE FORMATS:" + endl;
+        pretty += " DECIMAL2" + endl;
+        pretty += "     Force two decimals." + endl;
+        pretty += " FRACTION" + endl;
+        pretty += "     Display numbers as fractions on the format" + endl;
+        pretty += "     numerator/denominator. (default).";
+        return pretty;
+              
     }
     
     
@@ -322,6 +350,20 @@ public class Shell {
         case SHOWOPT:    return output.Output.optimality(curLp);
         case SHOWPRIMAL: return output.Output.primal(curLp, format);
         default: return Data.EHELP;
+        }
+    }
+    
+    
+    
+    private String parseFormat(ShellMsg msg) {
+        if (!msg.hasArg()) return String.format("Current format: %s.", format);
+        
+        try  {
+            Format f = Format.valueOf(msg.arg);
+            format = f;
+            return String.format("Changed format to %s.", f);
+        } catch (Exception e) {
+            return String.format("Invalid format '%s'.", msg.arg);
         }
     }
     

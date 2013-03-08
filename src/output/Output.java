@@ -18,6 +18,8 @@
  */
 package output;
 
+import java.math.BigInteger;
+
 import org.apache.commons.math3.fraction.BigFraction;
 import org.apache.commons.math3.linear.FieldMatrix;
 
@@ -33,93 +35,31 @@ import model.LP;
  */
 public final class Output {
     /* Some enums for output format */
-    public static enum Format {DECIMAL2, DECIMAL4, DECIMAL8, DECIMAL16}
+    public static enum Format {DECIMAL2, DECIMAL4, DECIMAL8, DECIMAL16,
+                               FRACTION}
     
-    /**
-     * Return a nicely formatted {@code String} that represents the
-     * matrix-vector product of the given {@code Matrix} and the
-     * given vector given as an {@code Array} with a given precision.
-     *
-     * @param  A
-     *         A {@code Matrix}.
-     * @param  x
-     *         A vector as an {@code array} of {@code Strings}.
-     * @param  precision
-     *         Limit each double precision number to this many decimals.
-     *         Give a negative value to automatically set precision.
-     * @return
-     *         A nicely formatted {@code String}.
-     */
-    public static String toString(FieldMatrix<BigFraction> A,
-                                  String[] x, int precision) {
-        StringBuilder sb = new StringBuilder();
-        String[][] terms = OMatrix.niceTerms(A, x, precision);
-
-        for (int i = 0; i < A.getRowDimension(); i++) {
-            if (i != 0) {
-                sb.append("\n");
-            }
-            sb.append(OMatrix.join(terms[i], " "));
+    
+    
+    private static String toString(BigFraction bf) {
+        String str = null;
+        BigInteger denominator = bf.getDenominator();
+        BigInteger numerator = bf.getNumerator();
+        if (BigInteger.ONE.equals(denominator)) {
+            str = numerator.toString();
+        } else if (BigInteger.ZERO.equals(numerator)) {
+            str = "0";
+        } else {
+            str = numerator + "/" + denominator;
         }
-        return sb.toString();
+        return str;
     }
     
     
     
-    public static String primal(LP lp, Format numberFormat) {
-        switch (numberFormat) {
-        case DECIMAL2: return primal(lp, 2);
-        case DECIMAL4: return primal(lp, 4);
-        case DECIMAL8: return primal(lp, 8);
-        case DECIMAL16: return primal(lp, 16);
-        default: return primal(lp, 2);
-        }
-    }
-
-
-
-    /*
-     * Return a nicely formatted primal dictionary as a {@code String}.
-     *
-     * @param  lp
-     *         A {@code LP}.
-     * @param  precision
-     *         Limit each double precision number to this many decimals.
-     *         Give a negative value to automatically set precision.
-     * @return
-     *         A nicely formated {@code String}.
-     *         
-     */
-    public static String primal(LP lp, int precision) {
-        FieldMatrix<BigFraction> dict = lp.dictionary();
-
-        String[] basic = OLP.insert(lp.getBasic(), "ζ");
-        String[] nb = OLP.insert(lp.getNonBasic(), "");
-        
-        int max = OLP.longest(basic);
-        String format = String.format("%%%ds = ", max);
-
-        String[][] terms = OMatrix.niceTerms(dict, nb, precision);
-
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < basic.length; i++) {
-            sb.append(String.format(format, basic[i]));
-            sb.append(OMatrix.join(terms[i], " "));
-            if (i < basic.length-1)  sb.append("\n");
-        }
-
-        return sb.toString();
-    }
-    
-    
-    
-    public static String dual(LP lp, Format numberFormat) {
-        switch (numberFormat) {
-        case DECIMAL2: return dual(lp, 2);
-        case DECIMAL4: return dual(lp, 4);
-        case DECIMAL8: return dual(lp, 8);
-        case DECIMAL16: return dual(lp, 16);
-        default: return dual(lp, 2);
+    public static String number(BigFraction bf, Format f) {
+        switch(f) {
+        case FRACTION: return toString(bf);
+        default: return String.format("%.2f", bf.doubleValue());
         }
     }
     
@@ -137,7 +77,7 @@ public final class Output {
      *         A nicely formated {@code String}.
      *         
      */
-    public static String dual(LP lp, int precision) {
+    public static String dual(LP lp, Format f) {
         FieldMatrix<BigFraction> dict = lp.dictionary().transpose()
                 .scalarMultiply(BigFraction.MINUS_ONE);
 
@@ -147,7 +87,7 @@ public final class Output {
         int max = OLP.longest(basic);
         String format = String.format("%%%ds = ", max);
 
-        String[][] terms = OMatrix.niceTerms(dict, nb, precision);
+        String[][] terms = OMatrix.niceTerms(dict, nb, f);
 
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < basic.length; i++) {
@@ -196,4 +136,69 @@ public final class Output {
         return "Incumbent basic solution is not optimal.";
     }
 
+
+
+    /*
+     * Return a nicely formatted primal dictionary as a {@code String}.
+     *
+     * @param  lp
+     *         A {@code LP}.
+     * @param  precision
+     *         Limit each double precision number to this many decimals.
+     *         Give a negative value to automatically set precision.
+     * @return
+     *         A nicely formated {@code String}.
+     *         
+     */
+    public static String primal(LP lp, Format f) {
+        FieldMatrix<BigFraction> dict = lp.dictionary();
+    
+        String[] basic = OLP.insert(lp.getBasic(), "ζ");
+        String[] nb = OLP.insert(lp.getNonBasic(), "");
+        
+        int max = OLP.longest(basic);
+        String format = String.format("%%%ds = ", max);
+    
+        String[][] terms = OMatrix.niceTerms(dict, nb, f);
+    
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < basic.length; i++) {
+            sb.append(String.format(format, basic[i]));
+            sb.append(OMatrix.join(terms[i], " "));
+            if (i < basic.length-1)  sb.append("\n");
+        }
+    
+        return sb.toString();
+    }
+
+
+
+    /**
+     * Return a nicely formatted {@code String} that represents the
+     * matrix-vector product of the given {@code Matrix} and the
+     * given vector given as an {@code Array} with a given precision.
+     *
+     * @param  A
+     *         A {@code Matrix}.
+     * @param  x
+     *         A vector as an {@code array} of {@code Strings}.
+     * @param  precision
+     *         Limit each double precision number to this many decimals.
+     *         Give a negative value to automatically set precision.
+     * @return
+     *         A nicely formatted {@code String}.
+     */
+    public static String toString(FieldMatrix<BigFraction> A,
+                                  String[] x, Format f) {
+        StringBuilder sb = new StringBuilder();
+        String[][] terms = OMatrix.niceTerms(A, x, f);
+    
+        for (int i = 0; i < A.getRowDimension(); i++) {
+            if (i != 0) {
+                sb.append("\n");
+            }
+            sb.append(OMatrix.join(terms[i], " "));
+        }
+        return sb.toString();
+    }
 }

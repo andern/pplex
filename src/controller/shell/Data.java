@@ -65,6 +65,7 @@ public final class Data {
     static enum Cmd {
         CONDITIONS("conditions"),
         EXIT("exit"),
+        FORMAT("format"),
         HELP("help"),
         Q("q"),
         QUIT("quit"),
@@ -74,7 +75,6 @@ public final class Data {
         SHOWFEAS("show feasibility"),
         SHOWOPT("show optimality"),
         SHOWPRIMAL("show primal"),
-        SHOWSOL("show solution"),
         WARRANTY("warranty");
         
         private final String text;
@@ -106,6 +106,7 @@ public final class Data {
         {
             put(Cmd.CONDITIONS, "conditions");
             put(Cmd.EXIT,       "exit");
+            put(Cmd.FORMAT,     "format (format)");
             put(Cmd.HELP,       "help (command)");
             put(Cmd.Q,          "q");
             put(Cmd.QUIT,       "quit");
@@ -115,7 +116,6 @@ public final class Data {
             put(Cmd.SHOWFEAS,   "show feasibility");
             put(Cmd.SHOWOPT,    "show optimality");
             put(Cmd.SHOWPRIMAL, "show primal");
-            put(Cmd.SHOWSOL,    "show solution");
             put(Cmd.WARRANTY,   "warranty");
         }
     };
@@ -132,6 +132,7 @@ public final class Data {
         {
             put(Cmd.CONDITIONS, "show license conditions");
             put(Cmd.EXIT,       "quit the program (q and quit do the same)");
+            put(Cmd.FORMAT,     "change between a number of output formats");
             put(Cmd.HELP,       "show this list");
             put(Cmd.Q,          "quit the program (exit and quit do the same)");
             put(Cmd.QUIT,       "quit the program (exit and q do the same)");
@@ -141,7 +142,6 @@ public final class Data {
             put(Cmd.SHOWFEAS,   "show if incumbent basic solution is feasible");
             put(Cmd.SHOWOPT,    "show if incumbent basic solution is optimal");
             put(Cmd.SHOWPRIMAL, "show the primal dictionary");
-            put(Cmd.SHOWSOL,    "show the incumbent basic solution");
             put(Cmd.WARRANTY,   "show license warranty");
         }
     };
@@ -154,8 +154,17 @@ public final class Data {
     static final Map<Cmd, String> LHELP = new HashMap<Cmd, String>() {
         {
             put(Cmd.CONDITIONS,
-                " show a short summary of the terms and conditions of pplex'"
+                "show a short summary of the terms and conditions of pplex'"
               + " license."
+                );
+            
+            put(Cmd.FORMAT,
+                "Specify an output format for numbers throughout pplex. This"
+              + " only affects the display of numbers, and not how they are"
+              + " stored or how calculations are done."
+              + System.getProperty("line.separator")
+              + "Not specifying any format will output the format currently in"
+              + " use."
                 );
             
             put(Cmd.HELP,
@@ -165,9 +174,11 @@ public final class Data {
             put(Cmd.READ,
                 "read a file of format .lp into the program. read does not"
               + " override the current progress, so it is possible to undo"
-              + " a read. Currently, the .lp file format is only partially"
-              + " supported. That is, only the objective section and the"
-              + " constraints section is supported."
+              + " a read."
+              + System.getProperty("line.separator")
+              + "Currently, the .lp file format is only partially supported."
+              + " That is, only the objective section and the constraints"
+              + " section is supported."
                 );
             
             put(Cmd.SHOW,

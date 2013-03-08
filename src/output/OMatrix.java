@@ -22,6 +22,8 @@ import model.LP;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.apache.commons.math3.linear.FieldMatrix;
 
+import output.Output.Format;
+
 /**
  * Class containing output-methods specifically
  * for the {@code Matrix} object.
@@ -92,11 +94,11 @@ final class OMatrix {
      *         A 2D array of nicely formatted terms.
      */
     static String[][] niceTerms(FieldMatrix<BigFraction> A,
-                                String[] x, int precision) {
+                                String[] x, Format f) {
         int m = A.getRowDimension();
         int n = A.getColumnDimension();
 
-        String[][] terms = terms(A, x, precision);
+        String[][] terms = terms(A, x, f);
         int[] cols = colSizes(terms); // Find longest element in each column.
         /* Is the first column all positive? */
         boolean fcol = 
@@ -107,12 +109,12 @@ final class OMatrix {
             for (int j = 0; j < n; j++) {
                 char sign = signify(A.getEntry(i, j), j);
 
-                String f = String.format("%%c %%%ds", cols[j]);
+                String ff = String.format("%%c %%%ds", cols[j]);
                 if (j == 0 && fcol) {
-                    f = String.format("%%%ds", cols[j]);
-                    niceTerms[i][j] = String.format(f, terms[i][j]);
+                    ff = String.format("%%%ds", cols[j]);
+                    niceTerms[i][j] = String.format(ff, terms[i][j]);
                 } else {
-                    niceTerms[i][j] = String.format(f, sign, terms[i][j]);
+                    niceTerms[i][j] = String.format(ff, sign, terms[i][j]);
                 }
             }
         }
@@ -139,21 +141,15 @@ final class OMatrix {
     /*
      * Format a term as nicely as possible.
      */
-    private static String term(BigFraction coeff, String var, int precision) {
+    private static String term(BigFraction coeff, String var, Format f) {
         if (coeff.equals(BigFraction.ZERO)) {
             return "";
         } else if (coeff.equals(BigFraction.ONE) && !var.trim().equals("")) {
             return var;
         }
-    
-        String f;
-        if (precision < 0) {
-            f = "%s%s"; // Automatically set precision.
-        } else {
-            f = String.format("%%.%df%%s", precision);
-        }
-    
-        return String.format(f, coeff.doubleValue(), var);
+        
+        String cstr = Output.number(coeff, f);
+        return String.format("%s %s", cstr, var);
     }
 
 
@@ -163,7 +159,7 @@ final class OMatrix {
      * in the matrix-vector-product.
      */
     private static String[][] terms(FieldMatrix<BigFraction> A,
-                                    String[] x, int precision) {
+                                    String[] x, Format f) {
         int m = A.getRowDimension();
         int n = A.getColumnDimension();
         String[][] elements = new String[m][n];
@@ -171,7 +167,7 @@ final class OMatrix {
         for (int j = 0; j < n; j++) {
             for (int i = 0; i < m; i++) {
                 BigFraction coeff = A.getEntry(i, j).abs();
-                String element = term(coeff, x[j], precision);
+                String element = term(coeff, x[j], f);
     
                 elements[i][j] = element;
             }
