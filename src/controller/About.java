@@ -28,6 +28,8 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 
+import controller.shell.Data;
+
 /**
  * Class for the about dialog
  * 

@@ -31,6 +31,7 @@ import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.TokenStream;
 
+import controller.VisLP;
 import controller.shell.Data.Cmd;
 
 import output.Output.Format;
@@ -88,10 +89,14 @@ public class Shell {
     
     
     
-    private void addLp(LP lp) {
+    public void addLp(LP lp) {
         lps.add(p, lp);
         redo = 0;
         incLpCounter();
+        
+        // TODO: Solve this in another way?
+        VisLP.readScope = true;
+        VisLP.feasScope = true;
     }
     
     
@@ -114,8 +119,8 @@ public class Shell {
      * Parse a message sent to the shell and return an object easy to parse
      * for other functions.
      */
-    private ShellMsg parse(String input) throws IllegalArgumentException {
-        String msg = input.trim().replaceAll("\\s+", " "); // Remove all extra spaces
+    private ShellMsg parseStr(String input) throws IllegalArgumentException {
+        String msg = input.trim().replaceAll("\\s+", " ");// Remove extra spaces
         
         ShellMsg smsg = toShellMsg(msg);
         if (smsg == null) {
@@ -163,6 +168,16 @@ public class Shell {
     
     
     
+    public String parse(String str) {
+        try {
+            return parse(parseStr(str));
+        } catch (Exception e) {
+            return "";
+        }
+    }
+    
+    
+    
     /*
      * Redirect to correct functions.
      */
@@ -204,10 +219,24 @@ public class Shell {
     
     
     
-    private String getLongHelp(Cmd cmd) {
+    private String getLongHelp(Cmd cmd, int lim) {
         String lhelp = Data.LHELP.get(cmd);
-        if (lhelp != null) return lhelp;
-        return Data.SHELP.get(cmd);
+        if (lhelp == null) return " " + Data.SHELP.get(cmd);
+        
+        String[] words = lhelp.split(" ");
+        StringBuffer sb = new StringBuffer();
+        int len = 1;
+        for (String s : words) {
+            len += s.length() + 1;
+            if (len > lim) {
+                len = s.length() + 1;
+                sb.append(System.getProperty("line.separator"));
+            }
+
+            sb.append(" ");
+            sb.append(s);
+        }
+        return sb.toString();
     }
     
     
@@ -221,10 +250,10 @@ public class Shell {
         if (subCmds == null) return "";
         
         StringBuilder sb = new StringBuilder();
-        sb.append("\n\nSub Commands:\n");
+        sb.append("\nSUB COMMANDS\n");
         int i = 0;
         for (Cmd c : subCmds) {
-            sb.append(String.format("%-20s %s", c, Data.SHELP.get(c)));
+            sb.append(String.format(" %-20s %s", c, Data.SHELP.get(c)));
             if (++i < subCmds.size()) sb.append("\n");
         }
         
@@ -237,7 +266,7 @@ public class Shell {
         String examples = Data.EXHELP.get(cmd);
         if (examples == null) return "";
         
-        return String.format("%nExamples:%n%s", examples);
+        return String.format("%nEXAMPLES%n%s", examples);
     }
     
     
@@ -254,7 +283,7 @@ public class Shell {
         StringBuffer sb = new StringBuffer();
         sb.append(getUsage(cmd));
         sb.append("\n");
-        sb.append(getLongHelp(cmd));
+        sb.append(getLongHelp(cmd, 67));
         sb.append(getSubCmdList(cmd));
         sb.append(getExampleHelp(cmd));
         return sb.toString();
@@ -295,6 +324,19 @@ public class Shell {
         default: return Data.EHELP;
         }
     }
+    
+    
+    
+    /**
+     * 
+     * @return
+     *         The current linear program. Returns null if no current linear
+     *         program exists.
+     */
+    public LP getCurrentProgram() {
+        if (p == 0) return null;
+        return lps.get(p-1);
+    }
         
     
     
@@ -305,7 +347,7 @@ public class Shell {
     
     
     
-    void run() {
+    public void run() {
         Scanner s = new Scanner(System.in);
         System.out.println(Data.FWELCOME);
         for (;;) {
@@ -315,7 +357,7 @@ public class Shell {
             
             ShellMsg cmd = null;
             try {
-                cmd = parse(strcmd);
+                cmd = parseStr(strcmd);
                 System.out.println(parse(cmd));
             } catch (IllegalArgumentException e) {
                 System.out.println(e.getLocalizedMessage());

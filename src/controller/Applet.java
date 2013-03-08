@@ -36,6 +36,8 @@ import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.TokenStream;
 
+import controller.shell.Shell;
+
 import parser.LpFileFormatLexer;
 import parser.LpFileFormatParser;
 
@@ -59,7 +61,7 @@ public class Applet extends JApplet {
     private JMenuItem jmiZoomIn, jmiZoomOut, jmiNormalSize;
     
     private CCSystem ccs;
-    private CLI cli;
+    private Shell shell;
     private Console console;
     
     private LP lp;
@@ -171,8 +173,8 @@ public class Applet extends JApplet {
      */
     public Applet() {
         ccs = new CCSystem();
-        cli = new CLI();
-        console = new Console(cli);
+        shell = new Shell();
+        console = new Console(shell);
         
         jspSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                                             console, ccs);
@@ -261,7 +263,7 @@ public class Applet extends JApplet {
             
             jmiEx.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    cli.addLp(lpExamples.get(s));
+                    shell.addLp(lpExamples.get(s));
                     repaint();
                     console.putText("Loaded example " + s + " successfully.\n");
                 }});
@@ -277,7 +279,7 @@ public class Applet extends JApplet {
     @Override
     public void repaint() {
         super.repaint();
-        lp = cli.getCurrentProgram();
+        lp = shell.getCurrentProgram();
         VisLP.drawLP(ccs, lp);
     }
     

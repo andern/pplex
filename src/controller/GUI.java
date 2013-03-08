@@ -29,6 +29,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 
+import controller.shell.Shell;
+
 import cartesian.coordinate.CCSystem;
 
 import model.LP;
@@ -49,7 +51,7 @@ class GUI extends JFrame {
     private JMenuItem jmiZoomIn, jmiZoomOut, jmiNormalSize;
     
     private CCSystem ccs;
-    private CLI cli;
+    private Shell shell;
     private Console console;
     
     private LP lp;
@@ -66,8 +68,8 @@ class GUI extends JFrame {
         ccs = new CCSystem();
         ccs.setAxesVisible(false);
         ccs.setGridVisible(false);
-        cli = new CLI();
-        console = new Console(cli);
+        shell = new Shell();
+        console = new Console(shell);
         
         jspSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                                             console, ccs);
@@ -159,7 +161,7 @@ class GUI extends JFrame {
     @Override
     public void repaint() {
         super.repaint();
-        lp = cli.getCurrentProgram();
+        lp = shell.getCurrentProgram();
         VisLP.drawLP(ccs, lp);
     }
     

@@ -18,11 +18,13 @@
  */
 package controller;
 
+import controller.shell.Shell;
+
 class Main {
     public static void main(String[] args) {
-        if (args.length > 0 && args[0].equals("-nogui")) { 
-            CLI cli = new CLI();
-            cli.run();
+        if (args.length > 0 && args[0].equals("-nogui")) {
+            Shell shell = new Shell();
+            shell.run();
         } else {
             new GUI();
         }

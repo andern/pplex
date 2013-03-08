@@ -50,10 +50,10 @@ import model.LP;
  * @see     model.LP
  * @see     ccs.Coordinates
  */
-class VisLP {
+public class VisLP {
     private static ArrayList<Point2D> unb;
-    protected static boolean readScope = true;
-    protected static boolean feasScope = true;
+    public static boolean readScope = true;
+    public static boolean feasScope = true;
     
     
     
