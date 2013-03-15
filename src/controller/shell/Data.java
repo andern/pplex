@@ -19,6 +19,7 @@
 package controller.shell;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -67,6 +68,7 @@ public final class Data {
         EXIT("exit"),
         FORMAT("format"),
         HELP("help"),
+        PIVOT("pivot"),
         Q("q"),
         QUIT("quit"),
         READ("read"),
@@ -108,6 +110,7 @@ public final class Data {
             put(Cmd.EXIT,       "exit");
             put(Cmd.FORMAT,     "format (format)");
             put(Cmd.HELP,       "help (command)");
+            put(Cmd.PIVOT,      "pivot (dictionary) <index> (<index>)");
             put(Cmd.Q,          "q");
             put(Cmd.QUIT,       "quit");
             put(Cmd.READ,       "read <file>");
@@ -134,6 +137,7 @@ public final class Data {
             put(Cmd.EXIT,       "quit the program (q and quit do the same)");
             put(Cmd.FORMAT,     "change between a number of output formats");
             put(Cmd.HELP,       "show this list");
+            put(Cmd.PIVOT,      "run one iteration of the simplex method");
             put(Cmd.Q,          "quit the program (exit and quit do the same)");
             put(Cmd.QUIT,       "quit the program (exit and q do the same)");
             put(Cmd.READ,       "read a .lp file and create a model from it");
@@ -149,6 +153,7 @@ public final class Data {
     /*
      * Long help lines to be shown to the user when help <command> is written.
      * These sentences should be properly punctuated and end with a dot.
+     * Line separator is used to change "paragraph".
      */
     @SuppressWarnings("serial")
     static final Map<Cmd, String> LHELP = new HashMap<Cmd, String>() {
@@ -168,7 +173,12 @@ public final class Data {
                 );
             
             put(Cmd.HELP,
-                " show a list of available commands."
+                "show a list of available commands."
+                );
+            
+            put(Cmd.PIVOT,
+                "Run one iteration of the simplex method on the current linear"
+              + " program and print out its dictionary."
                 );
             
             put(Cmd.READ,
@@ -182,7 +192,7 @@ public final class Data {
                 );
             
             put(Cmd.SHOW,
-                "show has several subcommands that prints out various"
+                "show has several subcommands that print out various"
               + " information about the current linear program."
                 );
             
@@ -204,8 +214,41 @@ public final class Data {
     };
     
     @SuppressWarnings("serial")
-    static final Map<Cmd, String> EXHELP = new HashMap<Cmd, String>() {
+    static final Map<Cmd, LinkedHashMap<String, String>> EXHELP = 
+                        new HashMap<Cmd, LinkedHashMap<String, String>>() {
         {
+            put(Cmd.PIVOT, new LinkedHashMap<String, String>() {
+                {
+                    put("pivot primal",
+                        "Run one iteration of the primal simplex method with"
+                      + " entering and leaving variables according to the"
+                      + " largest coefficient rule."
+                        );
+                    
+                    put("pivot",
+                        "Shorthand for 'pivot primal'."
+                        );
+                    
+                    put("pivot dual",
+                        "Same as above, using the dual simplex method."
+                        );
+                    
+                    put("pivot primal 2 3",
+                        "Run one iteration of the primal simplex method with"
+                      + " column 2 being the entering variable and row 3 being"
+                      + " the leaving variable."
+                        );
+                    
+                    put("pivot 2 3",
+                        "Shorthand for the command directly above."
+                        );
+                    
+                    put("pivot dual 2 3",
+                        "Same as the command directly above, using the dual"
+                      + " simplex method."
+                        );
+                }
+            });
         }
     };
 }

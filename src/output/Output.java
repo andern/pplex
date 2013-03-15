@@ -35,8 +35,25 @@ import model.LP;
  */
 public final class Output {
     /* Some enums for output format */
-    public static enum Format {DECIMAL2, DECIMAL4, DECIMAL8, DECIMAL16,
-                               FRACTION}
+    public static enum Format {
+        DECIMAL2("Force two decimals."),
+        DECIMAL4("Force four decimals."),
+        DECIMAL8("Force eight decimals."),
+        DECIMAL16("Force 16 decimals."),
+        FRACTION("Display numbers as fractions on the format numerator/"+
+                 "denominator. (default)")
+        ;
+        
+        String desc;
+        
+        Format(String desc) {
+            this.desc = desc;
+        }
+        
+        public String getDesc() {
+            return desc;
+        }
+    }
     
     
     
