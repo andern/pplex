@@ -10,7 +10,7 @@ the Free Software Foundation, either version 3 of the License, or
 pplex uses Apache Commons Math library for handling matrices. It is released
 under the Apache License, Version 2.0. See lib/LICENSE.TXT for more information.
 
-![pplex supports visualization](https://raw.github.com/andern/pplex/master/doc/teaching_simplex/ex_gui2.png)
+![pplex supports visualization](https://raw.github.com/andern/pplex/master/doc/teaching_simplex/ex_gui3.png)
 [Try the pplex applet!](http://pplex.ii.uib.no)
 
 # Documentation
