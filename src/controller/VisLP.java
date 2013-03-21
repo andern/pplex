@@ -27,6 +27,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
+
 import org.apache.commons.math3.fraction.BigFraction;
 import org.apache.commons.math3.linear.Array2DRowFieldMatrix;
 import org.apache.commons.math3.linear.ArrayFieldVector;
@@ -54,6 +56,7 @@ public class VisLP {
     private static ArrayList<Point2D> unb;
     public static boolean readScope = true;
     public static boolean feasScope = true;
+    public static List<LP> lps = new ArrayList<LP>();
     
     
     

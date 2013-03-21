@@ -29,7 +29,12 @@ import javax.swing.JMenuItem;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 
+import controller.shell.NewShell;
 import controller.shell.Shell;
+import controller.shell.commands.Conditions;
+import controller.shell.commands.Exit;
+import controller.shell.commands.Read;
+import controller.shell.commands.Warranty;
 
 import cartesian.coordinate.CCSystem;
 
@@ -51,7 +56,7 @@ class GUI extends JFrame {
     private JMenuItem jmiZoomIn, jmiZoomOut, jmiNormalSize;
     
     private CCSystem ccs;
-    private Shell shell;
+    private NewShell shell;
     private Console console;
     
     private LP lp;
@@ -68,11 +73,16 @@ class GUI extends JFrame {
         ccs = new CCSystem();
         ccs.setAxesVisible(false);
         ccs.setGridVisible(false);
-        shell = new Shell();
+        
+        shell = new NewShell();
+        shell.addCommand(new Conditions());
+        shell.addCommand(new Read());
+        shell.addCommand(new Warranty());
+        shell.addCommand(new Exit());
+        
         console = new Console(shell);
         
-        jspSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-                                            console, ccs);
+        jspSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, console,ccs);
         jspSplitPane.setDividerSize(3);
         jspSplitPane.setDividerLocation(500);
         jspSplitPane.setResizeWeight(0);

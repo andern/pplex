@@ -36,7 +36,12 @@ import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.TokenStream;
 
+import controller.shell.NewShell;
 import controller.shell.Shell;
+import controller.shell.commands.Conditions;
+import controller.shell.commands.Exit;
+import controller.shell.commands.Read;
+import controller.shell.commands.Warranty;
 
 import parser.LpFileFormatLexer;
 import parser.LpFileFormatParser;
@@ -61,7 +66,7 @@ public class Applet extends JApplet {
     private JMenuItem jmiZoomIn, jmiZoomOut, jmiNormalSize;
     
     private CCSystem ccs;
-    private Shell shell;
+    private NewShell shell;
     private Console console;
     
     private LP lp;
@@ -173,7 +178,11 @@ public class Applet extends JApplet {
      */
     public Applet() {
         ccs = new CCSystem();
-        shell = new Shell();
+        shell = new NewShell();
+        shell.addCommand(new Conditions());
+        shell.addCommand(new Read());
+        shell.addCommand(new Warranty());
+        shell.addCommand(new Exit());
         console = new Console(shell);
         
         jspSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,

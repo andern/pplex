@@ -35,6 +35,7 @@ import org.antlr.runtime.TokenStream;
 import controller.VisLP;
 import controller.shell.Data.Cmd;
 
+import output.Output;
 import output.Output.Format;
 import parser.LpFileFormatLexer;
 import parser.LpFileFormatParser;
@@ -158,57 +159,6 @@ public class Shell {
                 System.out.println(e.getLocalizedMessage());
             }
         }
-    }
-
-
-
-    /*
-     * Cut a string into several strings. Each of the new strings will never
-     * be longer than maxlen. The output will look nice even if the original
-     * string contains newlines.
-     */
-    private String[] cut(String s, int maxlen) {
-        String endl = System.getProperty("line.separator");
-        StringBuilder sb = new StringBuilder();
-        
-        String delim = "";
-        String[] lines = s.split(endl);
-        for (String line : lines) {
-            sb.append(delim).append(cutLine(line, maxlen));
-            delim = endl;
-        }
-        
-        return sb.toString().split(endl);
-    }
-
-
-
-    /*
-     * Cut a string into several lines that are never longer than maxlen. Each
-     * line is separated with the OS's line separator. 
-     */
-    private String cutLine(String s, int maxlen) {
-        String endl = System.getProperty("line.separator");
-        int len = 0;
-        
-        StringBuilder sb = new StringBuilder();
-        String delim = "";
-        String[] words = s.split(" ");
-        for (String word : words) {
-            int wlen = word.length() + delim.length();
-            len += wlen;
-            
-            if (len > maxlen) {
-                len = wlen;
-                sb.append(endl);
-                delim = "";
-            }
-            
-            sb.append(delim).append(word);
-            delim = " ";
-        }
-        
-        return sb.toString();
     }
 
 
@@ -350,6 +300,13 @@ public class Shell {
 
 
 
+    private String[] cut(String longStr, int maxlen) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+
+
     /* Redirect to correct function. */
     private String parse(ShellMsg msg) {
         if(REQ_LP.contains(msg.cmd) && p == 0)
@@ -362,6 +319,7 @@ public class Shell {
         case QUIT:       System.exit(0);
         case FORMAT:     return parseFormat(msg);
         case HELP:       return parseHelp(msg);
+        case PIVOT:      return parsePivot(msg);
         case READ:       return parseRead(msg);
         case SHOW:       return parseShow(msg);
         case WARRANTY:   return Data.WARRANTY;
@@ -382,6 +340,61 @@ public class Shell {
         } catch (Exception e) {
             return String.format("Invalid format '%s'.", msg.arg);
         }
+    }
+    
+    
+    
+    /*
+     * Syntax: pivot (dictionary) <index> (<index>)
+     * 
+     * 
+     */
+    private String parsePivot(ShellMsg msg) {
+        if (!msg.hasArg()) return parsePivot("primal");
+        String[] args = msg.arg.split(" ");
+        
+        // Valid parameters: primal/dual int
+        switch (args.length) {
+        case 1:  return parsePivot(args[0]);
+        case 2:  return parsePivot(args[0], args[1]);
+        case 3:  return parsePivot(args[0], args[1], args[2]);
+        default: return "Invalid parameter. See 'help pivot' for more info.";
+        }
+    }
+    
+    
+    
+    private String parsePivot(String arg1) {
+        if (arg1.equals("primal")) return pivot(false);
+        if (arg1.equals("dual")) return pivot(true);
+        
+        int entering;
+        try {
+            entering = Integer.parseInt(arg1);
+        } catch (NumberFormatException e) {
+            return "pivot: Invalid 'pivot' parameter. "
+                 + "Must be primal/dual or int.";
+        }
+        if (entering < 0)
+            return "pivot: Index must be greater than or equal to 0.";
+        if (entering >= curLp.getNoNonBasic())
+            return "pivot: Index must be less than the number of columns.";
+        
+        return pivot(false, entering);
+        
+    }
+    
+    
+    
+    private String parsePivot(String arg1, String arg2) {
+        return "";
+    }
+    
+    
+    
+    private String parsePivot(String arg1, String arg2, String arg3) {
+        
+        return "";
     }
 
 
@@ -461,7 +474,7 @@ public class Shell {
         case SHOWFEAS:   return output.Output.feasibility(curLp);
         case SHOWOPT:    return output.Output.optimality(curLp);
         case SHOWPRIMAL: return output.Output.primal(curLp, format);
-        default: return Data.EHELP;
+        default:         return Data.EHELP;
         }
     }
 
@@ -484,6 +497,32 @@ public class Shell {
     
     
     
+    private String pivot(boolean dual) {
+        addLp(curLp.pivot(dual));
+        if (dual) return Output.dual(curLp, format);
+        return Output.primal(curLp, format);
+    }
+
+
+
+    private String pivot(boolean dual, int e) {
+        addLp(curLp.pivot(dual, e));
+        if (dual) return Output.dual(curLp, format);
+        return Output.primal(curLp, format);
+    }
+
+
+
+    private String pivot(boolean dual, int e, int l) {
+        if (dual) addLp(curLp.pivot(l, e));
+        else addLp(curLp.pivot(e, l));
+        
+        if (dual) return Output.dual(curLp, format);
+        return Output.primal(curLp, format);
+    }
+
+
+
     /* Print out a pretty list of available output formats. */
     private String prettyFormat() {
         String endl = System.getProperty("line.separator");
