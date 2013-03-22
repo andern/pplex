@@ -66,7 +66,7 @@ public class LP {
      *     0..n-1 and n-1..n+m-1, respectively.
      *
      *     The slack variables are called w1..wm.
-     * </pre></blockquote<p>
+     * </pre></blockquote><p>
      *
      * @param N
      *        A {@code Matrix} with the coefficients
@@ -473,6 +473,23 @@ public class LP {
         nNi[entering] = Bi[leaving];
         
         return new LP(B, N, b, c, nB_, nN_, nb_, nc_, x, nBi, nNi);
+    }
+    
+    
+    
+    /**
+     * Do one iteration of the simplex method. Calculate leaving variable
+     * according to the largest coefficient rule.
+     *
+     * @param  entering
+     *         Index of variable to enter the basis.
+     * @return
+     *         A linear program after one iteration.
+     */
+    public LP pivot(boolean dual, int entering) {
+        int leaving = leaving(entering, dual);
+        if (dual) return pivot(leaving, entering);
+        return pivot(entering, leaving);
     }
 
 
