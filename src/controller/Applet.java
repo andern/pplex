@@ -36,7 +36,6 @@ import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.TokenStream;
 
-import controller.shell.NewShell;
 import controller.shell.Shell;
 import controller.shell.commands.Conditions;
 import controller.shell.commands.Exit;
@@ -66,7 +65,7 @@ public class Applet extends JApplet {
     private JMenuItem jmiZoomIn, jmiZoomOut, jmiNormalSize;
     
     private CCSystem ccs;
-    private NewShell shell;
+    private Shell shell;
     private Console console;
     
     private LP lp;
@@ -178,7 +177,7 @@ public class Applet extends JApplet {
      */
     public Applet() {
         ccs = new CCSystem();
-        shell = new NewShell();
+        shell = new Shell();
         shell.addCommand(new Conditions());
         shell.addCommand(new Read());
         shell.addCommand(new Warranty());

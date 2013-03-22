@@ -29,7 +29,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 
-import controller.shell.NewShell;
 import controller.shell.Shell;
 import controller.shell.commands.Conditions;
 import controller.shell.commands.Exit;
@@ -56,7 +55,7 @@ class GUI extends JFrame {
     private JMenuItem jmiZoomIn, jmiZoomOut, jmiNormalSize;
     
     private CCSystem ccs;
-    private NewShell shell;
+    private Shell shell;
     private Console console;
     
     private LP lp;
@@ -74,7 +73,7 @@ class GUI extends JFrame {
         ccs.setAxesVisible(false);
         ccs.setGridVisible(false);
         
-        shell = new NewShell();
+        shell = new Shell();
         shell.addCommand(new Conditions());
         shell.addCommand(new Read());
         shell.addCommand(new Warranty());

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012, 2013 Andreas Halle
- * 
+ *
  * This file is part of pplex.
  *
  * pplex is free software; you can redistribute it and/or modify
@@ -18,78 +18,135 @@
  */
 package controller.shell;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
-import org.antlr.runtime.ANTLRFileStream;
-import org.antlr.runtime.CharStream;
-import org.antlr.runtime.CommonTokenStream;
-import org.antlr.runtime.TokenStream;
-
-import controller.VisLP;
-import controller.shell.Data.Cmd;
-
-import output.Output;
-import output.Output.Format;
-import parser.LpFileFormatLexer;
-import parser.LpFileFormatParser;
-
 import model.LP;
 
-/**
- * An implementation of the shell for pplex.
- * 
- * @author Andreas Halle
- */
+import controller.VisLP;
+
 public class Shell {
-    /* Save history for each linear program */
-    private ArrayList<LP> lps = new ArrayList<LP>();
-
-    /* Save command history */
-    private ArrayList<String> log = new ArrayList<String>();
+    private Set<Command> cmds = new HashSet<Command>();
     
-    /* Index pointer for the current linear program + 1 */
-    private int p = 0;
+    public static final String PNAME = "pplex";
+    public static final String VERSION = "0.4.1";
+    public static final String COPY = "Copyright(C) 2012, 2013 Andreas Halle";
+    public static final String LINE = 
+            String.format("%s version %s, %s", PNAME, VERSION, COPY);
+    public static final String WELCOME =
+            String.format("Welcome to %s. Type 'help' for a list of available"
+                        + "commands.", PNAME);
+    static final String LICENSE =
+            "This program comes with ABSOLUTELY NO WARRANTY; for details\n"
+          + "type `warranty'. This is free software, and you are welcome\n"
+          + "to redistribute it under certain conditions; type `conditions'\n"
+          + "for details.";
+    public static final String FWELCOME = String.format("%s\n%s\n\n%s",
+            LINE, LICENSE, WELCOME);
     
-    /* Current lp. lps.get(p-1) */
-    private LP curLp = null;
-
-    /* Index pointer for undo/redo operations */
-    private int redo = 0;
     
-    /* Use this output format for numbers */
-    private Format format = Format.FRACTION;
     
-    /* All commands that require a linear program to function. */
-    @SuppressWarnings("serial")
-    private final Set<Cmd> REQ_LP = new HashSet<Cmd>() {
-        {
-            add(Cmd.PIVOT);
-            add(Cmd.SHOW);
+    /**
+     * Cut a {@code String} into several strings. Each of the new strings will
+     * all be shorter than {@code maxlen} characters. Newlines in the output are
+     * taken into account.
+     * 
+     * @param  s
+     *         Input {@code String}. Can contain newlines.
+     * @param  maxlen
+     *         All output strings will contain less characters than this.
+     * @return an {@code Array} of strings with a given max length.
+     */
+    public static String[] cut(String s, int maxlen) {
+        String endl = System.getProperty("line.separator");
+        StringBuilder sb = new StringBuilder();
+        
+        String delim = "";
+        String[] lines = s.split(endl);
+        for (String line : lines) {
+            sb.append(delim).append(cutLine(line, maxlen));
+            delim = endl;
         }
-    };
-    
-    /* All sub commands of all commands that have sub commands. */
-    @SuppressWarnings("serial")
-    private final Map<Cmd, LinkedHashSet<Cmd>> SUBCMDS =
-                                        new HashMap<Cmd, LinkedHashSet<Cmd>>() {
-        {
-            put(Cmd.SHOW, new LinkedHashSet<Cmd>() {
-                {
-                    add(Cmd.SHOWDUAL);
-                    add(Cmd.SHOWFEAS);
-                    add(Cmd.SHOWOPT);
-                    add(Cmd.SHOWPRIMAL);
-                }
-            });
+        
+        return sb.toString().split(endl);
+    }
+
+
+
+    /**
+     * Cut a {@code String} into several lines that all have less characters
+     * than the given max length. Each line is separated with the OS's line
+     * separator. Input {@code String} should not contain newlines.
+     * 
+     * @param  s
+     *         Input {@code String}. Can not contain newlines.
+     * @param  maxlen
+     *         All lines in the output contain less characters than this.
+     * @return a {@code String} with lines with a given max length.
+     */
+    public static String cutLine(String s, int maxlen) {
+        String endl = System.getProperty("line.separator");
+        int len = 0;
+        
+        StringBuilder sb = new StringBuilder();
+        String delim = "";
+        String[] words = s.split(" ");
+        for (String word : words) {
+            int wlen = word.length() + delim.length();
+            len += wlen;
+            
+            if (len > maxlen) {
+                len = wlen;
+                sb.append(endl);
+                delim = "";
+            }
+            
+            sb.append(delim).append(word);
+            delim = " ";
         }
-    };
+        return sb.toString();
+    }
+    
+    
+    
+    /**
+     * Indent a {@code String} in such a way that it has a title and a
+     * corresponding description indented to separate the title and its
+     * description. An example:
+     * <p>
+     * The output looks something like this:
+     * <blockquote><pre>
+     * title        Here is a description of the
+     *              title. In this description,
+     *              each line has less characters
+     *              than the given max length
+     *              (indentation included).
+     * </pre></blockquote>
+     * 
+     * @param  title
+     *         A {@code String} containing a title.
+     * @param  desc
+     *         A {@code String} containing a title's description.
+     * @param  indentLen
+     *         Indent the beginning of each description line with this many
+     *         spaces.
+     * @param  maxlen
+     *         The maximum amount of characters on each line in the description
+     *         (including indentation).
+     * @return 
+     *         a nicely formatted {@code String} with a title and a description.
+     */
+    public static String indent(String title, String desc, int indentLen,
+                                int maxlen) {
+        return indent(title, cut(desc, maxlen), indentLen);
+    }
+    
+    
+    
+    public void addCommand(Command cmd) {
+        cmds.add(cmd);
+    }
     
     
     
@@ -100,9 +157,9 @@ public class Shell {
      * @param lp
      */
     public void addLp(LP lp) {
-        lps.add(p, lp);
-        redo = 0;
-        incLpCounter();
+//        lps.add(p, lp);
+//        redo = 0;
+//        incLpCounter();
         
         // TODO: Solve this in another way?
         VisLP.readScope = true;
@@ -118,12 +175,13 @@ public class Shell {
      *         program exists.
      */
     public LP getCurrentProgram() {
-        if (p == 0) return null;
-        return lps.get(p-1);
+//        if (p == 0) return null;
+//        return lps.get(p-1);
+        return null;
     }
-
-
-
+    
+    
+    
     /**
      * Parse a string (should come from console or gui-console), do what the
      * input says the user wants to do and output some result.
@@ -133,150 +191,106 @@ public class Shell {
      * @return
      *         some (hopefully) informative {@code String}.
      */
-    public String parse(String str) {
-        try {
-            return parse(parseStr(str));
-        } catch (IllegalArgumentException e) {
-            return e.getLocalizedMessage();
-        }
+    public String parse(String input) {
+        String str = input.trim().replaceAll("\\s+", " ");// Remove extra spaces
+        if (str.matches("^help.*")) return help(input);
+        
+        return resolve(str).execute();
     }
-
+    
+    /*
+     * Find a Command in a Set of commands from a String. Return null if no
+     * matching commands where found.
+     */
+    private Command commandFromString(String strCmd, Set<Command> cmds) {
+        for (Command c : cmds) {
+            Set<String> alias = c.getAliases();
+            String name = c.getName();
+            if (name == null) continue;
+            if ((alias != null&&alias.contains(strCmd)) || name.equals(strCmd))
+                return c;
+        }
+        return null;
+    }
+    
+    private Command commandFromString(String strCmd) {
+        return commandFromString(strCmd, cmds);
+    }
+    
+    
+    private Command resolve(Command cmd) {
+        String arg = cmd.getArg();
+        if (arg == null) return cmd;
+        
+        String[] args = arg.split(" ");
+        
+        Set<Command> subcmds = cmd.getSubCommands();
+        if (subcmds == null) return cmd;
+        
+        Command subcmd = commandFromString(args[0], subcmds);
+        if (subcmd == null) return cmd;
+        
+        int idx = arg.indexOf(" ");
+        if (idx == -1) subcmd.setArg(null);
+        else subcmd.setArg(arg.substring(idx+1));
+        
+        return resolve(subcmd);
+    }
+    
+    public Command resolve(String arg) {
+        int idx = arg.indexOf(" ");
+        String newArg = (idx == -1) ? null : arg.substring(idx+1);
+        String strCmd = (idx == -1) ? arg : arg.substring(0, idx);
+        
+        Command cmd = commandFromString(strCmd);
+        if (cmd == null) return null;
+        
+        cmd.setArg(newArg);
+        return resolve(cmd);
+    }
+    
+    
+    
+    /* Output a list of available commands with its short help. */
+    private String generateCommandList() {
+        StringBuffer sb = new StringBuffer();
+        String delim = "";
+        for (Command c : cmds) {
+            sb.append(delim);
+            sb.append(indent(c.getName(), c.getShortHelp(), 20, 47));
+            delim = System.getProperty("line.separator");
+        }
+        return sb.toString();
+    }
+    
+    
+    
+    private String help(String arg) {
+        int idx = arg.indexOf(" ");
+        if (idx == -1) return generateCommandList();
+        
+        String strCmd = (idx == -1) ? arg : arg.substring(idx+1);
+        Command cmd = resolve(strCmd);
+        if (cmd == null) return "help: Unknown command.";
+        
+        return cmd.getHelp();
+    }
 
 
     public void run() {
         Scanner s = new Scanner(System.in);
-        System.out.println(Data.FWELCOME);
+        System.out.println(FWELCOME);
         for (;;) {
             System.out.print("pplex> ");
-            
             String strcmd = s.nextLine();
             
-            ShellMsg cmd = null;
-            try {
-                cmd = parseStr(strcmd);
-                System.out.println(parse(cmd));
-            } catch (IllegalArgumentException e) {
-                System.out.println(e.getLocalizedMessage());
-            }
+            System.out.println(parse(strcmd));
         }
     }
 
 
 
-    private void decLpCounter() {
-        if (p == 0) return;
-        if (p-- == 1) curLp = null;
-        else curLp = lps.get(p-1);
-    }
-
-
-    
-    /* Output a list of available commands with its short help. */
-    private String generateCommandList() {
-        Cmd list[] = new Cmd[] {Cmd.FORMAT, Cmd.HELP, Cmd.PIVOT, Cmd.READ,
-                                Cmd.SHOW, Cmd.QUIT};
-        
-        StringBuffer sb = new StringBuffer();
-        String delim = "";
-        for (Cmd c : list) {
-            sb.append(delim);
-            sb.append(indentTitleText(c.toString(), Data.SHELP.get(c), 20, 47));
-            delim = System.getProperty("line.separator");
-        }
-        return sb.toString();
-    }
-
-
-
-    /*
-     * Return a String with a list of examples for a given command. Includes
-     * leading newline. Return a blank String if there are no examples.
-     */
-    private String getExampleHelp(Cmd cmd) {
-        LinkedHashMap<String, String> ex = Data.EXHELP.get(cmd);
-        if (ex == null) return "";
-        
-        StringBuilder sb = new StringBuilder();
-        sb.append("\nEXAMPLE USAGE\n");
-        Set<String> keys= ex.keySet();
-        String delim = "";
-        for (String key : keys) {
-            String str = ex.get(key);
-            sb.append(delim).append(indentTitleText(" " + key, str, 20, 47));
-            delim = System.getProperty("line.separator");
-        }
-        return sb.toString();
-    }
-
-
-
-    /* 
-     * Return a string containing a long text with help for the specified
-     * command. No lines in the output is longer than the gived limit.
-     */
-    private String getLongHelp(Cmd cmd, int lim) {
-        String lhelp = Data.LHELP.get(cmd);
-        if (lhelp == null) return Data.SHELP.get(cmd);
-        
-        StringBuilder sb = new StringBuilder();
-        
-        String delim = "";
-        String[] lines = cut(lhelp, lim);
-        for (String s : lines) {
-            sb.append(delim).append(" ").append(s);
-            delim = System.getProperty("line.separator");
-        }
-        return sb.toString();
-    }
-
-
-
-    /* 
-     * Return a String with a list of sub commands for a given command. Includes
-     * leading newline. Return a blank String if there are no sub commands.
-     */
-    private String getSubCmdList(Cmd cmd) {
-        Set<Cmd> subCmds = SUBCMDS.get(cmd);
-        if (subCmds == null) return "";
-        
-        StringBuilder sb = new StringBuilder();
-        sb.append("\nSUB COMMANDS\n");
-        
-        String delim = "";
-        for (Cmd c : subCmds) {
-            String str = " " + c.toString();
-            sb.append(delim);
-            sb.append(indentTitleText(str, Data.SHELP.get(c), 20, 47));
-            delim = System.getProperty("line.separator");
-        }
-        
-        return sb.toString();
-    }
-
-
-
-    private String getUsage(Cmd cmd) {
-        return String.format("Usage: %s", Data.SYNTAX.get(cmd));
-    }
-
-
-
-    private void incLpCounter() {
-        curLp = lps.get(p++);
-    }
-
-    
-
-    /*
-     * Indent a help string like this:
-     * 
-     * cmd subcmd arg    This is a long text describing what
-     *                   the command does. This line is split
-     *                   into several lines and indented
-     *                   "properly" in such a way that makes
-     *                   it readable.
-     */
-    private String indentTitleText(String title, String[] lines, int indentLen) {
+    private static String indent(String title, String[] lines, int indentLen) {
         StringBuilder sb = new StringBuilder();
         String format = String.format("%%-%ds %%s", indentLen);
         
@@ -289,305 +303,5 @@ public class Shell {
             delim = System.getProperty("line.separator");
         }
         return sb.toString();
-    }
-
-
-
-    private String indentTitleText(String title, String longStr, int indentLen,
-            int maxlen) {
-        return indentTitleText(title, cut(longStr, maxlen), indentLen);
-    }
-
-
-
-    private String[] cut(String longStr, int maxlen) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-
-
-    /* Redirect to correct function. */
-    private String parse(ShellMsg msg) {
-        if(REQ_LP.contains(msg.cmd) && p == 0)
-            return "No current linear program exists.";
-        
-        switch(msg.cmd) {
-        case CONDITIONS: return Data.CONDITIONS;
-        case EXIT:
-        case Q:
-        case QUIT:       System.exit(0);
-        case FORMAT:     return parseFormat(msg);
-        case HELP:       return parseHelp(msg);
-        case PIVOT:      return parsePivot(msg);
-        case READ:       return parseRead(msg);
-        case SHOW:       return parseShow(msg);
-        case WARRANTY:   return Data.WARRANTY;
-        default:         return "";
-        }
-    }
-
-
-
-    /* Set or show the current format. */
-    private String parseFormat(ShellMsg msg) {
-        if (!msg.hasArg()) return String.format("Current format: %s.", format);
-        
-        try  {
-            Format f = Format.valueOf(msg.arg);
-            format = f;
-            return String.format("Changed format to %s.", f);
-        } catch (Exception e) {
-            return String.format("Invalid format '%s'.", msg.arg);
-        }
-    }
-    
-    
-    
-    /*
-     * Syntax: pivot (dictionary) <index> (<index>)
-     * 
-     * 
-     */
-    private String parsePivot(ShellMsg msg) {
-        if (!msg.hasArg()) return parsePivot("primal");
-        String[] args = msg.arg.split(" ");
-        
-        // Valid parameters: primal/dual int
-        switch (args.length) {
-        case 1:  return parsePivot(args[0]);
-        case 2:  return parsePivot(args[0], args[1]);
-        case 3:  return parsePivot(args[0], args[1], args[2]);
-        default: return "Invalid parameter. See 'help pivot' for more info.";
-        }
-    }
-    
-    
-    
-    private String parsePivot(String arg1) {
-        if (arg1.equals("primal")) return pivot(false);
-        if (arg1.equals("dual")) return pivot(true);
-        
-        int entering;
-        try {
-            entering = Integer.parseInt(arg1);
-        } catch (NumberFormatException e) {
-            return "pivot: Invalid 'pivot' parameter. "
-                 + "Must be primal/dual or int.";
-        }
-        if (entering < 0)
-            return "pivot: Index must be greater than or equal to 0.";
-        if (entering >= curLp.getNoNonBasic())
-            return "pivot: Index must be less than the number of columns.";
-        
-        return pivot(false, entering);
-        
-    }
-    
-    
-    
-    private String parsePivot(String arg1, String arg2) {
-        return "";
-    }
-    
-    
-    
-    private String parsePivot(String arg1, String arg2, String arg3) {
-        
-        return "";
-    }
-
-
-
-    /* 
-     * Return a string with all the help available for a command. Sections
-     * without information about the specified command is omitted.
-     */
-    private String parseHelp(ShellMsg msg) {
-        if (!msg.hasArg()) return generateCommandList();
-        
-        
-        ShellMsg helpMsg = toShellMsg(msg.arg);
-        if (helpMsg == null) 
-            return String.format("help: Unknown command '%s'", msg.arg);
-        
-        /* Some exceptional commands */
-        if (helpMsg.cmd == Cmd.FORMAT) return prettyFormat();
-        
-        Cmd cmd = (helpMsg.isSubCmd()) ? helpMsg.subcmd : helpMsg.cmd;
-        
-        StringBuffer sb = new StringBuffer();
-        sb.append(getUsage(cmd));
-        sb.append("\n");
-        sb.append(getLongHelp(cmd, 67));
-        sb.append(getSubCmdList(cmd));
-        sb.append(getExampleHelp(cmd));
-        return sb.toString();
-    }
-
-
-
-    /*
-     * Parse a file and turn it into an LP object. Set the new LP as the current
-     * LP.
-     * 
-     * NOTE: Please ignore any errors complaining about that the following
-     * classes are missing:
-     *  CharStream
-     *  ANTLRFileStream
-     *  LpFileFormatLexer
-     *  TokenStream
-     *  CommonTokenStream
-     *  LpFileFormatParser
-     *  
-     *  These classes are built at compile time (see ant target 'antlr' in
-     *  build.xml).
-     */
-    private String parseRead(ShellMsg msg) {
-        if (!msg.hasArg()) return getUsage(msg.cmd);
-        try {
-            CharStream stream = new ANTLRFileStream(msg.arg);
-            
-            LpFileFormatLexer lexer = new LpFileFormatLexer(stream);
-            TokenStream tokenStream = new CommonTokenStream(lexer);
-            LpFileFormatParser parser = new LpFileFormatParser(tokenStream);
-            
-            LP lp = parser.lpfromfile();
-            addLp(lp);
-            return "Read " + msg.arg + " OK.";
-        } catch (Exception e) {
-            return "Error reading file: " + e.getLocalizedMessage();
-        }
-    }
-
-
-
-    /* Run the correct sub commands of show */
-    private String parseShow(ShellMsg msg) {
-        if (!msg.isSubCmd()) {
-            if (msg.hasArg()) return Data.EHELP;
-            return output.Output.primal(curLp, format);
-        }
-        
-        switch (msg.subcmd) {
-        case SHOWDUAL:   return output.Output.dual(curLp, format);
-        case SHOWFEAS:   return output.Output.feasibility(curLp);
-        case SHOWOPT:    return output.Output.optimality(curLp);
-        case SHOWPRIMAL: return output.Output.primal(curLp, format);
-        default:         return Data.EHELP;
-        }
-    }
-
-
-
-    /*
-     * Parse a message sent to the shell and return an object easy to parse
-     * for other functions.
-     */
-    private ShellMsg parseStr(String input) throws IllegalArgumentException {
-        String msg = input.trim().replaceAll("\\s+", " ");// Remove extra spaces
-        
-        ShellMsg smsg = toShellMsg(msg);
-        if (smsg == null) {
-            String e = (msg.equals("")) ? "" : Data.EHELP;
-            throw new IllegalArgumentException(e);
-        }
-        return smsg;
-    }
-    
-    
-    
-    private String pivot(boolean dual) {
-        addLp(curLp.pivot(dual));
-        if (dual) return Output.dual(curLp, format);
-        return Output.primal(curLp, format);
-    }
-
-
-
-    private String pivot(boolean dual, int e) {
-        addLp(curLp.pivot(dual, e));
-        if (dual) return Output.dual(curLp, format);
-        return Output.primal(curLp, format);
-    }
-
-
-
-    private String pivot(boolean dual, int e, int l) {
-        if (dual) addLp(curLp.pivot(l, e));
-        else addLp(curLp.pivot(e, l));
-        
-        if (dual) return Output.dual(curLp, format);
-        return Output.primal(curLp, format);
-    }
-
-
-
-    /* Print out a pretty list of available output formats. */
-    private String prettyFormat() {
-        String endl = System.getProperty("line.separator");
-        StringBuilder sb = new StringBuilder("AVAILABLE FORMATS");
-        sb.append(endl);
-        String delim = "";
-        for (Format f : Format.values()) {
-            String str = " " + f.toString();
-            sb.append(delim);
-            sb.append(indentTitleText(str, f.getDesc(), 20, 47));
-            delim = endl;
-        }
-        return sb.toString();
-    }
-
-
-
-    /*
-     * Return a shellmsg object from a string. Assumes no leading/trailing
-     * spaces in input.
-     */
-    private ShellMsg toShellMsg(String str) {
-        int idx1 = str.indexOf(' ');
-        int idx2 = str.indexOf(' ', idx1+1); // Will be -1 if idx1 == -1
-        
-        if (idx1 == -1) { // No subcmd or argument.
-            Cmd cmd = Cmd.fromString(str);
-            if (cmd == null) return null;
-            return new ShellMsg(cmd);
-        }
-        Cmd cmd = Cmd.fromString(str.substring(0, idx1));
-        ShellMsg msg = new ShellMsg(cmd);
-        
-        if (idx2 == -1) { // subcmd or single argument (no spaces).
-            Cmd subCmd = Cmd.fromString(str);
-            if (subCmd == null) msg.arg = str.substring(idx1+1);
-            else msg.subcmd = msg.subcmd = subCmd;
-            return msg;
-        }
-        
-        // subcmd AND argument(s) or several arguments (spaces)
-        Cmd subCmd = Cmd.fromString(str.substring(0, idx2));
-        if (subCmd != null) {
-            msg.subcmd = subCmd;
-            msg.arg = str.substring(idx2+1);
-            return msg;
-        }
-        msg.arg = str.substring(idx1+1);
-        return msg;
-    }
-    
-    
-    
-    private class ShellMsg {
-        private Cmd cmd;
-        private Cmd subcmd;
-        private String arg;
-        
-        ShellMsg(Cmd cmd) {
-            this.cmd = cmd;
-            this.subcmd = null;
-            this.arg = null;
-        }
-        
-        boolean hasArg() { return (arg != null); }
-        boolean isSubCmd() { return (subcmd != null); }
     }
 }

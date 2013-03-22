@@ -35,7 +35,6 @@ import javax.swing.JTextField;
 
 import controller.GUI;
 import controller.shell.Data;
-import controller.shell.NewShell;
 import controller.shell.Shell;
 
 /**
@@ -60,14 +59,14 @@ class Console extends JPanel {
     private ArrayList<String> cliHistory;
     private int p;
     
-    private NewShell shell;
+    private Shell shell;
     
     
     
     /**
      * Initialize the console.
      */
-    public Console(NewShell shell) {
+    public Console(Shell shell) {
         this.shell = shell;
         
         setLayout(new BorderLayout());

@@ -18,7 +18,7 @@
  */
 package controller;
 
-import controller.shell.NewShell;
+import controller.shell.Shell;
 import controller.shell.commands.Conditions;
 import controller.shell.commands.Exit;
 import controller.shell.commands.Read;
@@ -27,7 +27,7 @@ import controller.shell.commands.Warranty;
 class Main {
     public static void main(String[] args) {
         if (args.length > 0 && args[0].equals("-nogui")) {
-            NewShell shell = new NewShell();
+            Shell shell = new Shell();
             shell.addCommand(new Conditions());
             shell.addCommand(new Read());
             shell.addCommand(new Warranty());
