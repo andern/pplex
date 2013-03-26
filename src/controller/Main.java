@@ -28,6 +28,7 @@ class Main {
     public static void main(String[] args) {
         if (args.length > 0 && args[0].equals("-nogui")) {
             Shell shell = new Shell();
+            shell.setWelcomeMsg(Data.FWELCOME);
             shell.addCommand(new Conditions());
             shell.addCommand(new Read());
             shell.addCommand(new Warranty());

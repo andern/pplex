@@ -27,23 +27,8 @@ import model.LP;
 import controller.VisLP;
 
 public class Shell {
+    private String welcome;
     private Set<Command> cmds = new HashSet<Command>();
-    
-    public static final String PNAME = "pplex";
-    public static final String VERSION = "0.4.1";
-    public static final String COPY = "Copyright(C) 2012, 2013 Andreas Halle";
-    public static final String LINE = 
-            String.format("%s version %s, %s", PNAME, VERSION, COPY);
-    public static final String WELCOME =
-            String.format("Welcome to %s. Type 'help' for a list of available"
-                        + "commands.", PNAME);
-    static final String LICENSE =
-            "This program comes with ABSOLUTELY NO WARRANTY; for details\n"
-          + "type `warranty'. This is free software, and you are welcome\n"
-          + "to redistribute it under certain conditions; type `conditions'\n"
-          + "for details.";
-    public static final String FWELCOME = String.format("%s\n%s\n\n%s",
-            LINE, LICENSE, WELCOME);
     
     
     
@@ -156,6 +141,7 @@ public class Shell {
      * 
      * @param lp
      */
+    // TODO: Remove all LP specific stuff from the Shell implementation.
     public void addLp(LP lp) {
 //        lps.add(p, lp);
 //        redo = 0;
@@ -182,6 +168,12 @@ public class Shell {
     
     
     
+    public String getWelcomeMsg() {
+        return welcome;
+    }
+    
+    
+    
     /**
      * Parse a string (should come from console or gui-console), do what the
      * input says the user wants to do and output some result.
@@ -198,6 +190,25 @@ public class Shell {
         return resolve(str).execute();
     }
     
+    public void run() {
+        Scanner s = new Scanner(System.in);
+        System.out.println(welcome);
+        for (;;) {
+            System.out.print("pplex> ");
+            String strcmd = s.nextLine();
+            
+            System.out.println(parse(strcmd));
+        }
+    }
+    
+    
+    
+    public void setWelcomeMsg(String msg) {
+        welcome = msg;
+    }
+
+
+
     /*
      * Find a Command in a Set of commands from a String. Return null if no
      * matching commands where found.
@@ -237,7 +248,7 @@ public class Shell {
         return resolve(subcmd);
     }
     
-    public Command resolve(String arg) {
+    private Command resolve(String arg) {
         int idx = arg.indexOf(" ");
         String newArg = (idx == -1) ? null : arg.substring(idx+1);
         String strCmd = (idx == -1) ? arg : arg.substring(0, idx);
@@ -275,19 +286,6 @@ public class Shell {
         
         return cmd.getHelp();
     }
-
-
-    public void run() {
-        Scanner s = new Scanner(System.in);
-        System.out.println(FWELCOME);
-        for (;;) {
-            System.out.print("pplex> ");
-            String strcmd = s.nextLine();
-            
-            System.out.println(parse(strcmd));
-        }
-    }
-
 
 
     private static String indent(String title, String[] lines, int indentLen) {

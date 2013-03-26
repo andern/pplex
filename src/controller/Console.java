@@ -34,7 +34,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import controller.GUI;
-import controller.shell.Data;
+import controller.Data;
 import controller.shell.Shell;
 
 /**

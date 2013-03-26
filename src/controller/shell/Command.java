@@ -184,7 +184,7 @@ public abstract class Command {
         String delim = "";
         for (String key : keys) {
             String str = ex.get(key);
-            sb.append(delim).append(NewShell.indent(" " + key, str, 20, 47));
+            sb.append(delim).append(Shell.indent(" " + key, str, 20, 47));
             delim = System.getProperty("line.separator");
         }
         return sb.toString();
@@ -207,7 +207,7 @@ public abstract class Command {
         for (Command c : subCmds) {
             String str = " " + c.toString();
             sb.append(delim);
-            sb.append(NewShell.indent(str, Data.SHELP.get(c), 20, 47));
+            sb.append(Shell.indent(str, c.getShortHelp(), 20, 47));
             delim = System.getProperty("line.separator");
         }
         
@@ -224,7 +224,7 @@ public abstract class Command {
         StringBuilder sb = new StringBuilder();
         
         String delim = "";
-        String[] lines = NewShell.cut(lhelp, lim);
+        String[] lines = Shell.cut(lhelp, lim);
         for (String s : lines) {
             sb.append(delim).append(" ").append(s);
             delim = System.getProperty("line.separator");
