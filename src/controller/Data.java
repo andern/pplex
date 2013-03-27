@@ -1,6 +1,12 @@
 package controller;
 
-public class Data {
+import java.util.ArrayList;
+import java.util.List;
+
+import model.LP;
+import output.Output.Format;
+
+public final class Data {
     /* Don't allow instances of this class. */
     private Data() {}
     
@@ -19,4 +25,8 @@ public class Data {
           + "for details.";
     public static final String FWELCOME = String.format("%s\n%s\n\n%s",
             LINE, LICENSE, WELCOME);
+    
+    public static Format format = Format.FRACTION;
+    public static List<LP> lps = new ArrayList<LP>();
+    public static int counter = -1;
 }

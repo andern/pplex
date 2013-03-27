@@ -18,6 +18,9 @@
  */
 package controller.shell.commands;
 
+import java.util.Map;
+import java.util.Set;
+
 import model.LP;
 
 import org.antlr.runtime.ANTLRFileStream;
@@ -31,7 +34,12 @@ import parser.LpFileFormatParser;
 import controller.Data;
 import controller.shell.Command;
 
-public class Read extends Command {
+public class Example extends Command {
+    protected Set<String> getAliases() { return null; }
+    protected Map<String, String> getExamples() { return null; }
+    protected Set<Command> getSubCommands() { return null; }
+    
+    
     protected String getLongHelp() { 
         return "read a file of format .lp into the program. read does not"
              + " override the current progress, so it is possible to undo"

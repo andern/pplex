@@ -18,9 +18,9 @@
  */
 package controller.shell.commands;
 
-import controller.shell.EasyCommand;
+import controller.shell.Command;
 
-public class Conditions extends EasyCommand {
+public class Conditions extends Command {
     protected String getName() { return "conditions"; }
     protected String getShortHelp() { return "show license conditions"; }
     protected String getUsage() { return "conditions"; }

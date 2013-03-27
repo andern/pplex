@@ -18,18 +18,23 @@
  */
 package controller.shell.commands;
 
+import output.Output;
+
+import controller.Data;
 import controller.shell.Command;
 
-public class Warranty extends Command {
-    protected String getName() { return "warranty"; }
-    protected String getShortHelp() { return "show license warranty"; }
-    protected String getUsage() { return "warranty"; }
+public class ShowDual extends Command {
+    protected String getName() { return "dual"; }
+    protected String getShortHelp() { return "show the dual dictionary"; }
+    protected String getUsage() { return "show dual"; }
+    
+    protected String getLongHelp() {
+        return "print out a dual dictionary of the current linear program."
+             + " For the primal, see the 'show primal' command.";
+    }
     
     protected String execute(String arg) {
-        return
-        "This program is distributed in the hope that it will be useful,\n"
-      + "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
-      + "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
-      + "GNU General Public License for more details.";
+        if (Data.counter == -1) return "show: No LP available.";
+        return Output.dual(Data.lps.get(Data.counter), Data.format);
     }
 }

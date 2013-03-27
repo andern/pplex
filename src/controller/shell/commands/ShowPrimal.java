@@ -16,16 +16,25 @@
  * You should have received a copy of the GNU General Public license
  * along with pplex. If not, see <http://www.gnu.org/licenses/>.
  */
-package controller.shell;
+package controller.shell.commands;
 
-import java.util.Map;
-import java.util.Set;
+import output.Output;
 
+import controller.Data;
 import controller.shell.Command;
 
-public abstract class EasyCommand extends Command {
-    protected Set<String> getAliases() { return null; }
-    protected Map<String, String> getExamples() { return null; }
-    protected Set<Command> getSubCommands() { return null; }
-    protected String getLongHelp() { return null; }
+public class ShowPrimal extends Command {
+    protected String getName() { return "primal"; }
+    protected String getShortHelp() { return "show the primal dictionary"; }
+    protected String getUsage() { return "show primal"; }
+    
+    protected String getLongHelp() {
+        return "print out a primal dictionary of the current linear program."
+             + " For the dual, see the 'show dual' command.";
+    }
+    
+    protected String execute(String arg) {
+        if (Data.counter == -1) return "show: No LP available.";
+        return Output.primal(Data.lps.get(Data.counter), Data.format);
+    }
 }

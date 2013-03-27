@@ -18,18 +18,35 @@
  */
 package controller.shell.commands;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import output.Output;
+
+import controller.Data;
 import controller.shell.Command;
 
-public class Warranty extends Command {
-    protected String getName() { return "warranty"; }
-    protected String getShortHelp() { return "show license warranty"; }
-    protected String getUsage() { return "warranty"; }
+public class ShowFeas extends Command {
+    protected String getName() { return "feasibility"; }
+    protected String getUsage() { return "show feasibility"; }
+    
+    protected String getShortHelp() {
+        return "show if incumbent basic solution is feasible";
+    }
     
     protected String execute(String arg) {
-        return
-        "This program is distributed in the hope that it will be useful,\n"
-      + "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
-      + "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
-      + "GNU General Public License for more details.";
+        if (Data.counter == -1) return "show: No LP available.";
+        return Output.feasibility(Data.lps.get(Data.counter));
+    }
+    
+    @SuppressWarnings("serial")
+    protected Set<String> getAliases() {
+        return new HashSet<String>() {
+            {
+                add("feasible");
+                add("feas");
+                add("f");
+            }
+        };
     }
 }

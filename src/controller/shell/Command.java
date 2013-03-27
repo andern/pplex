@@ -22,10 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * An abstract class that shell-commands must extend. For more simple commands
- * without sub commands and/or example help, see {@code EasyCommand}. For
- * simple commands with a long help message, consider extending
- * {@code EasyCommand} and overriding {@code getLongHelp()};
+ * An abstract class that shell-commands must extend.
  * <p>
  * The return values from the abstract values decide how the help-output of
  * a command looks like. A typical help output might look like this:
@@ -43,12 +40,8 @@ import java.util.Set;
  *                                (the key).
  *  another key                   Another description here. Only one line.
  * </pre>
- * <p>
- * Refrain from overriding non-abstract methods as unexpected behavior might
- * occur.
  * 
  * @author Andreas Halle
- * @see    controller.shell.EasyCommand
  */
 public abstract class Command {
     private String arg;
@@ -60,21 +53,21 @@ public abstract class Command {
      * 
      * @return result from code execution.
      */
-    public String execute() { return execute(arg); }
+    public final String execute() { return execute(arg); }
 
     /**
      * Return argument set with {@code setArg(String)}.
      * 
      * @return argument.
      */
-    public String getArg() { return arg; }
+    public final String getArg() { return arg; }
     
     /**
      * Return the help text of a command as a {@code String}.
      * 
      * @return help text.
      */
-    public String getHelp() {
+    public final String getHelp() {
         StringBuffer sb = new StringBuffer();
         sb.append("Usage: ");
         sb.append(getUsage());
@@ -90,7 +83,7 @@ public abstract class Command {
      *  
      * @param arg argument to be given to the command before execution.
      */
-    public void setArg(String arg) { this.arg = arg; } 
+    public final void setArg(String arg) { this.arg = arg; } 
     
     /**
      * This method defines the behavior of the method.
@@ -106,7 +99,7 @@ public abstract class Command {
      * 
      * @return a {@code Set} of {@code Strings}.
      */
-    protected abstract Set<String> getAliases();
+    protected Set<String> getAliases() { return null; }
     
     /**
      * Return a {@code Map} where the keys are example command usage, and the
@@ -119,7 +112,7 @@ public abstract class Command {
      * 
      * @return a {@code Map} of examples.
      */
-    protected abstract Map<String, String> getExamples();
+    protected Map<String, String> getExamples() { return null; }
     
     /**
      * Return a long help text. This text is shown in the top of the command
@@ -127,7 +120,7 @@ public abstract class Command {
      * 
      * @return a long help text.
      */
-    protected abstract String getLongHelp();
+    protected String getLongHelp() { return null; }
 
     /**
      * Return a {@code String} containing the name of the command. This name,
@@ -146,14 +139,14 @@ public abstract class Command {
      * Return a {@code Set} that contains {@code Command} objects that are
      * used as sub commands for this {@code Command} object.
      * <p>
-     * Return a {@code LinkedHashSet} if you want the list to be printed in the
-     * order that you insert them.
+     * Return a {@code LinkedHashSet} if you want the list of sub commands in 
+     * help to be printed in the order that you insert them.
      * <p>
      * Return {@code null} if the command doesn't have any sub commands.
      * 
      * @return a {@code Set} of sub commands.
      */
-    protected abstract Set<Command> getSubCommands();
+    protected Set<Command> getSubCommands() { return null; };
     
     /**
      * Return a short help text. This help text is shown next to each command
@@ -205,7 +198,7 @@ public abstract class Command {
         
         String delim = "";
         for (Command c : subCmds) {
-            String str = " " + c.toString();
+            String str = " " + c.getName();
             sb.append(delim);
             sb.append(Shell.indent(str, c.getShortHelp(), 20, 47));
             delim = System.getProperty("line.separator");

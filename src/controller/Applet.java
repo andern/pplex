@@ -40,6 +40,7 @@ import controller.shell.Shell;
 import controller.shell.commands.Conditions;
 import controller.shell.commands.Exit;
 import controller.shell.commands.Read;
+import controller.shell.commands.Show;
 import controller.shell.commands.Warranty;
 
 import parser.LpFileFormatLexer;
@@ -179,9 +180,10 @@ public class Applet extends JApplet {
         ccs = new CCSystem();
         shell = new Shell();
         shell.addCommand(new Conditions());
-        shell.addCommand(new Read());
-        shell.addCommand(new Warranty());
         shell.addCommand(new Exit());
+        shell.addCommand(new Read());
+        shell.addCommand(new Show());
+        shell.addCommand(new Warranty());
         console = new Console(shell);
         
         jspSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,

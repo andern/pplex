@@ -19,7 +19,6 @@
 package controller.shell.commands;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import controller.shell.Command;
@@ -34,10 +33,6 @@ public class Exit extends Command {
             }
         };
     }
-    
-    protected Map<String, String> getExamples() { return null; }
-    protected Set<Command> getSubCommands() { return null; }
-    protected String getLongHelp() { return null; }
     protected String getName() { return "exit"; }
     
     protected String getShortHelp() {
