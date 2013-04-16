@@ -32,6 +32,8 @@ import javax.swing.KeyStroke;
 import controller.shell.Shell;
 import controller.shell.commands.Conditions;
 import controller.shell.commands.Exit;
+import controller.shell.commands.FormatCmd;
+import controller.shell.commands.Pivot;
 import controller.shell.commands.Read;
 import controller.shell.commands.Show;
 import controller.shell.commands.Warranty;
@@ -77,6 +79,8 @@ class GUI extends JFrame {
         shell = new Shell();
         shell.addCommand(new Conditions());
         shell.addCommand(new Exit());
+        shell.addCommand(new FormatCmd());
+        shell.addCommand(new Pivot());
         shell.addCommand(new Read());
         shell.addCommand(new Show());
         shell.addCommand(new Warranty());

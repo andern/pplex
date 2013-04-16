@@ -17,7 +17,7 @@ public final class Data {
             String.format("%s version %s, %s", PNAME, VERSION, COPY);
     public static final String WELCOME =
             String.format("Welcome to %s. Type 'help' for a list of available"
-                        + "commands.", PNAME);
+                        + " commands.", PNAME);
     static final String LICENSE =
             "This program comes with ABSOLUTELY NO WARRANTY; for details\n"
           + "type `warranty'. This is free software, and you are welcome\n"
