@@ -18,6 +18,9 @@
  */
 package controller.shell.commands;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import output.Output;
 
 import controller.Data;
@@ -36,5 +39,14 @@ public class ShowDual extends Command {
     protected String execute(String arg) {
         if (Data.counter == -1) return "show: No LP available.";
         return Output.dual(Data.lps.get(Data.counter), Data.format);
+    }
+    
+    @SuppressWarnings("serial")
+    protected Set<String> getAliases() {
+        return new HashSet<String>() {
+            { 
+                add("d");
+            }
+        };
     }
 }
