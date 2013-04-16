@@ -95,40 +95,56 @@ public class Pivot extends Command {
     }
     
     protected String getUsage() {
-        return "pivot (<dictionary>) <colindex> (<rowindex>)";
+        return "pivot ((<dictionary>) <colindex> (<rowindex>))";
     }
     
     protected String execute(String arg) {
+        if (arg == null) return pivot(false);
         String[] args = arg.split(" ");
-        return "";
+        String err="Unknown parameters. See 'help pivot' for more information.";
+        
+        boolean primal = args[0].equals("primal") || args[0].equals("p");
+        boolean dual = args[0].equals("dual") || args[0].equals("d");
+        boolean any = primal || dual;
+        
+        int idx = (any) ? 1 : 0;
+        int idx2 = (any) ? 2 : 1;
+        
+        try {
+            if (any && args.length == 1) return pivot(dual);
+            
+            int entering = Integer.parseInt(args[idx]);
+            if (args.length == idx+1) return pivot(dual, entering);
+            
+            int leaving = Integer.parseInt(args[idx2]);
+            if (args.length == idx2+1) return pivot(dual, entering, leaving);
+        } catch (NumberFormatException e) {
+        } catch (RuntimeException e) {
+            System.out.println("runtimeexception");
+            e.printStackTrace();
+            return e.getLocalizedMessage();
+        }
+        return err;
     }
     
-    
-    
-    private String parse(String arg) {
-        return "";
+    private String output(LP curLp, boolean dual) {
+        if (dual) return Output.dual(curLp, Data.format);
+        return Output.primal(curLp, Data.format);
     }
-    
-    
     
     private String pivot(boolean dual) {
         LP curLp = Data.lps.get(Data.counter++).pivot(dual);
         Data.lps.add(curLp);
         
-        if (dual) return Output.dual(curLp, Data.format);
-        return Output.primal(curLp, Data.format);
+        return output(curLp, dual);
     }
-
-
 
     private String pivot(boolean dual, int e) {
         LP curLp = Data.lps.get(Data.counter++).pivot(dual, e);
         Data.lps.add(curLp);
-        if (dual) return Output.dual(curLp, Data.format);
-        return Output.primal(curLp, Data.format);
+        
+        return output(curLp, dual);
     }
-
-
 
     private String pivot(boolean dual, int e, int l) {
         LP curLp = Data.lps.get(Data.counter++);
@@ -136,7 +152,6 @@ public class Pivot extends Command {
         else curLp = curLp.pivot(e, l);
         Data.lps.add(curLp);
         
-        if (dual) return Output.dual(curLp, Data.format);
-        return Output.primal(curLp, Data.format);
+        return output(curLp, dual);
     }
 }
