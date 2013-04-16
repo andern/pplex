@@ -168,9 +168,7 @@ public class Shell {
     
     
     
-    public String getWelcomeMsg() {
-        return welcome;
-    }
+    public String getWelcomeMsg() { return welcome; }
     
     
     
@@ -187,7 +185,12 @@ public class Shell {
         String str = input.trim().replaceAll("\\s+", " ");// Remove extra spaces
         if (str.matches("^help.*")) return help(input);
         
-        return resolve(str).execute();
+        Command res = resolve(str);
+        
+        String e = "Unknown command. Type 'help' for a list of commands.";
+        if (res == null) return e;
+        
+        return res.execute();
     }
     
     public void run() {
@@ -203,9 +206,7 @@ public class Shell {
     
     
     
-    public void setWelcomeMsg(String msg) {
-        welcome = msg;
-    }
+    public void setWelcomeMsg(String msg) { welcome = msg; }
 
 
 
@@ -218,7 +219,7 @@ public class Shell {
             Set<String> alias = c.getAliases();
             String name = c.getName();
             if (name == null) continue;
-            if ((alias != null&&alias.contains(strCmd)) || name.equals(strCmd))
+            if ((alias!=null && alias.contains(strCmd)) || name.equals(strCmd))
                 return c;
         }
         return null;
