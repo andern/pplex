@@ -67,21 +67,21 @@ public final class Data {
     
     
     
-    public static String undo() {
-        if (counter < 0) return "Nothing to undo.";
+    public static int undo() {
+        if (counter < 0) return -1;
 
         counter--;
         redo++;
-        return "";
+        return 0;
     }
     
     
     
-    public static String redo() {
-        if (redo <= 0) return "Nothing to redo.";
+    public static int redo() {
+        if (redo <= 0) return -1;
 
         redo--;
         counter++;
-        return "";
+        return 0;
     }
 }

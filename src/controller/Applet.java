@@ -42,7 +42,9 @@ import controller.shellcommands.Exit;
 import controller.shellcommands.FormatCmd;
 import controller.shellcommands.Pivot;
 import controller.shellcommands.Read;
+import controller.shellcommands.Redo;
 import controller.shellcommands.Show;
+import controller.shellcommands.Undo;
 import controller.shellcommands.Warranty;
 
 import parser.LpFileFormatLexer;
@@ -186,7 +188,9 @@ public class Applet extends JApplet {
         shell.addCommand(new FormatCmd());
         shell.addCommand(new Pivot());
         shell.addCommand(new Read());
+        shell.addCommand(new Redo());
         shell.addCommand(new Show());
+        shell.addCommand(new Undo());
         shell.addCommand(new Warranty());
         console = new Console(shell);
         

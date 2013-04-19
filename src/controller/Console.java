@@ -200,7 +200,7 @@ class Console extends JPanel {
      * Increase the font size of output console.
      */
     protected void increaseFont() {
-        float size = consoleFont.getSize();
+        float size = consoleFont.getSize() + 1.0f;
         if (size <= 100) {
             size++;
             consoleFont = consoleFont.deriveFont(size);
