@@ -32,6 +32,7 @@ class Main {
         if (args.length > 0 && args[0].equals("-nogui")) {
             Shell shell = new Shell();
             shell.setWelcomeMsg(Data.FWELCOME);
+            shell.setPrompt("pplex");
             shell.addCommand(new Conditions());
             shell.addCommand(new Exit());
             shell.addCommand(new FormatCmd());
