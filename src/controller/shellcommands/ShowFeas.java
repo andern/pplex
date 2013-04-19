@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public license
  * along with pplex. If not, see <http://www.gnu.org/licenses/>.
  */
-package controller.shell.commands;
+package controller.shellcommands;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -24,28 +24,28 @@ import java.util.Set;
 import output.Output;
 
 import controller.Data;
-import controller.shell.Command;
+import lightshell.Command;
 
-public class ShowOpt extends Command {
-    protected String getName() { return "optimality"; }
-    protected String getUsage() { return "show optimality"; }
+public class ShowFeas extends Command {
+    protected String getName() { return "feasibility"; }
+    protected String getUsage() { return "show feasibility"; }
     
     protected String getShortHelp() {
-        return "show if incumbent basic solution is optimal";
+        return "show if incumbent basic solution is feasible";
     }
     
     protected String execute(String arg) {
         if (Data.counter == -1) return "show: No LP available.";
-        return Output.optimality(Data.lps.get(Data.counter));
+        return Output.feasibility(Data.lps.get(Data.counter));
     }
     
     @SuppressWarnings("serial")
     protected Set<String> getAliases() {
         return new HashSet<String>() {
             {
-                add("optimal");
-                add("opt");
-                add("o");
+                add("feasible");
+                add("feas");
+                add("f");
             }
         };
     }

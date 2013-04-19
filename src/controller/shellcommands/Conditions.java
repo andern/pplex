@@ -16,33 +16,20 @@
  * You should have received a copy of the GNU General Public license
  * along with pplex. If not, see <http://www.gnu.org/licenses/>.
  */
-package controller.shell.commands;
+package controller.shellcommands;
 
-import java.util.HashSet;
-import java.util.Set;
+import lightshell.Command;
 
-import controller.shell.Command;
-
-public class Exit extends Command {
-    @SuppressWarnings("serial")
-    protected Set<String> getAliases() {
-        return new HashSet<String>() {
-            { 
-                add("q");
-                add("quit");
-            }
-        };
-    }
-    protected String getName() { return "exit"; }
-    
-    protected String getShortHelp() {
-        return "quit the program (q and quit do the same)";
-    }
-    
-    protected String getUsage() { return "exit"; }
+public class Conditions extends Command {
+    protected String getName() { return "conditions"; }
+    protected String getShortHelp() { return "show license conditions"; }
+    protected String getUsage() { return "conditions"; }
     
     protected String execute(String arg) {
-        System.exit(0);
-        return null;
+        return
+        "This program is free software: you can redistribute it and/or modify\n"
+      + "it under the terms of the GNU General Public License as published by\n"
+      + "the Free Software Foundation, either version 3 of the License, or\n"
+      + "(at your option) any later version.";
     }
 }

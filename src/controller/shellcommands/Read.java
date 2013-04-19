@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public license
  * along with pplex. If not, see <http://www.gnu.org/licenses/>.
  */
-package controller.shell.commands;
+package controller.shellcommands;
 
 import model.LP;
 
@@ -29,7 +29,7 @@ import parser.LpFileFormatLexer;
 import parser.LpFileFormatParser;
 
 import controller.Data;
-import controller.shell.Command;
+import lightshell.Command;
 
 public class Read extends Command {
     protected String getLongHelp() { 

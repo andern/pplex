@@ -16,12 +16,12 @@
  * You should have received a copy of the GNU General Public license
  * along with pplex. If not, see <http://www.gnu.org/licenses/>.
  */
-package controller.shell.commands;
+package controller.shellcommands;
 
 import output.Output.Format;
 import controller.Data;
-import controller.shell.Command;
-import controller.shell.Shell;
+import lightshell.Command;
+import lightshell.Shell;
 
 public class FormatCmd extends Command {
     protected String getLongHelp() { 

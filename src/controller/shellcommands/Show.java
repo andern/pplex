@@ -16,36 +16,55 @@
  * You should have received a copy of the GNU General Public license
  * along with pplex. If not, see <http://www.gnu.org/licenses/>.
  */
-package controller.shell.commands;
+package controller.shellcommands;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import output.Output;
 
 import controller.Data;
-import controller.shell.Command;
+import lightshell.Command;
+import controller.shellcommands.ShowDual;
+import controller.shellcommands.ShowFeas;
+import controller.shellcommands.ShowOpt;
+import controller.shellcommands.ShowPrimal;
 
-public class ShowFeas extends Command {
-    protected String getName() { return "feasibility"; }
-    protected String getUsage() { return "show feasibility"; }
+public class Show extends Command {
+    protected String getName() { return "show"; }
+    protected String getUsage() { return "show (<subcommand>)"; }
     
+    protected String getLongHelp() { 
+        return "show has several subcommands that print out various"
+             + " information about the current linear program.";
+    }
     protected String getShortHelp() {
-        return "show if incumbent basic solution is feasible";
+        return "show info about the current linear program";
     }
     
     protected String execute(String arg) {
         if (Data.counter == -1) return "show: No LP available.";
-        return Output.feasibility(Data.lps.get(Data.counter));
+        return Output.primal(Data.lps.get(Data.counter), Data.format);
     }
     
     @SuppressWarnings("serial")
     protected Set<String> getAliases() {
         return new HashSet<String>() {
             {
-                add("feasible");
-                add("feas");
-                add("f");
+                add("s");
+            }
+        };
+    }
+    
+    @SuppressWarnings("serial")
+    protected Set<Command> getSubCommands() {
+        return new LinkedHashSet<Command>() {
+            {
+                add(new ShowDual());
+                add(new ShowFeas());
+                add(new ShowOpt());
+                add(new ShowPrimal());
             }
         };
     }

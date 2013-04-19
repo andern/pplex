@@ -35,7 +35,7 @@ import javax.swing.JTextField;
 
 import controller.GUI;
 import controller.Data;
-import controller.shell.Shell;
+import lightshell.Shell;
 
 /**
  * The {@code Console} class represents a visual/graphical console

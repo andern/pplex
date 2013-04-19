@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public license
  * along with pplex. If not, see <http://www.gnu.org/licenses/>.
  */
-package controller.shell.commands;
+package controller.shellcommands;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -28,7 +28,7 @@ import output.Output;
 import model.LP;
 
 import controller.Data;
-import controller.shell.Command;
+import lightshell.Command;
 
 public class Pivot extends Command {
     @SuppressWarnings("serial")

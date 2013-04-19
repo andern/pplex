@@ -29,14 +29,15 @@ import javax.swing.JMenuItem;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 
-import controller.shell.Shell;
-import controller.shell.commands.Conditions;
-import controller.shell.commands.Exit;
-import controller.shell.commands.FormatCmd;
-import controller.shell.commands.Pivot;
-import controller.shell.commands.Read;
-import controller.shell.commands.Show;
-import controller.shell.commands.Warranty;
+
+import lightshell.Shell;
+import controller.shellcommands.Conditions;
+import controller.shellcommands.Exit;
+import controller.shellcommands.FormatCmd;
+import controller.shellcommands.Pivot;
+import controller.shellcommands.Read;
+import controller.shellcommands.Show;
+import controller.shellcommands.Warranty;
 
 import cartesian.coordinate.CCSystem;
 
@@ -176,7 +177,7 @@ class GUI extends JFrame {
     @Override
     public void repaint() {
         super.repaint();
-        lp = shell.getCurrentProgram();
+        //lp = shell.getCurrentProgram();
         VisLP.drawLP(ccs, lp);
     }
     

@@ -16,20 +16,25 @@
  * You should have received a copy of the GNU General Public license
  * along with pplex. If not, see <http://www.gnu.org/licenses/>.
  */
-package controller.shell.commands;
+package controller.shellcommands;
 
-import controller.shell.Command;
+import output.Output;
 
-public class Conditions extends Command {
-    protected String getName() { return "conditions"; }
-    protected String getShortHelp() { return "show license conditions"; }
-    protected String getUsage() { return "conditions"; }
+import controller.Data;
+import lightshell.Command;
+
+public class ShowPrimal extends Command {
+    protected String getName() { return "primal"; }
+    protected String getShortHelp() { return "show the primal dictionary"; }
+    protected String getUsage() { return "show primal"; }
+    
+    protected String getLongHelp() {
+        return "print out a primal dictionary of the current linear program."
+             + " For the dual, see the 'show dual' command.";
+    }
     
     protected String execute(String arg) {
-        return
-        "This program is free software: you can redistribute it and/or modify\n"
-      + "it under the terms of the GNU General Public License as published by\n"
-      + "the Free Software Foundation, either version 3 of the License, or\n"
-      + "(at your option) any later version.";
+        if (Data.counter == -1) return "show: No LP available.";
+        return Output.primal(Data.lps.get(Data.counter), Data.format);
     }
 }

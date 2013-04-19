@@ -16,25 +16,37 @@
  * You should have received a copy of the GNU General Public license
  * along with pplex. If not, see <http://www.gnu.org/licenses/>.
  */
-package controller.shell.commands;
+package controller.shellcommands;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import output.Output;
 
 import controller.Data;
-import controller.shell.Command;
+import lightshell.Command;
 
-public class ShowPrimal extends Command {
-    protected String getName() { return "primal"; }
-    protected String getShortHelp() { return "show the primal dictionary"; }
-    protected String getUsage() { return "show primal"; }
+public class ShowDual extends Command {
+    protected String getName() { return "dual"; }
+    protected String getShortHelp() { return "show the dual dictionary"; }
+    protected String getUsage() { return "show dual"; }
     
     protected String getLongHelp() {
-        return "print out a primal dictionary of the current linear program."
-             + " For the dual, see the 'show dual' command.";
+        return "print out a dual dictionary of the current linear program."
+             + " For the primal, see the 'show primal' command.";
     }
     
     protected String execute(String arg) {
         if (Data.counter == -1) return "show: No LP available.";
-        return Output.primal(Data.lps.get(Data.counter), Data.format);
+        return Output.dual(Data.lps.get(Data.counter), Data.format);
+    }
+    
+    @SuppressWarnings("serial")
+    protected Set<String> getAliases() {
+        return new HashSet<String>() {
+            { 
+                add("d");
+            }
+        };
     }
 }
