@@ -59,8 +59,7 @@ public class Read extends Command {
             LpFileFormatParser parser = new LpFileFormatParser(tokenStream);
             
             LP lp = parser.lpfromfile();
-            Data.lps.add(lp);
-            Data.counter++;
+            Data.addLp(lp);
             return "Read " + arg + " OK.";
         } catch (Exception e) {
             return "Error reading file: " + e.getLocalizedMessage();

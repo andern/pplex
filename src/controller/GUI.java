@@ -177,7 +177,7 @@ class GUI extends JFrame {
     @Override
     public void repaint() {
         super.repaint();
-        //lp = shell.getCurrentProgram();
+        lp = Data.getCurrentProgram();
         VisLP.drawLP(ccs, lp);
     }
     

@@ -293,7 +293,7 @@ public class Applet extends JApplet {
     @Override
     public void repaint() {
         super.repaint();
-        //lp = shell.getCurrentProgram();
+        lp = Data.getCurrentProgram();
         VisLP.drawLP(ccs, lp);
     }
     

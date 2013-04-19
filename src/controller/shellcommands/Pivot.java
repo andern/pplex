@@ -72,6 +72,12 @@ public class Pivot extends Command {
                     "Same as the command directly above, using the dual"
                   + " simplex method."
                     );
+                put("pivot 2",
+                    "Run one iteration of the primal simplex method with"
+                  + " column 2 being the entering variable. The leaving"
+                  + " variable is calculated according to the largest"
+                  + " coefficient rule."
+                    );
             }};
     }
     
@@ -99,7 +105,7 @@ public class Pivot extends Command {
     }
     
     protected String execute(String arg) {
-        if (arg == null) return pivot(false);
+        if (arg == null) return execute("primal");
         String[] args = arg.split(" ");
         String err="Unknown parameters. See 'help pivot' for more information.";
         
@@ -120,8 +126,6 @@ public class Pivot extends Command {
             if (args.length == idx2+1) return pivot(dual, entering, leaving);
         } catch (NumberFormatException e) {
         } catch (RuntimeException e) {
-            System.out.println("runtimeexception");
-            e.printStackTrace();
             return e.getLocalizedMessage();
         }
         return err;
@@ -133,24 +137,24 @@ public class Pivot extends Command {
     }
     
     private String pivot(boolean dual) {
-        LP curLp = Data.lps.get(Data.counter++).pivot(dual);
-        Data.lps.add(curLp);
+    	LP curLp = Data.getCurrentProgram().pivot(dual);
+    	Data.addLp(curLp);
         
         return output(curLp, dual);
     }
 
     private String pivot(boolean dual, int e) {
-        LP curLp = Data.lps.get(Data.counter++).pivot(dual, e);
-        Data.lps.add(curLp);
+    	LP curLp = Data.getCurrentProgram().pivot(dual, e);
+    	Data.addLp(curLp);
         
         return output(curLp, dual);
     }
 
     private String pivot(boolean dual, int e, int l) {
-        LP curLp = Data.lps.get(Data.counter++);
+    	LP curLp = Data.getCurrentProgram();
         if (dual) curLp = curLp.pivot(l, e);
         else curLp = curLp.pivot(e, l);
-        Data.lps.add(curLp);
+        Data.addLp(curLp);
         
         return output(curLp, dual);
     }

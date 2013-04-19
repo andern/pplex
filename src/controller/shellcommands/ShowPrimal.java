@@ -35,6 +35,6 @@ public class ShowPrimal extends Command {
     
     protected String execute(String arg) {
         if (Data.counter == -1) return "show: No LP available.";
-        return Output.primal(Data.lps.get(Data.counter), Data.format);
+        return Output.primal(Data.getCurrentProgram(), Data.format);
     }
 }

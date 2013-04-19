@@ -36,7 +36,7 @@ public class ShowFeas extends Command {
     
     protected String execute(String arg) {
         if (Data.counter == -1) return "show: No LP available.";
-        return Output.feasibility(Data.lps.get(Data.counter));
+        return Output.feasibility(Data.getCurrentProgram());
     }
     
     @SuppressWarnings("serial")

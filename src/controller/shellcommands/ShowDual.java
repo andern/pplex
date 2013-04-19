@@ -38,7 +38,7 @@ public class ShowDual extends Command {
     
     protected String execute(String arg) {
         if (Data.counter == -1) return "show: No LP available.";
-        return Output.dual(Data.lps.get(Data.counter), Data.format);
+        return Output.dual(Data.getCurrentProgram(), Data.format);
     }
     
     @SuppressWarnings("serial")
