@@ -28,7 +28,7 @@ public class Undo extends Command {
     
     protected String execute(String arg) {
     	int err = Data.undo();
-    	if (err == -1) return "Nothing to undo.";
+    	if (err == -1) return "undo: Nothing to undo.";
     	return "";
     }
 }

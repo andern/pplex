@@ -107,7 +107,6 @@ public class Pivot extends Command {
     protected String execute(String arg) {
         if (arg == null) return execute("primal");
         String[] args = arg.split(" ");
-        String err="Unknown parameters. See 'help pivot' for more information.";
         
         boolean primal = args[0].equals("primal") || args[0].equals("p");
         boolean dual = args[0].equals("dual") || args[0].equals("d");
@@ -126,9 +125,11 @@ public class Pivot extends Command {
             if (args.length == idx2+1) return pivot(dual, entering, leaving);
         } catch (NumberFormatException e) {
         } catch (RuntimeException e) {
-            return e.getLocalizedMessage();
+        	return String.format("pivot: %s", e.getLocalizedMessage());
         }
-        return err;
+        String err = 
+        		"Unknown parameters. See 'help pivot' for more information.";
+        return String.format("pivot: %s", err);
     }
     
     private String output(LP curLp, boolean dual) {

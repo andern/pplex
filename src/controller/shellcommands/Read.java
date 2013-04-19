@@ -51,6 +51,7 @@ public class Read extends Command {
     protected String getUsage() { return "read <file>"; }
     
     protected String execute(String arg) {
+    	if (arg == null) return "read: missing <file> parameter.";
         try {
             CharStream stream = new ANTLRFileStream(arg);
             
@@ -62,7 +63,8 @@ public class Read extends Command {
             Data.addLp(lp);
             return "Read " + arg + " OK.";
         } catch (Exception e) {
-            return "Error reading file: " + e.getLocalizedMessage();
+        	return "read: Error reading file: " + e.getLocalizedMessage();
         }
+        
     }
 }

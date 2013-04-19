@@ -45,7 +45,7 @@ public class FormatCmd extends Command {
     
     protected String execute(String arg) {
         if (arg == null || arg.length() == 0) 
-            return String.format("Current format: %s.", arg);
+            return String.format("Current format: %s.", Data.format);
         
         try  {
             Format f = Format.valueOf(arg);

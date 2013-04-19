@@ -28,7 +28,7 @@ public class Redo extends Command {
     
     protected String execute(String arg) {
     	int err = Data.redo();
-    	if (err == -1) return "Nothing to redo.";
+    	if (err == -1) return "redo: Nothing to redo.";
     	return "";
     }
 }
