@@ -1,6 +1,6 @@
 TODO UPDATE THIS - 0.5.0
 ==========================
-* NEW FEATURE: Numbers can now be output in fractions. Input files can also
+* NEW FEATURE: Numbers can now be output as fractions. Input files can also
                contain fractions on the format 'integer/integer'.
 * NEW FEATURE: Added a 'format' command that lets the user change the output
                format of numbers.
