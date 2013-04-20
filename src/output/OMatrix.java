@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Andreas Halle
+ * Copyright (C) 2012, 2013 Andreas Halle
  *
  * This file is part of pplex.
  *

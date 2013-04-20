@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Andreas Halle
+ * Copyright (C) 2012, 2013 Andreas Halle
  *
  * This file is part of pplex.
  *
@@ -58,7 +58,7 @@ public class About extends JDialog implements ActionListener {
                             + "<br>A pedagogical implementation of the"
                             + " simplex method.<br>"
                             + "<br>"
-                            + "Copyright (C) 2012 Andreas Halle"
+                            + Data.COPY
                             + "<br>");
         
         gbc.gridx = 0;
