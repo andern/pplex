@@ -6,10 +6,22 @@ grammar LpFileFormat;
     import org.apache.commons.math3.fraction.BigFraction;
     import org.apache.commons.math3.linear.Array2DRowFieldMatrix;
     import org.apache.commons.math3.linear.ArrayFieldVector;
+    import java.math.BigInteger;
     import java.util.Map.Entry;
     import model.LP;
+    
 }
 @lexer::header { package parser; }
+
+@parser::members {
+    BigFraction evalFrac(String arg) {
+        String[] args = arg.split("\\/");
+        BigInteger int1 = new BigInteger(args[0]);
+        BigInteger int2 = new BigInteger(args[1]);
+
+        return new BigFraction(int1, int2);
+    }
+}
 
 // Ignore all newlines, spaces and tabs.
 WS
@@ -89,6 +101,10 @@ NUMBER
     |   ('0'..'9')+                 (('e' | 'E') ('+' | '-')? '0'..'9'+)? ('f' | 'd')? // Allow "1e1"
     ;
 
+FRAC
+    :   ('0'..'9')+ '/' ('0'..'9')+
+    ;
+
 // Basically evaluates a NUMBER with any number of + and - signs.
 term returns [BigFraction val]
     :   { boolean positive = true; }
@@ -101,7 +117,19 @@ term returns [BigFraction val]
     |   NUMBER {
             $val = new BigFraction(Double.valueOf($NUMBER.text));
         }
+    |   { boolean positive = true; }
+        ('+' | '-' { positive = !positive; })+ FRAC {
+            $val = evalFrac($FRAC.text);
+            if (!positive) {
+                $val = $val.negate();
+            }
+        }
+
+    |   FRAC {
+            $val = evalFrac($FRAC.text);
+        }
     ;
+    
 ////////////////////////// END NUMBER STUFF //////////////////////////
 
 ////////////////////////// VARIABLE STUFF //////////////////////////
