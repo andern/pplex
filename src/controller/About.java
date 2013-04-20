@@ -18,15 +18,24 @@
  */
 package controller;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 
 import controller.Data;
 
@@ -39,39 +48,51 @@ public class About extends JDialog implements ActionListener {
     private static final long serialVersionUID = 1L;
     
     private JButton jbnOK;
-    private JLabel jlbLabel;
+    private JLabel jlbLogo, jlbText;
     
     
     
     public About() {
         setTitle("About");
-        setPreferredSize(new Dimension(420, 380));
+        //setPreferredSize(new Dimension(420, 380));
         setResizable(false);
         setLocationRelativeTo(null);
         
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(2, 0, 0, 0);
         
-        /* Adding a label */
-        jlbLabel = new JLabel("<html><br>pplex<br>"
-                            + "version " + Data.VERSION + "<br>"
-                            + "<br>A pedagogical implementation of the"
-                            + " simplex method.<br>"
-                            + "<br>"
-                            + Data.COPY
-                            + "<br>");
-        
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        add(jlbLabel, gbc);
-        
-        /* Adding an OK button */
-        jbnOK = new JButton("OK");
-        jbnOK.addActionListener(this);
+        /* Try to add the logo */
+		try {
+			BufferedImage logo;
+			logo = ImageIO.read(new File("res/big_icon.png"));
+			jlbLogo = new JLabel(new ImageIcon(logo));
+			jlbLogo.setHorizontalAlignment(SwingConstants.LEFT);
+	        gbc.gridx = 0;
+	        gbc.gridy = 0;
+	        gbc.gridwidth = 2;
+	        gbc.fill = GridBagConstraints.HORIZONTAL;
+	        add(jlbLogo, gbc);
+		} catch (IOException e) {
+			/* Don't add the logo if error occurs. */
+		}
+		
+		jlbText = new JLabel("<html>"
+              + "pplex <br>"
+              + "Version " + Data.VERSION + "<br>"
+              + "A pedagogical implementation of the simplex method <br>"
+              + Data.COPY + "<br>"
+              + "</html>");
         gbc.gridx = 0;
         gbc.gridy = 1;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        add(jlbText, gbc);
+        
+        jbnOK = new JButton("OK");
+        jbnOK.addActionListener(this);
+        gbc.gridx = 3;
+        gbc.gridy = 2;
         gbc.gridwidth = 1;
         add(jbnOK, gbc);
         
