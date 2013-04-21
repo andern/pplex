@@ -106,6 +106,9 @@ public class Pivot extends Command {
     
     protected String execute(String arg) {
         if (arg == null) return execute("primal");
+        LP lp = Data.getCurrentProgram();
+        if (lp == null) return "pivot: No current linear program loaded.";
+        
         String[] args = arg.split(" ");
         
         boolean primal = args[0].equals("primal") || args[0].equals("p");
@@ -116,13 +119,13 @@ public class Pivot extends Command {
         int idx2 = (any) ? 2 : 1;
         
         try {
-            if (any && args.length == 1) return pivot(dual);
+            if (any && args.length == 1) return pivot(lp, dual);
             
             int entering = Integer.parseInt(args[idx]);
-            if (args.length == idx+1) return pivot(dual, entering);
+            if (args.length == idx+1) return pivot(lp, dual, entering);
             
             int leaving = Integer.parseInt(args[idx2]);
-            if (args.length == idx2+1) return pivot(dual, entering, leaving);
+            if (args.length == idx2+1) return pivot(lp,dual,entering,leaving);
         } catch (NumberFormatException e) {
         } catch (RuntimeException e) {
         	return String.format("pivot: %s", e.getLocalizedMessage());
@@ -137,24 +140,24 @@ public class Pivot extends Command {
         return Output.primal(curLp, Data.format);
     }
     
-    private String pivot(boolean dual) {
-    	LP curLp = Data.getCurrentProgram().pivot(dual);
+    private String pivot(LP lp, boolean dual) {
+    	LP curLp = lp.pivot(dual);
     	Data.addLp(curLp);
         
         return output(curLp, dual);
     }
 
-    private String pivot(boolean dual, int e) {
-    	LP curLp = Data.getCurrentProgram().pivot(dual, e);
+    private String pivot(LP lp, boolean dual, int e) {
+    	LP curLp = lp.pivot(dual, e);
     	Data.addLp(curLp);
         
         return output(curLp, dual);
     }
 
-    private String pivot(boolean dual, int e, int l) {
-    	LP curLp = Data.getCurrentProgram();
-        if (dual) curLp = curLp.pivot(l, e);
-        else curLp = curLp.pivot(e, l);
+    private String pivot(LP lp, boolean dual, int e, int l) {
+    	LP curLp;
+        if (dual) curLp = lp.pivot(l, e);
+        else curLp = lp.pivot(e, l);
         Data.addLp(curLp);
         
         return output(curLp, dual);

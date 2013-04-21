@@ -25,6 +25,7 @@ import output.Output;
 
 import controller.Data;
 import lightshell.Command;
+import model.LP;
 
 public class ShowFeas extends Command {
     protected String getName() { return "feasibility"; }
@@ -35,8 +36,11 @@ public class ShowFeas extends Command {
     }
     
     protected String execute(String arg) {
-        if (Data.counter == -1) return "show: No LP available.";
-        return Output.feasibility(Data.getCurrentProgram());
+    	if (arg != null) return "show feasibility: Command does not take any"
+    			              + "arguments.";
+    	LP lp = Data.getCurrentProgram();
+        if (lp == null) return "show: No current linear program loaded.";
+        return Output.feasibility(lp);
     }
     
     @SuppressWarnings("serial")

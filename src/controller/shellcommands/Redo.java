@@ -27,8 +27,9 @@ public class Redo extends Command {
     protected String getUsage() { return "redo"; }
     
     protected String execute(String arg) {
+    	if (arg != null) return "redo: Command does not take any arguments.";
     	int err = Data.redo();
     	if (err == -1) return "redo: Nothing to redo.";
-    	return "";
+    	return null;
     }
 }

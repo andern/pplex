@@ -22,6 +22,7 @@ import output.Output;
 
 import controller.Data;
 import lightshell.Command;
+import model.LP;
 
 public class ShowPrimal extends Command {
     protected String getName() { return "primal"; }
@@ -34,7 +35,10 @@ public class ShowPrimal extends Command {
     }
     
     protected String execute(String arg) {
-        if (Data.counter == -1) return "show: No LP available.";
-        return Output.primal(Data.getCurrentProgram(), Data.format);
+    	if (arg != null) return "show primal: Command does not take any"
+	                          + "arguments.";
+    	LP lp = Data.getCurrentProgram();
+        if (lp == null) return "show: No current linear program loaded.";
+        return Output.primal(lp, Data.format);
     }
 }

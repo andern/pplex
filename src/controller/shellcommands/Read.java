@@ -39,7 +39,9 @@ public class Read extends Command {
              + System.getProperty("line.separator")
              + "Currently, the .lp file format is only partially supported."
              + " That is, only the objective section and the constraints"
-             + " section is supported.";
+             + " section is supported. However, pplex supports an extension"
+             + " to the .lp file format, namely fractions. Numbers can be"
+             + " typed on the format integer/integer.";
     }
     
     

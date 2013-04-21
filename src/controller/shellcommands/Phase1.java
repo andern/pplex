@@ -48,7 +48,7 @@ public class Phase1 extends Command {
                  + " is dually feasible.";
     	
     	Data.addLp(lp.phaseOneObj());
-    	return "phase1: Phase one has started. See command 'phase2' for how"
+    	return "Phase one has started. See command 'phase2' for how"
     		 + " to continue to phase two.";
     }
     

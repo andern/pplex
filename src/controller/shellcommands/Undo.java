@@ -27,8 +27,10 @@ public class Undo extends Command {
     protected String getUsage() { return "undo"; }
     
     protected String execute(String arg) {
+    	if (arg != null) return "undo: Command does not take any"
+	                          + "arguments.";
     	int err = Data.undo();
     	if (err == -1) return "undo: Nothing to undo.";
-    	return "";
+    	return null;
     }
 }

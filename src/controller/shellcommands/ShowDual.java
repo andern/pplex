@@ -25,6 +25,7 @@ import output.Output;
 
 import controller.Data;
 import lightshell.Command;
+import model.LP;
 
 public class ShowDual extends Command {
     protected String getName() { return "dual"; }
@@ -37,8 +38,11 @@ public class ShowDual extends Command {
     }
     
     protected String execute(String arg) {
-        if (Data.counter == -1) return "show: No LP available.";
-        return Output.dual(Data.getCurrentProgram(), Data.format);
+    	if (arg != null) return "show dual: Command does not take any"
+    						  + "arguments.";
+    	LP lp = Data.getCurrentProgram();
+        if (lp == null) return "show: No current linear program loaded.";
+        return Output.dual(lp, Data.format);
     }
     
     @SuppressWarnings("serial")

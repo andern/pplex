@@ -52,7 +52,7 @@ public class FormatCmd extends Command {
             Data.format = f;
             return String.format("Changed format to %s.", f);
         } catch (Exception e) {
-            return String.format("Invalid format '%s'.", arg);
+            return String.format("format: Invalid format '%s'.", arg);
         }
     }
     
