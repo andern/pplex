@@ -14,6 +14,9 @@ TODO UPDATE THIS - 0.5.0
         library, lightshell, making its development independent of pplex'
         development. This has resulted in some changes in the look and feel
         of the shell.
+* MISC: The 'replace' and 'reinstate' commands have been renamed to 'phase1'
+        and 'phase2', respectively. They both have the old command name as
+        aliases for legacy use.
 
 Thu Nov 22, 2012 - 0.4.1
 ==========================
