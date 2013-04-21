@@ -40,6 +40,8 @@ import lightshell.Shell;
 import controller.shellcommands.Conditions;
 import controller.shellcommands.Exit;
 import controller.shellcommands.FormatCmd;
+import controller.shellcommands.Phase1;
+import controller.shellcommands.Phase2;
 import controller.shellcommands.Pivot;
 import controller.shellcommands.Read;
 import controller.shellcommands.Redo;
@@ -186,6 +188,8 @@ public class Applet extends JApplet {
         shell.addCommand(new Conditions());
         shell.addCommand(new Exit());
         shell.addCommand(new FormatCmd());
+        shell.addCommand(new Phase1());
+        shell.addCommand(new Phase2());
         shell.addCommand(new Pivot());
         shell.addCommand(new Read());
         shell.addCommand(new Redo());

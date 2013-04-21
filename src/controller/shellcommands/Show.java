@@ -26,6 +26,7 @@ import output.Output;
 
 import controller.Data;
 import lightshell.Command;
+import model.LP;
 import controller.shellcommands.ShowDual;
 import controller.shellcommands.ShowFeas;
 import controller.shellcommands.ShowOpt;
@@ -44,7 +45,12 @@ public class Show extends Command {
     }
     
     protected String execute(String arg) {
-        if (Data.counter == -1) return "show: No LP available.";
+    	if (arg != null) return "show: Command does not take any arguments.";
+    	
+    	LP lp = Data.getCurrentProgram();
+    	
+        if (lp == null)
+        	return "show: No current linear program loaded.";
         return Output.primal(Data.getCurrentProgram(), Data.format);
     }
     
