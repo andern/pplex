@@ -116,8 +116,11 @@ class Console extends JPanel {
                 String text = jtfInput.getText();
                 if (!text.equals("")) {
                     jtaConsole.append("> " + text + "\n");
-                    jtaConsole.append(shell.parse(text));
-                    jtaConsole.append("\n");
+                    String res = shell.parse(text);
+                    if (res != null) {
+                        jtaConsole.append(shell.parse(text));
+                        jtaConsole.append("\n");
+                    }
                     cliHistory.add(text);
                     jtaConsole.setCaretPosition(jtaConsole.getDocument().getLength());
                 }

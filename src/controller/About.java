@@ -60,21 +60,21 @@ public class About extends JDialog implements ActionListener {
         gbc.insets = new Insets(2, 0, 0, 0);
         
         /* Try to add the logo */
-		try {
-			BufferedImage logo;
-			logo = ImageIO.read(new File("res/big_icon.png"));
-			jlbLogo = new JLabel(new ImageIcon(logo));
-			jlbLogo.setHorizontalAlignment(SwingConstants.LEFT);
-	        gbc.gridx = 0;
-	        gbc.gridy = 0;
-	        gbc.gridwidth = 2;
-	        gbc.fill = GridBagConstraints.HORIZONTAL;
-	        add(jlbLogo, gbc);
-		} catch (IOException e) {
-			/* Don't add the logo if error occurs. */
-		}
-		
-		jlbText = new JLabel("<html>"
+        try {
+            BufferedImage logo;
+            logo = ImageIO.read(new File("res/big_icon.png"));
+            jlbLogo = new JLabel(new ImageIcon(logo));
+            jlbLogo.setHorizontalAlignment(SwingConstants.LEFT);
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            gbc.gridwidth = 2;
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            add(jlbLogo, gbc);
+        } catch (IOException e) {
+            /* Don't add the logo if error occurs. */
+        }
+        
+        jlbText = new JLabel("<html>"
               + "pplex <br>"
               + "Version " + Data.VERSION + "<br>"
               + "A pedagogical implementation of the simplex method <br>"

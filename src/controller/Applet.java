@@ -176,7 +176,7 @@ public class Applet extends JApplet {
                    +                   "- 5x1 + 2x2 <= -3");
            
 
-    	return map;
+        return map;
     }
     
     /**
@@ -266,16 +266,16 @@ public class Applet extends JApplet {
         final Map<String, LP> lpExamples = new LinkedHashMap<String, LP>();
         
         for (String s : examples.keySet()) {
-        	CharStream stream;
+            CharStream stream;
             try {
-            	stream = new ANTLRStringStream(examples.get(s));
+                stream = new ANTLRStringStream(examples.get(s));
 
-            	LpFileFormatLexer lexer = new LpFileFormatLexer(stream);
-            	TokenStream tokenStream = new CommonTokenStream(lexer);
-            	LpFileFormatParser parser = new LpFileFormatParser(tokenStream);
+                LpFileFormatLexer lexer = new LpFileFormatLexer(stream);
+                TokenStream tokenStream = new CommonTokenStream(lexer);
+                LpFileFormatParser parser = new LpFileFormatParser(tokenStream);
                 lpExamples.put(s, parser.lpfromfile());
             } catch (Exception e) {
-            	System.out.println(e.getLocalizedMessage());
+                System.out.println(e.getLocalizedMessage());
             }
         }
         
@@ -285,7 +285,7 @@ public class Applet extends JApplet {
             
             jmiEx.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                	//shell.addLp(lpExamples.get(s));
+                    Data.addLp(lpExamples.get(s));
                     repaint();
                     console.putText("Loaded example " + s + " successfully.\n");
                 }});

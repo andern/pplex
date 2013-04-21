@@ -45,12 +45,12 @@ public class Show extends Command {
     }
     
     protected String execute(String arg) {
-    	if (arg != null) return "show: Command does not take any arguments.";
-    	
-    	LP lp = Data.getCurrentProgram();
-    	
+        if (arg != null) return "show: Command does not take any arguments.";
+        
+        LP lp = Data.getCurrentProgram();
+        
         if (lp == null)
-        	return "show: No current linear program loaded.";
+            return "show: No current linear program loaded.";
         return Output.primal(Data.getCurrentProgram(), Data.format);
     }
     

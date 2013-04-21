@@ -18,6 +18,9 @@
  */
 package controller.shellcommands;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import controller.Data;
 import lightshell.Command;
 
@@ -27,10 +30,19 @@ public class Undo extends Command {
     protected String getUsage() { return "undo"; }
     
     protected String execute(String arg) {
-    	if (arg != null) return "undo: Command does not take any"
-	                          + "arguments.";
-    	int err = Data.undo();
-    	if (err == -1) return "undo: Nothing to undo.";
-    	return null;
+        if (arg != null) return "undo: Command does not take any"
+                              + "arguments.";
+        int err = Data.undo();
+        if (err == -1) return "undo: Nothing to undo.";
+        return null;
+    }
+    
+    @SuppressWarnings("serial")
+    protected Set<String> getAliases() {
+        return new HashSet<String>() {
+            {
+                add("u");
+            }
+        };
     }
 }

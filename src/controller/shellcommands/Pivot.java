@@ -128,10 +128,10 @@ public class Pivot extends Command {
             if (args.length == idx2+1) return pivot(lp,dual,entering,leaving);
         } catch (NumberFormatException e) {
         } catch (RuntimeException e) {
-        	return String.format("pivot: %s", e.getLocalizedMessage());
+            return String.format("pivot: %s", e.getLocalizedMessage());
         }
         String err = 
-        		"Unknown parameters. See 'help pivot' for more information.";
+                "Unknown parameters. See 'help pivot' for more information.";
         return String.format("pivot: %s", err);
     }
     
@@ -141,21 +141,21 @@ public class Pivot extends Command {
     }
     
     private String pivot(LP lp, boolean dual) {
-    	LP curLp = lp.pivot(dual);
-    	Data.addLp(curLp);
+        LP curLp = lp.pivot(dual);
+        Data.addLp(curLp);
         
         return output(curLp, dual);
     }
 
     private String pivot(LP lp, boolean dual, int e) {
-    	LP curLp = lp.pivot(dual, e);
-    	Data.addLp(curLp);
+        LP curLp = lp.pivot(dual, e);
+        Data.addLp(curLp);
         
         return output(curLp, dual);
     }
 
     private String pivot(LP lp, boolean dual, int e, int l) {
-    	LP curLp;
+        LP curLp;
         if (dual) curLp = lp.pivot(l, e);
         else curLp = lp.pivot(e, l);
         Data.addLp(curLp);

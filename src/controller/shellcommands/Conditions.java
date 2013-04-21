@@ -26,8 +26,8 @@ public class Conditions extends Command {
     protected String getUsage() { return "conditions"; }
     
     protected String execute(String arg) {
-    	if (arg != null) 
-    		return "conditions: Command does not take any arguments.";
+        if (arg != null) 
+            return "conditions: Command does not take any arguments.";
         return
         "This program is free software: you can redistribute it and/or modify\n"
       + "it under the terms of the GNU General Public License as published by\n"

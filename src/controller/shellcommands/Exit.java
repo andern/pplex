@@ -42,7 +42,7 @@ public class Exit extends Command {
     protected String getUsage() { return "exit"; }
     
     protected String execute(String arg) {
-    	if (arg != null) return "exit: Command does not take any arguments.";
+        if (arg != null) return "exit: Command does not take any arguments.";
         System.exit(0);
         return null;
     }

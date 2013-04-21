@@ -64,7 +64,7 @@ public final class Data {
      *        a linear program.
      */
     public static void addLp(LP lp) {
-    	lps.add(++counter, lp);
+        lps.add(++counter, lp);
         
         // TODO: Is there a better solution to this?
         VisLP.readScope = true;

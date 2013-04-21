@@ -27,38 +27,38 @@ import lightshell.Command;
 import model.LP;
 
 public class Phase1 extends Command {
-	protected String getName() { return "phase1"; }
+    protected String getName() { return "phase1"; }
     protected String getShortHelp() { return "start phase one of the simplex method"; }
     protected String getUsage() { return "phase1"; }
     
     protected String execute(String arg) {
-    	if (arg != null) return "phase1: Command does not take any arguments.";
-    	
-    	LP lp = Data.getCurrentProgram();
-    	
-    	if (lp == null)
-    		return "phase1: No current linear program loaded.";
-    	
-    	if (lp.feasible(false))
-    		return "phase1: Phase one not started. Incumbent basic solution"
+        if (arg != null) return "phase1: Command does not take any arguments.";
+        
+        LP lp = Data.getCurrentProgram();
+        
+        if (lp == null)
+            return "phase1: No current linear program loaded.";
+        
+        if (lp.feasible(false))
+            return "phase1: Phase one not started. Incumbent basic solution"
                  + " is primal feasible.";
-    	
-    	if (lp.feasible(true))
-    		return "phase1: Phase one not started. Incumbent basic solution"
+        
+        if (lp.feasible(true))
+            return "phase1: Phase one not started. Incumbent basic solution"
                  + " is dually feasible.";
-    	
-    	Data.addLp(lp.phaseOneObj());
-    	return "Phase one has started. See command 'phase2' for how"
-    		 + " to continue to phase two.";
+        
+        Data.addLp(lp.phaseOneObj());
+        return "Phase one has started. See command 'phase2' for how"
+             + " to continue to phase two.";
     }
     
-	@SuppressWarnings("serial")
-	protected Set<String> getAliases() {
-		return new HashSet<String>() {
+    @SuppressWarnings("serial")
+    protected Set<String> getAliases() {
+        return new HashSet<String>() {
             {
-            	add("p1");
+                add("p1");
                 add("replace");
             }
         };
-	}
+    }
 }

@@ -26,8 +26,8 @@ public class Warranty extends Command {
     protected String getUsage() { return "warranty"; }
     
     protected String execute(String arg) {
-    	if (arg != null) return "warranty: Command does not take any"
-				              + " arguments.";
+        if (arg != null) return "warranty: Command does not take any"
+                              + " arguments.";
         return
         "This program is distributed in the hope that it will be useful,\n"
       + "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"

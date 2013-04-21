@@ -18,6 +18,9 @@
  */
 package controller.shellcommands;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import model.LP;
 
 import org.antlr.runtime.ANTLRFileStream;
@@ -53,7 +56,7 @@ public class Read extends Command {
     protected String getUsage() { return "read <file>"; }
     
     protected String execute(String arg) {
-    	if (arg == null) return "read: missing <file> parameter.";
+        if (arg == null) return "read: missing <file> parameter.";
         try {
             CharStream stream = new ANTLRFileStream(arg);
             
@@ -65,8 +68,16 @@ public class Read extends Command {
             Data.addLp(lp);
             return "Read " + arg + " OK.";
         } catch (Exception e) {
-        	return "read: Error reading file: " + e.getLocalizedMessage();
+            return "read: Error reading file: " + e.getLocalizedMessage();
         }
-        
+    }
+    
+    @SuppressWarnings("serial")
+    protected Set<String> getAliases() {
+        return new HashSet<String>() {
+            {
+                add("load");
+            }
+        };
     }
 }

@@ -27,37 +27,37 @@ import lightshell.Command;
 import model.LP;
 
 public class Phase2 extends Command {
-	protected String getName() { return "phase2"; }
+    protected String getName() { return "phase2"; }
     protected String getShortHelp() { return "start phase two of the simplex method"; }
     protected String getUsage() { return "phase2"; }
     
     protected String execute(String arg) {
-    	if (arg != null) return "phase2: Command does not take any arguments.";
-    	
-    	LP lp = Data.getCurrentProgram();
-    	
-    	if (lp == null)
-    		return "phase2: No current linear program loaded.";
-    	
-    	if (!lp.feasible(false))
-    		return "phase2: Phase two not started. Incumbent basic solution"
+        if (arg != null) return "phase2: Command does not take any arguments.";
+        
+        LP lp = Data.getCurrentProgram();
+        
+        if (lp == null)
+            return "phase2: No current linear program loaded.";
+        
+        if (!lp.feasible(false))
+            return "phase2: Phase two not started. Incumbent basic solution"
                  + " is primal infeasible.";
-    	
-    	if (!lp.feasible(true))
-    		return "phase2: Phase one not started. Incumbent basic solution"
+        
+        if (!lp.feasible(true))
+            return "phase2: Phase one not started. Incumbent basic solution"
                  + " is dually infeasible.";
-    	
-    	Data.addLp(lp.reinstate());
-    	return "phase2: Phase two has started.";
+        
+        Data.addLp(lp.reinstate());
+        return "phase2: Phase two has started.";
     }
     
-	@SuppressWarnings("serial")
-	protected Set<String> getAliases() {
-		return new HashSet<String>() {
+    @SuppressWarnings("serial")
+    protected Set<String> getAliases() {
+        return new HashSet<String>() {
             {
-            	add("p2");
+                add("p2");
                 add("reinstate");
             }
         };
-	}
+    }
 }
