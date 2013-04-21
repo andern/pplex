@@ -8,8 +8,6 @@ TODO UPDATE THIS - 0.5.0
                Without a leaving variable, pplex will automatically calculate
                the optimal leaving variable for the specified entering variable
                according to the largest coefficient rule.
-* NEW FEATURE: Added aliases for commands. See 'help alias' for more
-               information.
 * MISC: The shell is completely rewritten, and has been created as a separate
         library, lightshell, making its development independent of pplex'
         development. This has resulted in some changes in the look and feel
