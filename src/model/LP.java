@@ -426,7 +426,7 @@ public class LP {
         FieldMatrix<BigFraction> bin = new FieldLUDecomposition<BigFraction>(B_)
                 .getSolver().getInverse().multiply(N_);
         
-        // Step 1: Check for optimpivality
+        // Step 1: Check for optimality
         // Step 2: Select entering variable.
         // Naive method. Does not check for optimality. Assumes feasibility.
         // Entering variable is given.
