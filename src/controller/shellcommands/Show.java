@@ -51,7 +51,7 @@ public class Show extends Command {
         
         if (lp == null)
             return "show: No current linear program loaded.";
-        return Output.primal(Data.getCurrentProgram(), Data.format);
+        return Output.primal(lp, Data.format);
     }
     
     @SuppressWarnings("serial")
