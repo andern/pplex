@@ -44,7 +44,7 @@ public class Phase2 extends Command {
                  + " is primal infeasible.";
         
         if (!lp.feasible(true))
-            return "phase2: Phase one not started. Incumbent basic solution"
+            return "phase2: Phase two not started. Incumbent basic solution"
                  + " is dually infeasible.";
         
         Data.addLp(lp.reinstate());
