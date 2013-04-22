@@ -1,0 +1,7 @@
+\\ Word problem from purplemath.com
+max - 2 x + 5 y
+s.t     x       <= 200
+        x       >= 100
+              y <= 170
+              y >= 80
+        x +   y >= 200

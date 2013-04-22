@@ -1,0 +1,6 @@
+\\ Word problem from purplemath.com
+max - 2/5 x + 16/5 y
+s.t       x +      y <= 7
+          x +    2 y >= 4
+        - x +      y <= 5
+          x          <= 5

@@ -1,0 +1,4 @@
+\\ Word problem from purplemath.com
+max  8 x + 12 y
+s.t 10 x + 20 y <= 140
+     6 x +  8 y <= 72

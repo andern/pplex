@@ -1,0 +1,5 @@
+\\ Word problem from purplemath.com
+max 19/10 x + 3/2 y
+s.t       x         <= 6400000
+                  y >= 3000000
+    - 1/2 x +     y <= 0
