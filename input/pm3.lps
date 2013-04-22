@@ -1,4 +1,19 @@
-\\ Word problem from purplemath.com
+\\ Stapel, Elizabeth. "Linear Programming: More Word Problems." Purplemath.
+\\ Available from http://www.purplemath.com/modules/linprog3.htm.
+\\ Accessed 22 April 2013
+\\
+\\ Copyright(C) 2006-2012 Elizabeth Stapel
+\\
+\\ A calculator company produces a scientific calculator and a graphing
+\\ calculator. Long-term projections indicate an expected demand of at least
+\\ 100 scientific and 80 graphing calculators each day. Because of limitations
+\\ on production capacity, no more than 200 scientific and 170 graphing
+\\ calculators can be made daily. To satisfy a shipping contract, a total of at
+\\ least 200 calculators much be shipped each day.
+\\
+\\ If each scientific calculator sold results in a $2 loss, but each graphing
+\\ calculator produces a $5 profit, how many of each type should be made daily
+\\ to maximize net profits?
 max - 2 x + 5 y
 s.t     x       <= 200
         x       >= 100

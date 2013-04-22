@@ -1,0 +1,23 @@
+\\ Stapel, Elizabeth. "Linear Programming: More Word Problems." Purplemath.
+\\ Available from http://www.purplemath.com/modules/linprog4.htm.
+\\ Accessed 22 April 2013
+\\
+\\ Copyright(C) 2006-2012 Elizabeth Stapel
+\\
+\\ In order to ensure optimal health (and thus accurate test results), a lab
+\\ technician needs to feed the rabbits a daily diet containing a minimum of 24
+\\ grams (g) of fat, 36 g of carbohydrates, and 4 g of protien. But the rabbits
+\\ should be fed no more than five ounces of food a day.
+\\
+\\ Rather than order rabbit food that is custom-blended, it is cheaper to order
+\\ Food X and Food Y, and blend them for an optimal mix. Food X contains 8 g of
+\\ fat, 12 g of carbohydrates, and 2 g of protein per ounce, and costs $0.20
+\\ per ounce. Food Y contains 12 g of fat, 12 g of carbohydrates, and 1 g of
+\\ protein per ounce, at a cost of $0.30 per ounce.
+\\
+\\ What is the optimal blend?
+min 1/5 x + 3/10 y
+s.t   8 x +   12 y >= 24
+     12 x +   12 y >= 36
+      2 x +    1 y >= 4
+        x +      y <= 5

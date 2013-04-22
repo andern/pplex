@@ -1,0 +1,17 @@
+\\ Stapel, Elizabeth. "Linear Programming: More Word Problems." Purplemath.
+\\ Available from http://www.purplemath.com/modules/linprog4.htm.
+\\ Accessed 22 April 2013
+\\
+\\ Copyright(C) 2006-2012 Elizabeth Stapel
+\\
+\\ You have $12,000 to invest, and three different funds from which to choose.
+\\ The municipal bond fund has a 7% return, the local bank's CDs have an 8%
+\\ return, and the high-risk account has an expected (hoped-for) 12% return.
+\\ To minimize risk, you decide not to invest any more than $2,000 in the
+\\ high-risk account. For tax reasons, you need to invest at least three times
+\\ as much in the municipal bonds as in the bank CDs. Assuming the year-end
+\\ yields are as expected, what are the optimal investment amounts?
+max       - 1/20 x - 1/25 y \\ Should have + 36/25
+s.t              x +      y >= 10
+                 x +      y <= 12
+          -  1/3 x +      y <= 0

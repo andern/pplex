@@ -1,4 +1,9 @@
-\\ Word problem from purplemath.com
+\\ Stapel, Elizabeth. "Linear Programming: More Word Problems." Purplemath.
+\\ Available from http://www.purplemath.com/modules/linprog2.htm.
+\\ Accessed 22 April 2013
+\\
+\\ Copyright(C) 2006-2012 Elizabeth Stapel
+\\
 max - 2/5 x + 16/5 y
 s.t       x +      y <= 7
           x +    2 y >= 4

@@ -1,0 +1,22 @@
+\\ Stapel, Elizabeth. "Linear Programming: More Word Problems." Purplemath.
+\\ Available from http://www.purplemath.com/modules/linprog5.htm.
+\\ Accessed 22 April 2013
+\\
+\\ Copyright(C) 2006-2012 Elizabeth Stapel
+\\
+\\ A building supply has two locations in town. The office receives orders from
+\\ two customers, each requiring 3/4-inch plywood. Customer A needs fifty
+\\ sheets and Customer B needs seventy sheets.
+\\
+\\ The warehouse on the east side of town has eighty sheets in stock; the
+\\ west-side warehouse has forty-five sheets in stock. Delivery costs per sheet
+\\ are as follows: $0.50 from the eastern warehouse to Customer A, $0.60 from
+\\ the eastern warehouse to Customer B, $0.40 from the western warehouse to
+\\ Customer A, and $0.55 from the western warehouse to Customer B.
+\\
+\\ Find the shipping arrangement which minimizes costs.
+min 1/10 x + 1/20 y \\ Should have + 58.50
+s.t      x          <= 50
+                  y <= 70
+         x +      y >= 75
+         x +      y <= 80
