@@ -23,6 +23,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.math3.exception.MathArithmeticException;
+
 import output.Output;
 
 import model.LP;
@@ -117,16 +119,36 @@ public class Pivot extends Command {
         
         int idx = (any) ? 1 : 0;
         int idx2 = (any) ? 2 : 1;
+
+        /* Get size of lp */
+        int ro = lp.getNoBasic();
+        int co = lp.getNoNonBasic();
+
+        String colhi = String.format("Column index must be less than %d.", co);
+        String collo = "Column index must be greater than 0.";
+        String rowhi = String.format("Row index must be less than %d.", ro);
+        String rowlo = "Row index must be greater than 0.";
         
         try {
             if (any && args.length == 1) return pivot(lp, dual);
-            
+
+            /* Find entering variable and check that its legal. */
             int entering = Integer.parseInt(args[idx]);
+            if (entering >= co) return String.format("pivot: %s", colhi);
+            if (entering < 0) return String.format("pivot: %s", collo);
+
             if (args.length == idx+1) return pivot(lp, dual, entering);
             
+            /* Find leaving variable and check that its legal. */
             int leaving = Integer.parseInt(args[idx2]);
+            if (leaving >= ro) return String.format("pivot: %s", rowhi);
+            if (leaving < 0) return String.format("pivot: %s", rowlo);
+
             if (args.length == idx2+1) return pivot(lp,dual,entering,leaving);
+        } catch (MathArithmeticException e) {
+            return "pivot: Illegal pivot. Would cause division by zero.";
         } catch (NumberFormatException e) {
+            /* Fall through. Return err below. */
         } catch (RuntimeException e) {
             return String.format("pivot: %s", e.getLocalizedMessage());
         }
