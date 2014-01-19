@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Andreas Halle
+ * Copyright (C) 2012, 2013, 2014 Andreas Halle
  *
  * This file is part of pplex.
  *
@@ -37,17 +37,6 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.TokenStream;
 
 import lightshell.Shell;
-import controller.shellcommands.Conditions;
-import controller.shellcommands.Exit;
-import controller.shellcommands.FormatCmd;
-import controller.shellcommands.Phase1;
-import controller.shellcommands.Phase2;
-import controller.shellcommands.Pivot;
-import controller.shellcommands.Read;
-import controller.shellcommands.Redo;
-import controller.shellcommands.Show;
-import controller.shellcommands.Undo;
-import controller.shellcommands.Warranty;
 
 import parser.LpFileFormatLexer;
 import parser.LpFileFormatParser;
@@ -184,18 +173,7 @@ public class Applet extends JApplet {
      */
     public Applet() {
         ccs = new CCSystem();
-        shell = new Shell();
-        shell.addCommand(new Conditions());
-        shell.addCommand(new Exit());
-        shell.addCommand(new FormatCmd());
-        shell.addCommand(new Phase1());
-        shell.addCommand(new Phase2());
-        shell.addCommand(new Pivot());
-        shell.addCommand(new Read());
-        shell.addCommand(new Redo());
-        shell.addCommand(new Show());
-        shell.addCommand(new Undo());
-        shell.addCommand(new Warranty());
+        shell = Main.getShellOnlyCommands();
         console = new Console(shell);
         
         jspSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,

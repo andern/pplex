@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Andreas Halle
+ * Copyright (C) 2012, 2013, 2014 Andreas Halle
  *
  * This file is part of pplex.
  *
@@ -34,23 +34,28 @@ import controller.shellcommands.Warranty;
 class Main {
     public static void main(String[] args) {
         if (args.length > 0 && args[0].equals("-nogui")) {
-            Shell shell = new Shell();
+            Shell shell = getShellOnlyCommands();
             shell.setWelcomeMsg(Data.FWELCOME);
             shell.setPrompt("pplex");
-            shell.addCommand(new Conditions());
-            shell.addCommand(new Exit());
-            shell.addCommand(new FormatCmd());
-            shell.addCommand(new Phase1());
-            shell.addCommand(new Phase2());
-            shell.addCommand(new Pivot());
-            shell.addCommand(new Read());
-            shell.addCommand(new Redo());
-            shell.addCommand(new Show());
-            shell.addCommand(new Undo());
-            shell.addCommand(new Warranty());
             shell.run();
         } else {
             new GUI();
         }
+    }
+    
+    public static Shell getShellOnlyCommands() {
+    	Shell shell = new Shell();
+    	shell.addCommand(new Conditions());
+        shell.addCommand(new Exit());
+        shell.addCommand(new FormatCmd());
+        shell.addCommand(new Phase1());
+        shell.addCommand(new Phase2());
+        shell.addCommand(new Pivot());
+        shell.addCommand(new Read());
+        shell.addCommand(new Redo());
+        shell.addCommand(new Show());
+        shell.addCommand(new Undo());
+        shell.addCommand(new Warranty());
+        return shell;
     }
 }
