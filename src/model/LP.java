@@ -652,8 +652,8 @@ public class LP {
 
     /**
      * @return
-     *         A {@code Matrix} of double precision numbers representing
-     *         the dictionary of the current Linear Program.
+     *         A {@code Matrix} of numbers representing the dictionary of the
+     *         current Linear Program.
      */
     public FieldMatrix<BigFraction> dictionary() {
         BigFraction[][] data = new BigFraction[Bi.length+1][Ni.length+1];
@@ -690,8 +690,8 @@ public class LP {
      * Cx <= b. This method returns the matrix C.
      * 
      * @return
-     *         A {@code Matrix} of double precision numbers representing
-     *         the coefficients for the variables in the constraints.
+     *         A {@code Matrix} of numbers representing the coefficients for the
+     *         variables in the constraints.
      */
     public FieldMatrix<BigFraction> getConsCoeffs() {
         return N_;
@@ -709,8 +709,8 @@ public class LP {
      * Cx <= b. This method returns the vector b.
      * 
      * @return
-     *         A {@code Matrix} of double precision numbers representing
-     *         the values in the constraints. 
+     *         A {@code Matrix} of numbers representing the values in the
+     *         constraints. 
      */
     public FieldVector<BigFraction> getConsValues() {
         return b;
@@ -720,8 +720,8 @@ public class LP {
     
     /**
      * @return
-     *         A row {@code Matrix} of double precision numbers representing
-     *         the coefficients in the objective function.
+     *         A row {@code Matrix} of numbers representing the coefficients in
+     *         the objective function.
      */
     public FieldVector<BigFraction> getObjFunction() {
         return c;
