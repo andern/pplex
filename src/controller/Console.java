@@ -107,7 +107,6 @@ class Console extends JPanel {
     
     
     /* KeyListener for the console. Implements history-browsing. */
-    // TODO: WISHLIST: Tab-completion of commands and files.
     private class InputListener implements KeyListener {
         @Override
         public void keyPressed(KeyEvent e) {

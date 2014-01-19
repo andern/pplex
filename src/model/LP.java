@@ -395,24 +395,6 @@ public class LP {
 
 
     /**
-     * Return a new linear program with a new objective function
-     * made of the given coefficients.
-     *
-     * @param  coeff
-     *         Coefficients of the decision variables.
-     * @return
-     *         A linear program with the new objective function.
-     */
-    public LP replaceObj(BigFraction[] coeff) {
-        // TODO: Is this the behavior we want?
-        FieldVector<BigFraction> nc_ = new ArrayFieldVector<BigFraction>(coeff)
-                .mapMultiply(BigFraction.MINUS_ONE);
-        return new LP(B, N, b, c, B_, N_, b_, nc_, x, Bi, Ni);
-    }
-
-
-
-    /**
      * Do one iteration of the simplex method.
      *
      * @param  entering
