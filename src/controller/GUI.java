@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Andreas Halle
+ * Copyright (C) 2012, 2013, 2014 Andreas Halle
  *
  * This file is part of pplex.
  *
@@ -29,6 +29,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 
+
+import lightshell.Shell;
+
 import cartesian.coordinate.CCSystem;
 
 import model.LP;
@@ -49,7 +52,7 @@ class GUI extends JFrame {
     private JMenuItem jmiZoomIn, jmiZoomOut, jmiNormalSize;
     
     private CCSystem ccs;
-    private CLI cli;
+    private Shell shell;
     private Console console;
     
     private LP lp;
@@ -66,11 +69,12 @@ class GUI extends JFrame {
         ccs = new CCSystem();
         ccs.setAxesVisible(false);
         ccs.setGridVisible(false);
-        cli = new CLI();
-        console = new Console(cli);
         
-        jspSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-                                            console, ccs);
+        shell = Main.getShellOnlyCommands();
+        
+        console = new Console(shell);
+        
+        jspSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, console,ccs);
         jspSplitPane.setDividerSize(3);
         jspSplitPane.setDividerLocation(500);
         jspSplitPane.setResizeWeight(0);
@@ -159,7 +163,7 @@ class GUI extends JFrame {
     @Override
     public void repaint() {
         super.repaint();
-        lp = cli.getCurrentProgram();
+        lp = Data.getCurrentProgram();
         VisLP.drawLP(ccs, lp);
     }
     

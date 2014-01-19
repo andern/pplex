@@ -1,0 +1,18 @@
+\\ Stapel, Elizabeth. "Linear Programming: More Word Problems." Purplemath.
+\\ Available from http://www.purplemath.com/modules/linprog2.htm.
+\\ Accessed 22 April 2013
+\\
+\\ Copyright(C) 2006-2012 Elizabeth Stapel
+\\
+\\ At a certain refinery, the refining process requires the production of at
+\\ least two gallons of gasoline for each gallon of fuel oil. To meet the
+\\ anticipated demands of winter, at least three million gallons of fuel oil a
+\\ day will need to be produced. The demand for gasoline, on the other hand, is
+\\ not more than 6.4 million gallons a day.
+\\
+\\ If gasoline is selling for $1.90 per gallon and fuel oil sells for
+\\ $1.50/gal, how much of each should be produced in order to maximize revenue?
+max 19/10 x + 3/2 y
+s.t       x         <= 6400000
+                  y >= 3000000
+    - 1/2 x +     y <= 0

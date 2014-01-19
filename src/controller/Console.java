@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Andreas Halle
+ * Copyright (C) 2012, 2013 Andreas Halle
  *
  * This file is part of pplex.
  *
@@ -34,6 +34,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import controller.GUI;
+import controller.Data;
+import lightshell.Shell;
 
 /**
  * The {@code Console} class represents a visual/graphical console
@@ -57,15 +59,15 @@ class Console extends JPanel {
     private ArrayList<String> cliHistory;
     private int p;
     
-    private CLI cli;
+    private Shell shell;
     
     
     
     /**
      * Initialize the console.
      */
-    public Console(CLI cli) {
-        this.cli = cli;
+    public Console(Shell shell) {
+        this.shell = shell;
         
         setLayout(new BorderLayout());
         
@@ -114,8 +116,11 @@ class Console extends JPanel {
                 String text = jtfInput.getText();
                 if (!text.equals("")) {
                     jtaConsole.append("> " + text + "\n");
-                    jtaConsole.append(cli.parseCmd(text));
-                    jtaConsole.append("\n");
+                    String res = shell.parse(text);
+                    if (res != null) {
+                        jtaConsole.append(res);
+                        jtaConsole.append("\n");
+                    }
                     cliHistory.add(text);
                     jtaConsole.setCaretPosition(jtaConsole.getDocument().getLength());
                 }
@@ -198,7 +203,7 @@ class Console extends JPanel {
      * Increase the font size of output console.
      */
     protected void increaseFont() {
-        float size = consoleFont.getSize();
+        float size = consoleFont.getSize() + 1.0f;
         if (size <= 100) {
             size++;
             consoleFont = consoleFont.deriveFont(size);

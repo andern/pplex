@@ -1,0 +1,16 @@
+\\ Stapel, Elizabeth. "Linear Programming: More Word Problems." Purplemath.
+\\ Available from http://www.purplemath.com/modules/linprog3.htm.
+\\ Accessed 22 April 2013
+\\
+\\ Copyright(C) 2006-2012 Elizabeth Stapel
+\\
+\\ You need to buy some filing cabinets. You know that Cabinet X costs $10 per
+\\ unit, requires six square feet of floor space, and holds eight cubic feet of
+\\ files. Cabinet Y costs $20 per unit, requires eight square feet of floor
+\\ space, and holds twelve cubic feet of files. You have been given $140 for
+\\ this purchase, though you don't have to spend that much. The office has room
+\\ for no more than 72 square feet of cabinets. How many of which model should
+\\ you buy, in order to maximize storage volume?
+max  8 x + 12 y
+s.t 10 x + 20 y <= 140
+     6 x +  8 y <= 72

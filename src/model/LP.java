@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Andreas Halle
+ * Copyright (C) 2012, 2013 Andreas Halle
  *
  * This file is part of pplex.
  *
@@ -66,7 +66,7 @@ public class LP {
      *     0..n-1 and n-1..n+m-1, respectively.
      *
      *     The slack variables are called w1..wm.
-     * </pre></blockquote<p>
+     * </pre></blockquote><p>
      *
      * @param N
      *        A {@code Matrix} with the coefficients
@@ -426,7 +426,7 @@ public class LP {
         FieldMatrix<BigFraction> bin = new FieldLUDecomposition<BigFraction>(B_)
                 .getSolver().getInverse().multiply(N_);
         
-        // Step 1: Check for optimpivality
+        // Step 1: Check for optimality
         // Step 2: Select entering variable.
         // Naive method. Does not check for optimality. Assumes feasibility.
         // Entering variable is given.
@@ -473,6 +473,23 @@ public class LP {
         nNi[entering] = Bi[leaving];
         
         return new LP(B, N, b, c, nB_, nN_, nb_, nc_, x, nBi, nNi);
+    }
+    
+    
+    
+    /**
+     * Do one iteration of the simplex method. Calculate leaving variable
+     * according to the largest coefficient rule.
+     *
+     * @param  entering
+     *         Index of variable to enter the basis.
+     * @return
+     *         A linear program after one iteration.
+     */
+    public LP pivot(boolean dual, int entering) {
+        int leaving = leaving(entering, dual);
+        if (dual) return pivot(leaving, entering);
+        return pivot(entering, leaving);
     }
 
 
@@ -635,8 +652,8 @@ public class LP {
 
     /**
      * @return
-     *         A {@code Matrix} of double precision numbers representing
-     *         the dictionary of the current Linear Program.
+     *         A {@code Matrix} of numbers representing the dictionary of the
+     *         current Linear Program.
      */
     public FieldMatrix<BigFraction> dictionary() {
         BigFraction[][] data = new BigFraction[Bi.length+1][Ni.length+1];
@@ -673,8 +690,8 @@ public class LP {
      * Cx <= b. This method returns the matrix C.
      * 
      * @return
-     *         A {@code Matrix} of double precision numbers representing
-     *         the coefficients for the variables in the constraints.
+     *         A {@code Matrix} of numbers representing the coefficients for the
+     *         variables in the constraints.
      */
     public FieldMatrix<BigFraction> getConsCoeffs() {
         return N_;
@@ -692,8 +709,8 @@ public class LP {
      * Cx <= b. This method returns the vector b.
      * 
      * @return
-     *         A {@code Matrix} of double precision numbers representing
-     *         the values in the constraints. 
+     *         A {@code Matrix} of numbers representing the values in the
+     *         constraints. 
      */
     public FieldVector<BigFraction> getConsValues() {
         return b;
@@ -703,8 +720,8 @@ public class LP {
     
     /**
      * @return
-     *         A row {@code Matrix} of double precision numbers representing
-     *         the coefficients in the objective function.
+     *         A row {@code Matrix} of numbers representing the coefficients in
+     *         the objective function.
      */
     public FieldVector<BigFraction> getObjFunction() {
         return c;

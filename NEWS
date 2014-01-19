@@ -1,3 +1,21 @@
+TODO UPDATE THIS - 0.5.0
+==========================
+* NEW FEATURE: Numbers can now be output as fractions. Input files can also
+               contain fractions on the format 'integer/integer'.
+* NEW FEATURE: Added a 'format' command that lets the user change the output
+               format of numbers.
+* NEW FEATURE: A leaving variable for the 'pivot' command is now optional.
+               Without a leaving variable, pplex will automatically calculate
+               the optimal leaving variable for the specified entering variable
+               according to the largest coefficient rule.
+* MISC: The shell is completely rewritten, and has been created as a separate
+        library, lightshell, making its development independent of pplex'
+        development. This has resulted in some changes in the look and feel
+        of the shell.
+* MISC: The 'replace' and 'reinstate' commands have been renamed to 'phase1'
+        and 'phase2', respectively. They both have the old command names as
+        aliases for legacy use.
+
 Thu Nov 22, 2012 - 0.4.1
 ==========================
 * BUG FIX: Fixed a small error where horizontal lines could be drawn wrong (or
@@ -9,7 +27,6 @@ Thu Nov 22, 2012 - 0.4.1
         independent of pplex' development. This has resulted in
         some minor visual changes in pplex, e.g. a grid.
 * MISC: ProGuard is now used to shrink pplex' jar files significantly.
-        
 
 Mon Oct 15, 2012 - 0.4.0
 ==========================

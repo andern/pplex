@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Andreas Halle
+ * Copyright (C) 2012, 2013 Andreas Halle
  *
  * This file is part of pplex.
  *
@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+
 import org.apache.commons.math3.fraction.BigFraction;
 import org.apache.commons.math3.linear.Array2DRowFieldMatrix;
 import org.apache.commons.math3.linear.ArrayFieldVector;
@@ -50,10 +51,10 @@ import model.LP;
  * @see     model.LP
  * @see     ccs.Coordinates
  */
-class VisLP {
+public class VisLP {
     private static ArrayList<Point2D> unb;
-    protected static boolean readScope = true;
-    protected static boolean feasScope = true;
+    public static boolean readScope = true;
+    public static boolean feasScope = true;
     
     
     

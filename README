@@ -1,6 +1,6 @@
 pplex readme
-Last updated:    2012-11-22
-Release version: 0.4.1
+Last updated:    2012-11-22 // TODO: UPDATE THIS AT TIME OF RELEASE
+Release version: 0.5.0
 ------------------------------------------------------------------------
 
 Table of contents
@@ -52,16 +52,13 @@ of pplex (but you cannot read your own files.)
 
 Running pplex requires Java Runtime Environment installed on your computer.
 
-1. Download the newest version of pplex from
-   http://folk.uib.no/xif001/pplex/pplex.jar and put it anywhere you like.
-2. Double-click on pplex.jar.
+A quick way to get started:
+1. git clone git://github.com/andern/pplex.git
+2. cd pplex
+3. java -jar pplex.jar
 
-
-(Optional) Getting started:
-3. Download test.lps from http://folk.uib.no/xif001/pplex/test.lps and
-   put it in the same directory as pplex.jar.
-4. Type 'read test.lps' in pplex' console.
-
+Or... download the latest stable jar file from here:
+https://github.com/andern/pplex/blob/master/pplex.jar?raw=true
 
 3.1) Running pplex
 ---- -------------
@@ -74,25 +71,24 @@ interface in a terminal window by passing the '-nogui' argument like this:
 
 4.0) Compiling pplex
 ---- ---------------
+Run the following commands:
+1. git clone git://github.com/andern/pplex.git
+2. cd pplex
+3. ant ('ant mac' if you are on Mac OS X)
+
 Compiling pplex requires:
 * Java Development Kit
 * Apache Ant
 
-To compile pplex you first need to download the source code of pplex. This
-can be done from the website (see 2.0) or by cloning the repository.
+Details about the steps above:
+1. To clone the repository, you need git installed on your system.
+   Alternatively, you can download the repository as an archive file
+   on the project web page.
+2. Enter the newly downloaded directory.
+3. Compile the sources of pplex and build a jar that is runnable on
+   several platforms.
 
-To clone the repository you need git installed on your system. Cloning
-the repository is done by typing the following in a terminal:
-  `git clone git@github.com:andern/pplex.git`
-
-To only compile the sources of pplex, run
-  `ant compile`
-in the pplex directory.
-
-To compile the sources of pplex and build a runnable jar, run
-  `ant jar`
-  or simply
-  `ant`
+Type 'ant -p' for information about several build targets for pplex.
 
 
 4.1) Applet
