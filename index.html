@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>pplex by andern</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+          <h1>pplex</h1>
+          <h2>a pedagogical implementation of the Simplex method</h2>
+        </header>
+
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/andern/pplex/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/andern/pplex/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/andern/pplex" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <h1>
+<a name="about" class="anchor" href="#about"><span class="octicon octicon-link"></span></a>About</h1>
+
+<p>pplex is an application that can interpret linear programs (LP) and show
+how the LP dictionary evolves throughout the execution of the simplex method.</p>
+
+<p>pplex is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.</p>
+
+<p>pplex uses Apache Commons Math library for handling matrices. It is released
+under the Apache License, Version 2.0. See lib/LICENSE.TXT for more information.</p>
+
+<p><img src="https://raw.github.com/andern/pplex/master/doc/teaching_simplex/ex_gui3.png" alt="pplex supports visualization"></p>
+
+<p><a href="http://pplex.ii.uib.no">Try the pplex applet!</a></p>
+
+<h1>
+<a name="documentation" class="anchor" href="#documentation"><span class="octicon octicon-link"></span></a>Documentation</h1>
+
+<p>Documentation on how to use pplex can be found <a href="https://raw.github.com/andern/pplex/master/doc/pplex_intro.pdf">here</a>.</p>
+
+<h2>
+<a name="reporting-bugs" class="anchor" href="#reporting-bugs"><span class="octicon octicon-link"></span></a>Reporting Bugs</h2>
+
+<p>GitHub's issue tracker is used for tracking bugs of pplex. Before submitting a
+bug you should make sure that you are running the latest version of pplex, and
+that the bug has not already been submitted to the tracker on GitHub.</p>
+
+<h1>
+<a name="installing-pplex" class="anchor" href="#installing-pplex"><span class="octicon octicon-link"></span></a>Installing pplex</h1>
+
+<p>If you want to try pplex before installing it, you can try it as an applet by
+visiting <a href="http://pplex.ii.uib.no">http://pplex.ii.uib.no</a>. It has most of the functionality
+of pplex (but you cannot read your own files.)</p>
+
+<p>Running pplex requires Java Runtime Environment installed on your computer.</p>
+
+<ol>
+<li>Download the newest version of pplex from one of the links above.</li>
+<li>Extract the archive.</li>
+<li>Double-click on pplex.jar.</li>
+<li>(Getting started) Type read input/vdb2.8.lps in pplex' console.</li>
+</ol><h2>
+<a name="running-pplex" class="anchor" href="#running-pplex"><span class="octicon octicon-link"></span></a>Running pplex</h2>
+
+<p>pplex starts in visual mode by default. This is only relevant for linear
+programs with two variables. pplex can easily be run without a graphical
+interface in a terminal window by passing the '-nogui' argument like this:
+  <code>java -jar pplex.jar -nogui</code></p>
+
+<h1>
+<a name="compiling-pplex" class="anchor" href="#compiling-pplex"><span class="octicon octicon-link"></span></a>Compiling pplex</h1>
+
+<p>Compiling pplex requires:</p>
+
+<ul>
+<li>Java Development Kit</li>
+<li>Apache Ant</li>
+</ul><p>To compile pplex you first need to download the source code of pplex. This
+can be done from the website or by cloning the repository.</p>
+
+<p>To clone the repository you need git installed on your system. Cloning
+the repository is done by typing the following in a terminal:
+  <code>git clone git@github.com:andern/pplex.git</code></p>
+
+<p>To only compile the sources of pplex, run
+  <code>ant compile</code>
+in the pplex directory.</p>
+
+<p>To compile the sources of pplex and build a runnable jar, run
+  <code>ant jar</code>
+  or simply
+  <code>ant</code></p>
+
+<h2>
+<a name="applet" class="anchor" href="#applet"><span class="octicon octicon-link"></span></a>Applet</h2>
+
+<p>pplex can be compiled as an applet by running
+  <code>ant applet</code>
+in the pplex directory.</p>
+
+<p>See applet.html in the pplex directory for an example
+on how to deploy the applet on your own website.</p>
+        </section>
+
+        <footer>
+          pplex is maintained by <a href="https://github.com/andern">andern</a><br>
+          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
+    </div>
+  </body>
+</html>
