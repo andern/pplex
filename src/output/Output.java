@@ -27,11 +27,11 @@ import model.LP;
 
 /**
  * The {@code Output} class contains methods that
- * return {@code Strings] that are ready to be
+ * return {@code Strings} that are ready to be
  * output by the command-line interface.
  *  
  * @author  Andreas Halle
- * @see     controller.CLI
+ * @see     lightshell.Shell
  */
 public final class Output {
     /* Some enums for output format */
@@ -87,9 +87,8 @@ public final class Output {
      *
      * @param  lp
      *         A {@code LP}.
-     * @param  precision
-     *         Limit each double precision number to this many decimals.
-     *         Give a negative value to automatically set precision.
+     * @param  f
+     *         Format numbers using the given format.
      * @return
      *         A nicely formated {@code String}.
      *         
@@ -199,9 +198,8 @@ public final class Output {
      *         A {@code Matrix}.
      * @param  x
      *         A vector as an {@code array} of {@code Strings}.
-     * @param  precision
-     *         Limit each double precision number to this many decimals.
-     *         Give a negative value to automatically set precision.
+     * @param  f
+     *         Format numbers using the given format.
      * @return
      *         A nicely formatted {@code String}.
      */

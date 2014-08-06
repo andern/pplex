@@ -48,7 +48,7 @@ import cartesian.coordinate.CCSystem;
  * @author  Thomas Le
  * @see     cartesian.coordinate.CCSystem
  */
-public class Screenshot extends JDialog implements ActionListener {
+class Screenshot extends JDialog implements ActionListener {
     private static final long serialVersionUID = 1L;
     private JLabel jlbFilePath;
     private JTextField jtfFilePath, jtfWidth, jtfHeight;

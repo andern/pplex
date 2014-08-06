@@ -44,14 +44,14 @@ import model.LP;
 
 /**
  * The {@code VisLP} class contains functions for visualizing
- * a linear program ({@code LP} class) in two dimensions using
+ * a linear program ({@code LP}) in two dimensions using
  * the {@code Coordinate} class.
  * 
  * @author  Andreas Halle
  * @see     model.LP
- * @see     ccs.Coordinates
+ * @see     cartesian.coordinate.CCSystem
  */
-public class VisLP {
+class VisLP {
     private static ArrayList<Point2D> unb;
     public static boolean readScope = true;
     public static boolean feasScope = true;

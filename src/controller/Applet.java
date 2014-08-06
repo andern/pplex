@@ -53,7 +53,7 @@ import model.LP;
  * @see     Console
  * @see     cartesian.coordinate.CCSystem
  */
-public class Applet extends JApplet {
+class Applet extends JApplet {
     private static final long serialVersionUID = 1L;
     
     private JSplitPane jspSplitPane;

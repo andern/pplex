@@ -43,7 +43,7 @@ import lightshell.Shell;
  * 
  * @author  Andreas Halle
  * @author  Thomas Le
- * @see     CLI
+ * @see     lightshell.Shell
  * @see     cartesian.coordinate.CCSystem
  * @see     GUI
  */

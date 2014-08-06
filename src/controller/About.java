@@ -41,7 +41,7 @@ import controller.Data;
  * 
  * @author Andreas Halle
  */
-public class About extends JDialog implements ActionListener {
+class About extends JDialog implements ActionListener {
     private static final long serialVersionUID = 1L;
     
     private JButton jbnOK;

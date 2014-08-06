@@ -23,6 +23,7 @@
   <target name="clobber" depends="clean" description="remove all artifact files">
     <delete file="pplex.jar"/>
     <delete file="pplex-applet.jar"/>
+    <delete dir="doc/api"/>
   </target>
 
   <target name="compile" depends="antlr" description="compile the Java source code to class files">
@@ -105,5 +106,21 @@
       -dontobfuscate
       -dontwarn org.antlr.runtime.tree.DOTTreeGenerator
     </proguard>
+  </target>
+
+  <target name="javadoc" description="Compile API documentation for pplex">
+    <javadoc destdir="doc/api" author="true" version="true" use="true" windowtitle="pplex API">
+      <classpath>
+        <pathelement location="lib/commons-math3-3.0.jar"/>
+        <pathelement location="lib/lightshell.jar"/>
+      </classpath>
+
+      <packageset dir="src" defaultexcludes="yes">
+        <include name="model/**" />
+        <include name="output/**" />
+      </packageset>
+
+      <doctitle>pplex API</doctitle>
+    </javadoc>
   </target>
 </project>

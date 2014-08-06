@@ -28,10 +28,9 @@ import org.apache.commons.math3.linear.FieldMatrix;
 import org.apache.commons.math3.linear.FieldVector;
 
 /**
- * An {@code Object} representing a linear program (LP).
+ * An {@code Object} representing a linear program (LP).
  *
  * @author  Andreas Halle
- * @see     controller.Parser
  */
 public class LP {
     public static final int UNDER = 0;
@@ -59,27 +58,28 @@ public class LP {
      * <p>
      * n being the number of variables and m being the number of constraints,
      * this {@code constructor} does the following:
-     * <p><blockquote><pre>
-     *     B is set to the identity matrix of dimension m.
+     * <ul>
+     * <li>B is set to the identity matrix of dimension m.</li>
      *
-     *     The indices of the basic and non-basic variables are set to
-     *     0..n-1 and n-1..n+m-1, respectively.
+     * <li>The indices of the non-basic and basic variables are set to
+     *     0..n-1 and n..n+m-1, respectively.</li>
      *
-     *     The slack variables are called w1..wm.
-     * </pre></blockquote><p>
+     * <li>The slack variables are called w1..wm.</li>
+     * </ul>
+     * </p>
      *
      * @param N
-     *        A {@code Matrix} with the coefficients
-     *        of the non-basic variables.
+     *        A {@code FieldMatrix} with the coefficients of the non-basic
+     *        variables.
      * @param b
-     *        A {@code Matrix} with the upper bounds on
-     *        the constraints in the original program.
+     *        A {@code FieldVector} with the upper bounds on the constraints
+     *        in the original program.
      * @param c
-     *        A {@code Matrix} with the coefficients of the
-     *        decision variables in the original program.
+     *        A {@code FieldVector} with the coefficients of the decision
+     *        variables in the original program.
      * @param x
-     *        A {@code HashMap} mapping the indices of the
-     *        basic and non-basic variables to their names.
+     *        A {@code HashMap} mapping the indices of the basic and non-basic
+     *        variables to their names.
      */
     public LP(FieldMatrix<BigFraction> N, FieldVector<BigFraction> b,
               FieldVector<BigFraction> c, HashMap<Integer, String> x) {
@@ -87,7 +87,7 @@ public class LP {
                 c.mapMultiply(BigFraction.MINUS_ONE).copy(), x,
                 new int[N.getRowDimension()], new int[N.getColumnDimension()]);
 
-        /* Create an identity matrix of BigFraction's */
+        /* Create an identity matrix of BigFraction */
         int m = N.getRowDimension();
         BigFraction[][] Bd = new BigFraction[m][m];
         for (int i = 0; i < m; i++) {
@@ -132,16 +132,16 @@ public class LP {
     
     
     /**
-     * Return a newly created {@code Matrix} with a new block
-     * {@code Matrix} added either horizontally or vertically
-     * next to the original {@code Matrix}.
+     * Return a newly created {@code FieldMatrix} with a new block
+     * {@code FieldMatrix} added either horizontally or vertically to the
+     * original {@code FieldMatrix}.
      *
      * @param  B
-     *         {@code Matrix} to append to the parent {@code Matrix}.
+     *         {@code FieldMatrix} to append to the parent {@code FieldMatrix}.
      * @param  modifier
-     *         Matrix.HORIZONTAL or Matrix.VERTICAL.
+     *         RIGHT or UNDER
      * @return
-     *         The original {@code Matrix} with a new {@code Matrix} block.
+     *         The original {@code FieldMatrix} with a new block.
      */
     public static FieldMatrix<BigFraction> addBlock(
                         FieldMatrix<BigFraction> A, FieldMatrix<BigFraction> B,
@@ -213,8 +213,8 @@ public class LP {
     
 
     /**
-     * Find an entering variable index according
-     * to the largest coefficients rule.
+     * Find an entering variable index according to the largest coefficient
+     * rule.
      *
      * @param  dual
      *         If true, find an entering variable index for the dual dictionary.
@@ -265,8 +265,12 @@ public class LP {
 
 
     /**
-     * Find a leaving variable index that is the most
-     * bounding on the given entering variable index.
+     * Find a leaving variable index that is the most bounding on the given
+     * entering variable index.
+     * <p>
+     * If there are multiple leaving variables that are 'the most bounding', the
+     * variable listed first in the incumbent dictionary will be chosen.
+     * </p>
      *
      * @param  entering
      *         an entering variable index.
@@ -311,8 +315,7 @@ public class LP {
                 unbounded = false;
             }
         }
-        String e = "Program is unbounded.";
-        if (unbounded) throw new RuntimeException(e);
+        if (unbounded) throw new RuntimeException("Program is unbounded");
         
         BigFraction max;
         if (index == -1) { // All boundaries are 0. (All values of check are 0).
@@ -343,7 +346,7 @@ public class LP {
 
 
     /**
-     * Return the objective value of the current dictionary.
+     * Return the objective value of the incumbent dictionary.
      *
      * @return
      *         the objective value.
@@ -381,10 +384,11 @@ public class LP {
 
 
     /**
-     * Return a new linear program with a new objective function
-     * making the program dually feasible.
+     * Return a new linear program with a new objective function, keeping the
+     * dictionary, making the program dually feasible.
      *
-     * @return A linear program.
+     * @return
+     *         A linear program.
      */
     public LP phaseOneObj() {
         FieldVector<BigFraction> nc_ = new ArrayFieldVector<BigFraction>(
@@ -491,9 +495,16 @@ public class LP {
         if (dual) return pivot(l, e);
         return pivot(e, l);
     }
-    
-    
-    
+
+
+    /**
+     * Transition from phase 1 to phase 2 of the simplex method by reinstating
+     * an updated objective function based on the original objective function
+     * according to the incumbent dictionary.
+     *
+     * @return
+     *         A linear program.
+     */
     public LP reinstate() {
         FieldVector<BigFraction> nc_ = new ArrayFieldVector<BigFraction>(
                 c_.getDimension(), BigFraction.ZERO);
@@ -634,8 +645,8 @@ public class LP {
 
     /**
      * @return
-     *         A {@code Matrix} of numbers representing the dictionary of the
-     *         current Linear Program.
+     *         A {@code FieldMatrix} of numbers representing the dictionary of
+     *         the incumbent Linear Program.
      */
     public FieldMatrix<BigFraction> dictionary() {
         BigFraction[][] data = new BigFraction[Bi.length+1][Ni.length+1];
@@ -664,16 +675,18 @@ public class LP {
     
     /**
      * Constraints being on the form:
+     * <pre><blockquote>
      * c11x1 + c12x2 + ... + c1nxn <= b1
      * c21x1 + c22x2 + ... + c2nxn <= b2
      *                 ...
      * cm1x1 + cm2x2 + ... + cmnxn <= bm
-     * 
+     * </blockquote></pre>
+     *
      * Cx <= b. This method returns the matrix C.
      * 
      * @return
-     *         A {@code Matrix} of numbers representing the coefficients for the
-     *         variables in the constraints.
+     *         A {@code FieldMatrix} of numbers representing the coefficients
+     *         for the variables in the constraints.
      */
     public FieldMatrix<BigFraction> getConsCoeffs() {
         return N_;
@@ -683,15 +696,17 @@ public class LP {
     
     /**
      * Constraints being on the form:
+     * <pre><blockquote>
      * c11x1 + c12x2 + ... + c1nxn <= b1
      * c21x1 + c22x2 + ... + c2nxn <= b2
      *                 ...
      * cm1x1 + cm2x2 + ... + cmnxn <= bm
+     * </blockquote></pre>
      * 
      * Cx <= b. This method returns the vector b.
      * 
      * @return
-     *         A {@code Matrix} of numbers representing the values in the
+     *         A {@code FieldVector} of numbers representing the values in the
      *         constraints. 
      */
     public FieldVector<BigFraction> getConsValues() {
@@ -702,8 +717,8 @@ public class LP {
     
     /**
      * @return
-     *         A row {@code Matrix} of numbers representing the coefficients in
-     *         the objective function.
+     *         A row {@code FieldVector} of numbers representing the
+     *         coefficients in the objective function.
      */
     public FieldVector<BigFraction> getObjFunction() {
         return c;
