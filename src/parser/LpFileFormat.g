@@ -2,7 +2,8 @@ grammar LpFileFormat;
 
 @header { 
     package parser;
-    import java.util.HashMap;
+    import com.google.common.collect.BiMap;
+    import com.google.common.collect.HashBiMap;
     import org.apache.commons.math3.fraction.BigFraction;
     import org.apache.commons.math3.linear.Array2DRowFieldMatrix;
     import org.apache.commons.math3.linear.ArrayFieldVector;
@@ -165,9 +166,9 @@ var returns [BigFraction coeff, String name]
 
 ////////////////////////// LP SPECIFIC STUFF //////////////////////////
 // Objective section
-lpfile returns [HashMap<String, Integer> varnames, ArrayList<ArrayList<BigFraction>> coeffs, ArrayList<BigFraction> rhs]
+lpfile returns [BiMap<String, Integer> varnames, ArrayList<ArrayList<BigFraction>> coeffs, ArrayList<BigFraction> rhs]
     :   {
-            $varnames = new HashMap<String, Integer>();
+            $varnames = HashBiMap.create();
             $coeffs = new ArrayList<ArrayList<BigFraction>>();
             $rhs = new ArrayList<BigFraction>();
             boolean maximize = true;
@@ -290,8 +291,8 @@ lpfromfile returns [LP lp]
             Ndata[i-1] = $lpfile.coeffs.get(i).toArray(new BigFraction[0]);
         }
         
-        /* Invert the HashMap */
-        HashMap<Integer, String> x = new HashMap<Integer, String>();
+        /* Invert the BiMap */
+        BiMap<Integer, String> x = HashBiMap.create();
         for (Entry<String, Integer> entry : $lpfile.varnames.entrySet()) {
             x.put(entry.getValue(), entry.getKey());
         }

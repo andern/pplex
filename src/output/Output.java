@@ -90,7 +90,7 @@ public final class Output {
      * @param  f
      *         Format numbers using the given format.
      * @return
-     *         A nicely formated {@code String}.
+     *         A nicely formatted {@code String}.
      *         
      */
     public static String dual(LP lp, Format f) {
@@ -154,16 +154,15 @@ public final class Output {
 
 
 
-    /*
+    /**
      * Return a nicely formatted primal dictionary as a {@code String}.
      *
      * @param  lp
      *         A {@code LP}.
-     * @param  precision
-     *         Limit each double precision number to this many decimals.
-     *         Give a negative value to automatically set precision.
+     * @param  f
+     *         Format numbers using the given format.
      * @return
-     *         A nicely formated {@code String}.
+     *         A nicely formatted {@code String}.
      *         
      */
     public static String primal(LP lp, Format f) {

@@ -1,3 +1,8 @@
+Xxx Xxx dd, 2014 - 0.5.1
+==========================
+* NEW FEATURE: The pivot command now also accepts variables as input for
+               choosing entering and leaving variables instead of just indices.
+
 Sun Jan 19, 2014 - 0.5.0
 ==========================
 * NEW FEATURE: Numbers can now be output as fractions. Input files can also

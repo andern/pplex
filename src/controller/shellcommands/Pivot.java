@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Andreas Halle
+ * Copyright (C) 2012-2014 Andreas Halle
  *
  * This file is part of pplex.
  *
@@ -18,10 +18,7 @@
  */
 package controller.shellcommands;
 
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.math3.exception.MathArithmeticException;
 
@@ -103,14 +100,18 @@ public class Pivot extends Command {
     }
     
     protected String getUsage() {
-        return "pivot ((<dictionary>) <colindex> (<rowindex>))";
+        return "pivot ((dictionary) (<variable> (<variable>)))\n" +
+               "DEPRECATED: pivot ((<dictionary>) <colindex> (<rowindex>))";
     }
     
     protected String execute(String arg) {
         if (arg == null) return execute("primal");
         LP lp = Data.getCurrentProgram();
         if (lp == null) return "pivot: No current linear program loaded.";
-        
+        System.out.println(lp.x);
+        System.out.println(Arrays.toString(lp.getBasicIndices()));
+        System.out.println(Arrays.toString(lp.getNonBasicIndices()));
+
         String[] args = arg.split(" ");
         
         boolean primal = args[0].equals("primal") || args[0].equals("p");
@@ -132,14 +133,14 @@ public class Pivot extends Command {
         try {
             if (any && args.length == 1) return pivot(lp, dual);
 
-            /* Find entering variable and check that its legal. */
+            /* Find entering variable and check that it's legal. */
             int entering = Integer.parseInt(args[idx]);
             if (entering >= co) return String.format("pivot: %s", colhi);
             if (entering < 0) return String.format("pivot: %s", collo);
 
             if (args.length == idx+1) return pivot(lp, dual, entering);
             
-            /* Find leaving variable and check that its legal. */
+            /* Find leaving variable and check that it's legal. */
             int leaving = Integer.parseInt(args[idx2]);
             if (leaving >= ro) return String.format("pivot: %s", rowhi);
             if (leaving < 0) return String.format("pivot: %s", rowlo);
@@ -148,7 +149,7 @@ public class Pivot extends Command {
         } catch (MathArithmeticException e) {
             return "pivot: Illegal pivot. Would cause division by zero.";
         } catch (NumberFormatException e) {
-            /* Fall through. Return err below. */
+            return parse(lp, args, dual, idx, idx2);
         } catch (RuntimeException e) {
             return String.format("pivot: %s", e.getLocalizedMessage());
         }
@@ -156,7 +157,27 @@ public class Pivot extends Command {
                 "Unknown parameters. See 'help pivot' for more information.";
         return String.format("pivot: %s", err);
     }
-    
+
+    private String parse(LP lp, String var1, String var2) {
+        return "";
+    }
+
+
+    private String parse(LP lp, String[] args, boolean dual, int idx, int idx2){
+        try {
+            if (args.length == idx+1)
+                return pivot(lp, dual, args[idx]);
+            if (args.length == idx2+1)
+                return pivot(lp, dual, args[idx], args[idx2]);
+        } catch (Exception e) {
+            return String.format("pivot: %s", e.getLocalizedMessage());
+        }
+
+        String err =
+                "Unknown parameters. See 'help pivot' for more information.";
+        return String.format("pivot: %s", err);
+    }
+
     private String output(LP curLp, boolean dual) {
         if (dual) return Output.dual(curLp, Data.format);
         return Output.primal(curLp, Data.format);
@@ -173,6 +194,20 @@ public class Pivot extends Command {
         LP curLp = lp.pivot(dual, e);
         Data.addLp(curLp);
         
+        return output(curLp, dual);
+    }
+
+    private String pivot(LP lp, boolean dual, String var) {
+        LP curLp = lp.pivot(dual, var);
+        Data.addLp(curLp);
+
+        return output(curLp, dual);
+    }
+
+    private String pivot(LP lp, boolean dual, String var, String var2) {
+        LP curLp = lp.pivot(var, var2);
+        Data.addLp(curLp);
+
         return output(curLp, dual);
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Andreas Halle
+ * Copyright (C) 2012-2014 Andreas Halle
  *
  * This file is part of pplex.
  *
@@ -19,7 +19,9 @@
 package model;
 
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.List;
+
+import com.google.common.collect.BiMap;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.apache.commons.math3.linear.Array2DRowFieldMatrix;
 import org.apache.commons.math3.linear.ArrayFieldVector;
@@ -45,9 +47,9 @@ public class LP {
     private FieldMatrix<BigFraction> N_;
     private FieldVector<BigFraction> b_; // x_b
     private FieldVector<BigFraction> c_; // z_n which is c negated!
-    
-    private HashMap<Integer, String> x;
-    
+
+    public BiMap<Integer, String> x;
+
     private int[] Bi;
     private int[] Ni;
     
@@ -82,7 +84,7 @@ public class LP {
      *        variables to their names.
      */
     public LP(FieldMatrix<BigFraction> N, FieldVector<BigFraction> b,
-              FieldVector<BigFraction> c, HashMap<Integer, String> x) {
+              FieldVector<BigFraction> c, BiMap<Integer, String> x) {
         this(null, N, b, c, null, N.copy(), b.copy(),
                 c.mapMultiply(BigFraction.MINUS_ONE).copy(), x,
                 new int[N.getRowDimension()], new int[N.getColumnDimension()]);
@@ -112,7 +114,7 @@ public class LP {
        FieldVector<BigFraction> b,  FieldVector<BigFraction> c,
        FieldMatrix<BigFraction> B_, FieldMatrix<BigFraction> N_,
        FieldVector<BigFraction> b_, FieldVector<BigFraction> c_,
-       HashMap<Integer, String> x, int[] Bi, int[] Ni) {
+       BiMap<Integer, String> x, int[] Bi, int[] Ni) {
         this.B = B;
         this.N = N;
         this.b = b;
@@ -225,7 +227,7 @@ public class LP {
     private int entering(boolean dual) {
         String e = "Incumbent basic solution is optimal.";
         String e2 = String.format("Incumbent basic solution is %s infeasible",
-                                   dual ? "dually" : "primal");
+                                   dual ? "dually" : "primally");
 
         if (optimal(dual)) throw new RuntimeException(e);
         if (!feasible(dual)) throw new RuntimeException(e2);
@@ -259,7 +261,6 @@ public class LP {
     public boolean feasible(boolean dual) {
         if (dual) return getMinValue(c_).compareTo(BigFraction.ZERO) >= 0.0;
         return getMinValue(b_).compareTo(BigFraction.ZERO) >= 0.0;
-        
     }
 
 
@@ -398,7 +399,7 @@ public class LP {
 
 
 
-    /**
+    /*
      * Do one iteration of the simplex method.
      *
      * @param  entering
@@ -460,13 +461,16 @@ public class LP {
         
         return new LP(B, N, b, c, nB_, nN_, nb_, nc_, x, nBi, nNi);
     }
-    
-    
-    
-    /**
+
+
+
+    /*
      * Do one iteration of the simplex method. Calculate leaving variable
      * according to the largest coefficient rule.
      *
+     * @param  dual
+     *         If true, run the dual simplex method.
+     *         Otherwise, run the primal simplex method.
      * @param  entering
      *         Index of variable to enter the basis.
      * @return
@@ -476,6 +480,90 @@ public class LP {
         int leaving = leaving(entering, dual);
         if (dual) return pivot(leaving, entering);
         return pivot(entering, leaving);
+    }
+
+
+
+    /**
+     * Do one iteration of the simplex method. Calculate leaving variable
+     * according to the largest coefficient rule.
+     *
+     * @param  var
+     *         Variable to enter/leave the basis.
+     * @param  var2
+     *         Variable to enter/leave the basis.
+     * @return
+     *         A linear program after one iteration.
+     */
+    public LP pivot(String var, String var2) {
+        String format = "Unknown variable '%s'.";
+        Integer varIdx = x.inverse().get(var);
+        Integer var2Idx = x.inverse().get(var2);
+
+        int idx = getDualIndex(var2);
+        int idx2 = getDualIndex(var);
+        if (idx == -1 && idx2 == -1) {
+            idx = (varIdx != null) ? varIdx : -1;
+            idx2 = (var2Idx != null) ? var2Idx : -1;
+        }
+
+        if (idx == -1)
+                throw new IllegalArgumentException(String.format(format, var));
+        if (idx2 == -1)
+                throw new IllegalArgumentException(String.format(format, var2));
+
+        System.out.println(idx);
+        System.out.println(idx2);
+
+        if (isNonBasic(idx) == isNonBasic(idx2))
+            throw new IllegalArgumentException("The entering and leaving" +
+                    " variables cannot both be basic variables or both be" +
+                    " non-basic variables.");
+
+        if (isNonBasic(idx)) return pivot(getPivotIndex(var), getPivotIndex(var2));
+        return pivot(getPivotIndex(var2), getPivotIndex(var));
+
+    }
+
+
+
+    private boolean isNonBasic(int varIndex) {
+        for (int i : Ni) if (i == varIndex) return true;
+        return false;
+    }
+
+
+
+    private boolean isBasic(int varIndex) {
+        for (int i : Bi) if (i == varIndex) return true;
+        return false;
+    }
+
+
+    /**
+     * Do one iteration of the simplex method. Calculate leaving variable
+     * according to the largest coefficient rule.
+     *
+     * @param  dual
+     *         If true, run the dual simplex method.
+     *         Otherwise, run the primal simplex method.
+     * @param  entering
+     *         Variable to enter the basis.
+     * @return
+     *         A linear program after one iteration.
+     */
+    public LP pivot(boolean dual, String entering) {
+        String format = "Illegal variable '%s'.";
+        Integer idx = x.inverse().get(entering);
+        if (idx == null)
+            throw new IllegalArgumentException(String.format(format, entering));
+
+        if (idx > getNoNonBasic()) {
+            dual = true;
+            idx -= getNoNonBasic();
+        }
+
+        return pivot(dual, idx);
     }
 
 
@@ -639,6 +727,34 @@ public class LP {
             vars[i] = var;
         }
         return vars;
+    }
+
+
+    private int getPivotIndex(String var) {
+        Integer idx = x.inverse().get(var);
+        if (idx == null) return getDualPivotIndex(var);
+
+        int[] indices = (idx >= Ni.length) ? Bi : Ni;
+        for (int i = 0; i < indices.length; i++) if(indices[i] == idx) return i;
+        return -1;
+    }
+
+
+
+    private int getDualPivotIndex(String var) {
+        int idx = Arrays.asList(getDualNonBasic()).indexOf(var);
+        if (idx != -1) return idx;
+
+        return Arrays.asList(getDualBasic()).indexOf(var);
+    }
+
+
+
+    private int getDualIndex(String var) {
+        int idx = Arrays.asList(getDualNonBasic()).indexOf(var);
+        if (idx != -1) return idx;
+
+        return Arrays.asList(getDualBasic()).indexOf(var) + Ni.length;
     }
 
 
