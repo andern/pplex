@@ -1,6 +1,6 @@
 pplex readme
-Last updated:    2014-01-19
-Release version: 0.5.0
+Last updated:    2014-08-15
+Release version: 0.5.1
 ------------------------------------------------------------------------
 
 Table of contents
@@ -53,7 +53,7 @@ of pplex (but you cannot read your own files.)
 Running pplex requires Java Runtime Environment installed on your computer.
 
 A quick way to get started:
-1. git clone git://github.com/andern/pplex.git
+1. git clone https://github.com/andern/pplex.git
 2. cd pplex
 3. java -jar pplex.jar
 
@@ -72,7 +72,7 @@ interface in a terminal window by passing the '-nogui' argument like this:
 4.0) Compiling pplex
 ---- ---------------
 Run the following commands:
-1. git clone git://github.com/andern/pplex.git
+1. git clone https://github.com/andern/pplex.git
 2. cd pplex
 3. ant ('ant mac' if you are on Mac OS X)
 

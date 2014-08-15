@@ -5,7 +5,7 @@ of pplex (but you cannot read your own files.)
 Running pplex requires Java Runtime Environment installed on your computer.
 
 Run the following commands:
-1. git clone git://github.com/andern/pplex.git
+1. git clone https://github.com/andern/pplex.git
 2. cd pplex
 3. ant ('ant mac' if you are on Mac OS X)
 
