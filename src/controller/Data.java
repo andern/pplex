@@ -39,8 +39,8 @@ public final class Data {
 
     
     public static final String PNAME = "pplex";
-    public static final String VERSION = "0.5.0";
-    public static final String COPY = "Copyright(C) 2012, 2013 Andreas Halle";
+    public static final String VERSION = "0.5.1";
+    public static final String COPY = "Copyright(C) 2012-2014 Andreas Halle";
     public static final String LINE = 
             String.format("%s version %s, %s", PNAME, VERSION, COPY);
     public static final String WELCOME =

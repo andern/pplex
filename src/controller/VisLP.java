@@ -404,12 +404,13 @@ class VisLP {
                     FieldVector<BigFraction> point =
                             new FieldLUDecomposition<BigFraction>(sys)
                                     .getSolver().getInverse().operate(bsys);
-                    double x = point.getEntry(0).doubleValue();
-                    double y = point.getEntry(1).doubleValue();
-                    Point2D p2d = new Point2D.Double(x, y);
-                
+                    BigFraction x = point.getEntry(0);
+                    BigFraction y = point.getEntry(1);
+
                     /* Only add feasible points */
-                    if (feasible(p2d, N, b)) {
+                    if (feasible(x, y, N, b)) {
+                        Point2D.Float p2d = new Point2D.Float(x.floatValue(),
+                                                              y.floatValue());
                         if (i >= N.getRowDimension()-1) unb.add(p2d);
                         points.add(p2d);
                     }
@@ -423,8 +424,9 @@ class VisLP {
         }
         return points.toArray(new Point2D[0]);
     }
-    
-    
+
+
+
     /*
      * Find the lowest and highest x and y values among all the
      * given points. Set the are to be displayed in the cartesian
@@ -459,16 +461,14 @@ class VisLP {
     
     
     /* Return whether a point is feasible according to the given constraints. */
-    private static boolean feasible(Point2D p2d, FieldMatrix<BigFraction> N,
+    private static boolean feasible(BigFraction x, BigFraction y,
+                                    FieldMatrix<BigFraction> N,
                                     FieldVector<BigFraction> b) {
-        double x = p2d.getX();
-        double y = p2d.getY();
-        
         for (int j = 0; j < N.getRowDimension(); j++) {
-            float nx = N.getEntry(j, 0).floatValue();
-            float ny = N.getEntry(j, 1).floatValue();
-            float val = (float) (nx*x + ny*y);
-            if (val > b.getEntry(j).floatValue()) return false;
+            BigFraction nx = N.getEntry(j, 0);
+            BigFraction ny = N.getEntry(j, 1);
+            BigFraction val = nx.multiply(x).add(ny.multiply(y)); // nx*x + ny*y
+            if (val.compareTo(b.getEntry(j)) > 0) return false;
         }
         
         return true;

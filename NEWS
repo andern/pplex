@@ -1,3 +1,10 @@
+Fri Aug 15, 2014 - 0.5.1
+==========================
+* BUG FIX: Fixed a bug that that caused the feasible region to sometimes not be
+           shown correctly.
+* MISC: Updated jcoolib to version 0.1.1 in order to fix a bug that caused
+        some lines not to be drawn correctly.
+
 Sun Jan 19, 2014 - 0.5.0
 ==========================
 * NEW FEATURE: Numbers can now be output as fractions. Input files can also
