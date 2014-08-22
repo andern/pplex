@@ -36,6 +36,8 @@ import model.LP;
 public final class Output {
     /* Some enums for output format */
     public static enum Format {
+        DECIMAL("Estimate number of necessary decimals. Subject to precision" +
+                " errors."),
         DECIMAL2("Force two decimals."),
         DECIMAL4("Force four decimals."),
         DECIMAL8("Force eight decimals."),
@@ -75,8 +77,13 @@ public final class Output {
     
     public static String number(BigFraction bf, Format f) {
         switch(f) {
-        case FRACTION: return toString(bf);
-        default: return String.format("%.2f", bf.doubleValue());
+        case DECIMAL: return Double.toString(bf.doubleValue());
+        case DECIMAL2: return String.format("%.2f", bf.doubleValue());
+        case DECIMAL4: return String.format("%.4f", bf.doubleValue());
+        case DECIMAL8: return String.format("%.8f", bf.doubleValue());
+        case DECIMAL16: return String.format("%.16f", bf.doubleValue());
+        case FRACTION:
+        default: return toString(bf);
         }
     }
     
