@@ -125,8 +125,10 @@ public class Pivot extends Command {
         int co = lp.getNoNonBasic();
 
         String colhi = String.format("Column index must be less than %d.", co);
+        String dcolhi = String.format("Column index must be less than %d.", ro);
         String collo = "Column index must be greater than 0.";
         String rowhi = String.format("Row index must be less than %d.", ro);
+        String drowhi = String.format("Row index must be less than %d.", co);
         String rowlo = "Row index must be greater than 0.";
         
         try {
@@ -134,14 +136,16 @@ public class Pivot extends Command {
 
             /* Find entering variable and check that its legal. */
             int entering = Integer.parseInt(args[idx]);
-            if (entering >= co) return String.format("pivot: %s", colhi);
+            if (entering >= co&&!dual)return String.format("pivot: %s", colhi);
+            if (entering >= ro&&dual) return String.format("pivot: %s", dcolhi);
             if (entering < 0) return String.format("pivot: %s", collo);
 
             if (args.length == idx+1) return pivot(lp, dual, entering);
             
             /* Find leaving variable and check that its legal. */
             int leaving = Integer.parseInt(args[idx2]);
-            if (leaving >= ro) return String.format("pivot: %s", rowhi);
+            if (leaving >= ro&&!dual) return String.format("pivot: %s", rowhi);
+            if (leaving >= co&&dual) return String.format("pivot: %s", drowhi);
             if (leaving < 0) return String.format("pivot: %s", rowlo);
 
             if (args.length == idx2+1) return pivot(lp,dual,entering,leaving);
