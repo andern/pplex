@@ -3,6 +3,14 @@ Xxx Xxx dd, 2015 - 0.5.1
 * NEW FEATURE: The pivot command now also accepts variables as input for
                choosing entering and leaving variables instead of just indices.
 
+Sun Nov 09, 2014 - 0.5.2
+==========================
+* BUG FIX: Fixed a bug in the pivot command that caused some pivots on the dual
+           dictionary to be falsely reported as invalid.
+* BUG FIX: The format command now sets the output format correctly.
+* MISC: Updated jcoolib to version 0.1.2 in order to fix a bug that caused
+        some lines not to be drawn correctly.
+
 Fri Aug 15, 2014 - 0.5.1
 ==========================
 * BUG FIX: Fixed a bug that that caused the feasible region to sometimes not be
