@@ -1,0 +1,33 @@
+p x  => p 0   (show primal)
+p y  => p 1   (show primal)
+
+p w1 => p d 0 (show primal)
+p w2 => p d 1 (show primal)
+p w3 => p d 2 (show primal)
+p w4 => p d 3 (show primal)
+
+p y1 => p d 0 (show dual)
+p y2 => p d 1 (show dual)
+p y3 => p d 2 (show dual)
+p y4 => p d 3 (show dual)
+
+p z1 => p 0 (show dual)
+p z2 => p 1 (show dual)
+
+p X X => ILLEGAL!
+p x y => ILLEGAL!
+p y x => ILLEGAL!
+p wX wY => ILLEGAL!
+
+p x w1 => p 0 0 (show primal)
+p x w2 => p 0 1 (show primal)
+p x w3 => p 0 2 (show primal)
+p x w4 => p 0 3 (show primal)
+
+p y w1 => p 1 0 (show primal)
+p y w2 => p 1 1 (show primal)
+p y w3 => p 1 2 (show primal)
+p y w4 => p 1 3 (show primal)
+
+p X Y => p Y X (show primal)
+p d X Y => p d Y X (show dual)
