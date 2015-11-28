@@ -48,32 +48,28 @@ public class Pivot extends Command {
                   + " entering and leaving variables according to the"
                   + " largest coefficient rule."
                     );
-                
+
+                put("pivot dual",
+                    "Same as above, using the dual simplex method."
+                );
+
                 put("pivot",
                     "Shorthand for 'pivot primal'."
                     );
                 
-                put("pivot dual",
-                    "Same as above, using the dual simplex method."
+                put("pivot var1 var2",
+                    "Run one iteration of the simplex method with "
+                  + " 'var1' as the entering variable and 'var2' as the"
+                  + " leaving variable."
                     );
                 
-                put("pivot primal 2 3",
+                put("pivot dual var1 var2",
+                    "Same as above, but print the dual dictionary after"
+                  + " the iteration."
+                    );
+                put("pivot var1",
                     "Run one iteration of the primal simplex method with"
-                  + " column 2 being the entering variable and row 3 being"
-                  + " the leaving variable."
-                    );
-                
-                put("pivot 2 3",
-                    "Shorthand for the command directly above."
-                    );
-                
-                put("pivot dual 2 3",
-                    "Same as the command directly above, using the dual"
-                  + " simplex method."
-                    );
-                put("pivot 2",
-                    "Run one iteration of the primal simplex method with"
-                  + " column 2 being the entering variable. The leaving"
+                  + " 'var' as the entering variable. The leaving"
                   + " variable is calculated according to the largest"
                   + " coefficient rule."
                     );
@@ -85,12 +81,10 @@ public class Pivot extends Command {
         return "Run one iteration of the simplex method on the current linear"
              + " program and print out its dictionary."
              + System.getProperty("line.separator")
-             + "The argument indices refer to rows and columns in the primal or"
-             + " dual dictionary. The dictionary argument tells pplex which"
-             + " dictionary the indices refer to. If no dictionary argument is"
-             + " given, pplex will automatically assume the primal dictionary."
-             + " If no rowindex is given, pplex will automatically compute the"
-             + " leaving variable according to the largest coefficient rule.";
+             + "The arguments refer to basic or non-basic variables in the"
+             + " primal or dual dictionary. If the dictionary argument is"
+             + " given, pplex will choose a pivot based on the largest"
+             + " coefficient rule.";
     }
     
     
@@ -108,9 +102,6 @@ public class Pivot extends Command {
         if (arg == null) return execute("primal");
         LP lp = Data.getCurrentProgram();
         if (lp == null) return "pivot: No current linear program loaded.";
-        System.out.println(lp.x);
-        System.out.println(Arrays.toString(lp.getBasicIndices()));
-        System.out.println(Arrays.toString(lp.getNonBasicIndices()));
 
         String[] args = arg.split(" ");
         
@@ -162,9 +153,6 @@ public class Pivot extends Command {
         return String.format("pivot: %s", err);
     }
 
-    private String parse(LP lp, String var1, String var2) {
-        return "";
-    }
 
 
     private String parse(LP lp, String[] args, boolean dual, int idx, int idx2){
@@ -202,7 +190,7 @@ public class Pivot extends Command {
     }
 
     private String pivot(LP lp, boolean dual, String var) {
-        LP curLp = lp.pivot(dual, var);
+        LP curLp = lp.pivot(var);
         Data.addLp(curLp);
 
         return output(curLp, dual);

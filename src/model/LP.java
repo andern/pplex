@@ -21,7 +21,9 @@ package model;
 import java.util.Arrays;
 import java.util.List;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
+import com.google.common.primitives.Ints;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.apache.commons.math3.linear.Array2DRowFieldMatrix;
 import org.apache.commons.math3.linear.ArrayFieldVector;
@@ -541,27 +543,22 @@ public class LP {
 
 
     /**
-     * Do one iteration of the simplex method. Calculate leaving variable
-     * according to the largest coefficient rule.
+     * Do one iteration of the simplex method. Calculate entering/leaving
+     * variable according to the largest coefficient rule.
      *
-     * @param  dual
-     *         If true, run the dual simplex method.
-     *         Otherwise, run the primal simplex method.
-     * @param  entering
-     *         Variable to enter the basis.
+     * @param  var
+     *         Variable to enter/leave the basis.
      * @return
      *         A linear program after one iteration.
      */
-    public LP pivot(boolean dual, String entering) {
+    public LP pivot(String entering) {
         String format = "Illegal variable '%s'.";
-        Integer idx = x.inverse().get(entering);
+        boolean dual = Arrays.asList(getBasic()).contains(entering)
+                || Arrays.asList(getDualNonBasic()).contains(entering);
+
+        Integer idx = getPivotIndex(entering);
         if (idx == null)
             throw new IllegalArgumentException(String.format(format, entering));
-
-        if (idx > getNoNonBasic()) {
-            dual = true;
-            idx -= getNoNonBasic();
-        }
 
         return pivot(dual, idx);
     }
@@ -734,9 +731,9 @@ public class LP {
         Integer idx = x.inverse().get(var);
         if (idx == null) return getDualPivotIndex(var);
 
-        int[] indices = (idx >= Ni.length) ? Bi : Ni;
-        for (int i = 0; i < indices.length; i++) if(indices[i] == idx) return i;
-        return -1;
+        int i = Ints.indexOf(Ni, idx);
+        if (i == -1) i = Ints.indexOf(Bi, idx);
+        return i;
     }
 
 

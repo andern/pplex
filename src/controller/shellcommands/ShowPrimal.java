@@ -24,6 +24,9 @@ import controller.Data;
 import lightshell.Command;
 import model.LP;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class ShowPrimal extends Command {
     protected String getName() { return "primal"; }
     protected String getShortHelp() { return "show the primal dictionary"; }
@@ -40,5 +43,14 @@ public class ShowPrimal extends Command {
         LP lp = Data.getCurrentProgram();
         if (lp == null) return "show: No current linear program loaded.";
         return Output.primal(lp, Data.format);
+    }
+
+    @SuppressWarnings("serial")
+    protected Set<String> getAliases() {
+        return new HashSet<String>() {
+            {
+                add("p");
+            }
+        };
     }
 }
